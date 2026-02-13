@@ -1,18 +1,43 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import MainLayout from './layouts/MainLayout'
+import Landing from './pages/public/Landing'
+import SelectRole from './pages/public/SelectRole'
+import AdminLayout from './layouts/AdminLayout'
+import AdminDashboard from './pages/admin/Dashboard'
+import Craftsmen from './pages/admin/Craftsmen'
+import CraftsmanLayout from './layouts/CraftmanLayout'
+import Dashboard from './pages/craftsman/Dashboard';
+import Requests from './pages/craftsman/Requests'
+import Home from './pages/public/Home'
+import About from './pages/public/About'
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
     <>
-    <div className="min-h-screen flex items-center justify-center bg-black">
-      <h1 className="text-4xl font-bold text-green-400">
-        khadamatak is coming soon
-      </h1>
-    </div>
+<BrowserRouter>
+  <Routes>
+  <Route path='/login' element={<SelectRole/>}></Route>
+  <Route element={<MainLayout />}>
+  <Route path='/' element={<Landing/>}/>
+  <Route path='/home' element={<Home/>}/>
+  <Route path="about"  element={<About/>} />
+  </Route> 
+  
+  <Route path="/admin" element={<AdminLayout />}>
+      <Route index element={<AdminDashboard />} />
+      <Route path="Craftsmen"  element={<Craftsmen/>} />
+  </Route>
+
+  <Route path="/craftsman" element={<CraftsmanLayout />}>
+      <Route index element={<Dashboard />} />
+      <Route path="requests"  element={<Requests/>} />
+  </Route>
+
+  </Routes>
+</BrowserRouter>
     </>
   )
 }
