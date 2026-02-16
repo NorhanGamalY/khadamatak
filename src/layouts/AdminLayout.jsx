@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom';
-import Header from '../pages/admin/Header';
+import Header from '../components/common/Header';
 
 export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeLabel, setActiveLabel] = useState("لوحة التحكم");
   const navItems = [
     { label: "لوحة التحكم", to: "/admin" },
     { label: "الحرفيين", to: "/admin/craftsmen" },
@@ -27,9 +28,10 @@ export default function AdminLayout() {
         ${sidebarOpen ? 'translate-x-0' : 'translate-x-full'}
       `}>
         <div>
-          <nav className="space-y-4 mt-8 pt-8">
+          <nav className="space-y-4">
             {navItems.map((item) => (
-              <NavItem key={item.to} label={item.label} to={item.to}  onClick={() => window.innerWidth < 1024 && setSidebarOpen(false)} />
+              <NavItem key={item.to} label={item.label} to={item.to}  onClick={() => window.innerWidth < 1024 && setSidebarOpen(false)} 
+                              setActiveLabel={setActiveLabel}/>
             ))}
           </nav>
         </div>
@@ -38,25 +40,30 @@ export default function AdminLayout() {
       </aside>
 
       <main className={`
-        fixed top-[160px] right-0 left-0 bottom-0 transition-all duration-300
+       flex-1 transition-all duration-300
         ${sidebarOpen ? 'lg:mr-64' : 'lg:mr-0'}
       `}>
-                <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}/>
+                <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} name={"Admin Admin"} role={"مدير النظام"} activeTitle={activeLabel}/>
                 <Outlet />
       </main>
     </div>
   )
 }
-const NavItem = ({ label, to, onClick }) => (
+const NavItem = ({ label, to, onClick ,setActiveLabel}) => (
   <NavLink
     to={to}
     end={to === "/admin"}
     onClick={onClick}
-    className={({ isActive }) =>
-      `flex items-center justify-between px-4 py-2.5 rounded-lg cursor-pointer transition-colors ${isActive
-        ? "bg-[#d75b19] text-white text-[20px]"
-        : "text-[#8A8A8A] text-[16px] hover:bg-white/5 hover:text-white"
-      }`}>
+    className={({ isActive }) => {
+      if (isActive) {
+        setActiveLabel(label);
+      }
+      return `flex items-center justify-between px-4 py-2.5 rounded-lg cursor-pointer transition-colors ${
+        isActive
+          ? "bg-[#d75b19] text-white text-[20px]"
+          : "text-[#8A8A8A] text-[16px] hover:bg-white/5 hover:text-white"
+      }`;
+    }}>
     <span className="font-medium">{label}</span>
   </NavLink>
 );

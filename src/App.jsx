@@ -17,6 +17,7 @@ import Reports from './pages/admin/Reports'
 import Services from './pages/admin/Services'
 import PaymentSettings from './pages/admin/PaymentSettings'
 import GenreralSettings from './pages/admin/GeneralSettings'
+import Profile from './pages/craftsman/Profile'
 
 function App() {
 
@@ -34,7 +35,7 @@ function App() {
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />
             <Route path="craftsmen" element={<Craftsmen />} />
-            <Route path="/admin/settings" element={<Settings />} >
+            <Route path="settings/*" element={<Settings />} >
             <Route index element={<GenreralSettings />} /> 
             <Route path="payment" element={<PaymentSettings />} />
             </Route>
@@ -45,6 +46,7 @@ function App() {
           <Route path="/craftsman" element={<CraftsmanLayout />}>
             <Route index element={<Dashboard />} />
             <Route path="requests" element={<Requests />} />
+            <Route path="profile"  element={<Profile/>} />
           </Route>
 
         </Routes>

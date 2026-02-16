@@ -4,26 +4,31 @@ import { FaSearch } from "react-icons/fa";
 import { RxHamburgerMenu } from "react-icons/rx";
 import Navbar from '../../components/layout/Navbar';
 import Avatar from '../../components/common/Avatar';
+import { useNavigate } from 'react-router-dom';
 
-export default function Header({ sidebarOpen, setSidebarOpen }) {
+export default function Header({ sidebarOpen, setSidebarOpen, name , role,activeTitle ,profilePath}) {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(true);
+    const navigate = useNavigate();
 
     return (
         <div className='bg-[#ECECF2]'>
-            <nav className={`fixed top-0 left-0 flex justify-between min-h-[80px] items-center z-50 w-full mx-auto ${sidebarOpen ? 'lg:ps-10 right-25' : 'lg:ps-0 right-0'}`} >
+            <nav className={`fixed bg-white top-0 left-0 flex justify-between min-h-[80px] items-center z-50  mx-auto ${sidebarOpen ? 'w-[50%] lg:w-[83%]' : 'w-full'}`} >
                 <Navbar />
             </nav>
-            <div className='bg-[#ECECF2] min-h-[20px] fixed top-[80px] left-0 right-0'></div>
-            <header className={`bg-white border-b border-[#e7e7ef] fixed top-[100px] left-0 ${sidebarOpen ? 'lg:ps-10 right-40' : 'lg:ps-0 right-0'}`}>
+            <div className='bg-[#ECECF2] min-h-[20px] top-[80px] left-0 right-0'></div>
+            <header className={`bg-white border-b border-[#e7e7ef] mt-[100px] left-0 ${sidebarOpen ? 'lg:ps-10 right-40' : 'lg:ps-0 right-0'}`}>
                 <div className="mx-auto px-3 sm:px-4">
                     <div className="bg-white rounded-xl shadow-[0_1px_0_rgba(0,0,0,0.03)] px-3 sm:px-4 py-2 flex items-center gap-3 flex-row-reverse">
                         <div className="flex items-center gap-3]">
                             <div className="leading-tight text-right me-3">
-                                <div className="text-[13px] font-bold">مدير النظام</div>
-                                <div className="text-[11px] text-[#6b7280]">Super Admin</div>
+                                <div className="text-[13px] font-bold">{name}</div>
+                                <div className="text-[11px] text-[#6b7280]">{role}</div>
                             </div>
-                            <div className="h-10 w-10 rounded-full bg-[#f59e0b] flex items-center justify-center text-white font-extrabold">
-                                <Avatar name='Admin'/>
+                            <div 
+                                onClick={() => navigate(profilePath)}
+                                className="h-10 w-10 rounded-full bg-[#f59e0b] flex items-center justify-center text-white font-extrabold cursor-pointer hover:bg-[#f59e0b]/90 transition-colors"
+                            >                                
+                            <Avatar name={name}/>
                             </div>
                         </div>
                         <div className="flex-1">
@@ -42,7 +47,7 @@ export default function Header({ sidebarOpen, setSidebarOpen }) {
                                 onClick={() => setSidebarOpen(!sidebarOpen)}
                                 className="text-[#6b7280] hover:text-[#111827] transition-colors">
                                 <RxHamburgerMenu /></button>
-                            <span className="font-semibold text-[#111827]">الإعدادات</span>
+                            <span className="font-semibold text-[#111827]">{activeTitle}</span>
                         </div>
 
                     </div>
