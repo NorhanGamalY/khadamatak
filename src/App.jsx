@@ -12,6 +12,7 @@ import Dashboard from './pages/craftsman/Dashboard';
 import Requests from './pages/craftsman/Requests'
 import Home from './pages/public/Home'
 import About from './pages/public/About'
+import Profile from './pages/craftsman/Profile'
 
 function App() {
 
@@ -34,6 +35,7 @@ function App() {
   <Route path="/craftsman" element={<CraftsmanLayout />}>
       <Route index element={<Dashboard />} />
       <Route path="requests"  element={<Requests/>} />
+      <Route path="profile"  element={<Profile/>} />
   </Route>
 
   </Routes>
