@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import Header from "../components/common/Header";
-import { useSearch } from "../context/searchContext";
 
 export default function CraftsmanLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeLabel, setActiveLabel] = useState("لوحة التحكم");
-  const { search, setSearch } = useSearch();
   const navItems = [
     { label: "لوحة المعلومات", to: "/craftsman" },
     { label: "ادارة الطلبات", to: "/craftsman/requests" },
