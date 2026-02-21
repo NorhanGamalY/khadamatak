@@ -1,23 +1,24 @@
-import { useState } from "react";
-import "./App.css";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import MainLayout from "./layouts/MainLayout";
-import Landing from "./pages/public/Landing";
-import SelectRole from "./pages/public/SelectRole";
-import AdminLayout from "./layouts/AdminLayout";
-import AdminDashboard from "./pages/admin/Dashboard";
-import Craftsmen from "./pages/admin/Craftsmen";
-import CraftsmanLayout from "./layouts/CraftmanLayout";
-import Dashboard from "./pages/craftsman/Dashboard";
-import Requests from "./pages/craftsman/Requests";
-import Home from "./pages/public/Home";
-import About from "./pages/public/About";
-import Settings from "./pages/admin/Settings";
-import Reports from "./pages/admin/Reports";
-import Services from "./pages/admin/Services";
-import PaymentSettings from "./pages/admin/PaymentSettings";
-import GenreralSettings from "./pages/admin/GeneralSettings";
-import Profile from "./pages/craftsman/Profile";
+import { useState } from 'react'
+import './App.css'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import MainLayout from './layouts/MainLayout'
+import Landing from './pages/public/Landing'
+import SelectRole from './pages/public/SelectRole'
+import AdminLayout from './layouts/AdminLayout'
+import AdminDashboard from './pages/admin/Dashboard'
+import Craftsmen from './pages/admin/Craftsmen'
+import CraftsmanLayout from './layouts/CraftmanLayout'
+import Dashboard from './pages/craftsman/Dashboard';
+import Requests from './pages/craftsman/Requests'
+import Home from './pages/public/Home'
+import About from './pages/public/About'
+import Settings from './pages/admin/Settings'
+import Reports from './pages/admin/Reports'
+import Services from './pages/admin/Services'
+import PaymentSettings from './pages/admin/PaymentSettings'
+import GenreralSettings from './pages/admin/GeneralSettings'
+import Profile from './pages/craftsman/Profile'
+import Conflicts from './pages/admin/Conflicts';
 import CraftsmanServices from "./pages/craftsman/Services";
 
 function App() {
@@ -41,6 +42,7 @@ function App() {
             </Route>
             <Route path="reports" element={<Reports />} />
             <Route path="services" element={<Services />} />
+            <Route path="conflicts" element={<Conflicts />} />
           </Route>
 
           <Route path="/craftsman" element={<CraftsmanLayout />}>
