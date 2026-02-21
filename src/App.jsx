@@ -18,41 +18,43 @@ import Services from './pages/admin/Services'
 import PaymentSettings from './pages/admin/PaymentSettings'
 import GenreralSettings from './pages/admin/GeneralSettings'
 import Profile from './pages/craftsman/Profile'
+import Conflicts from './pages/admin/Conflicts';
+import CraftsmanServices from "./pages/craftsman/Services";
 
 function App() {
-
   return (
     <>
       <BrowserRouter>
         <Routes>
-          <Route path='/login' element={<SelectRole />}></Route>
+          <Route path="/login" element={<SelectRole />}></Route>
           <Route element={<MainLayout />}>
-            <Route path='/' element={<Landing />} />
-            <Route path='/home' element={<Home />} />
+            <Route path="/" element={<Landing />} />
+            <Route path="/home" element={<Home />} />
             <Route path="about" element={<About />} />
           </Route>
 
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />
             <Route path="craftsmen" element={<Craftsmen />} />
-            <Route path="settings/*" element={<Settings />} >
-            <Route index element={<GenreralSettings />} /> 
-            <Route path="payment" element={<PaymentSettings />} />
+            <Route path="settings/*" element={<Settings />}>
+              <Route index element={<GenreralSettings />} />
+              <Route path="payment" element={<PaymentSettings />} />
             </Route>
             <Route path="reports" element={<Reports />} />
             <Route path="services" element={<Services />} />
+            <Route path="conflicts" element={<Conflicts />} />
           </Route>
 
           <Route path="/craftsman" element={<CraftsmanLayout />}>
             <Route index element={<Dashboard />} />
             <Route path="requests" element={<Requests />} />
-            <Route path="profile"  element={<Profile/>} />
+            <Route path="profile" element={<Profile />} />
+            <Route path="services" element={<CraftsmanServices />} />
           </Route>
-
         </Routes>
       </BrowserRouter>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
