@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom';
 import Header from '../components/common/Header';
+import { label } from 'framer-motion/client';
 
 export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -11,12 +12,13 @@ export default function AdminLayout() {
     { label: "قائمة الخدمات", to: "/admin/services" },
     { label: "الطلبات", to: "/admin/requests" },
     { label: "التقارير", to: "/admin/reports" },
+    { label: "النزاعات", to: "/admin/conflicts" },
     { label: "الاعدادات", to: "/admin/settings" },
   ];
   return (
     <div className="flex flex-col lg:flex-row min-h-screen text-black">
-            {sidebarOpen && (
-        <div 
+      {sidebarOpen && (
+        <div
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
@@ -30,8 +32,8 @@ export default function AdminLayout() {
         <div>
           <nav className="space-y-4">
             {navItems.map((item) => (
-              <NavItem key={item.to} label={item.label} to={item.to}  onClick={() => window.innerWidth < 1024 && setSidebarOpen(false)} 
-                              setActiveLabel={setActiveLabel}/>
+              <NavItem key={item.to} label={item.label} to={item.to} onClick={() => window.innerWidth < 1024 && setSidebarOpen(false)}
+                setActiveLabel={setActiveLabel} />
             ))}
           </nav>
         </div>
@@ -43,13 +45,13 @@ export default function AdminLayout() {
        flex-1 transition-all duration-300
         ${sidebarOpen ? 'lg:mr-64' : 'lg:mr-0'}
       `}>
-                <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} name={"Admin Admin"} role={"مدير النظام"} activeTitle={activeLabel}/>
-                <Outlet />
+        <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} name={"Admin Admin"} role={"مدير النظام"} activeTitle={activeLabel} />
+        <Outlet />
       </main>
     </div>
   )
 }
-const NavItem = ({ label, to, onClick ,setActiveLabel}) => (
+const NavItem = ({ label, to, onClick, setActiveLabel }) => (
   <NavLink
     to={to}
     end={to === "/admin"}
@@ -58,11 +60,10 @@ const NavItem = ({ label, to, onClick ,setActiveLabel}) => (
       if (isActive) {
         setActiveLabel(label);
       }
-      return `flex items-center justify-between px-4 py-2.5 rounded-lg cursor-pointer transition-colors ${
-        isActive
+      return `flex items-center justify-between px-4 py-2.5 rounded-lg cursor-pointer transition-colors ${isActive
           ? "bg-[#d75b19] text-white text-[20px]"
           : "text-[#8A8A8A] text-[16px] hover:bg-white/5 hover:text-white"
-      }`;
+        }`;
     }}>
     <span className="font-medium">{label}</span>
   </NavLink>

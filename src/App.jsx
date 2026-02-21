@@ -18,6 +18,7 @@ import Services from './pages/admin/Services'
 import PaymentSettings from './pages/admin/PaymentSettings'
 import GenreralSettings from './pages/admin/GeneralSettings'
 import Profile from './pages/craftsman/Profile'
+import Conflicts from './pages/admin/Conflicts';
 
 function App() {
 
@@ -41,6 +42,7 @@ function App() {
             </Route>
             <Route path="reports" element={<Reports />} />
             <Route path="services" element={<Services />} />
+            <Route path="conflicts" element={<Conflicts />} />
           </Route>
 
           <Route path="/craftsman" element={<CraftsmanLayout />}>
