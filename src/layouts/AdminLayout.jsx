@@ -8,6 +8,7 @@ export default function AdminLayout() {
   const [activeLabel, setActiveLabel] = useState("لوحة التحكم");
   const navItems = [
     { label: "لوحة التحكم", to: "/admin" },
+    { label: "المستخدمين", to: "/admin/users" },
     { label: "الحرفيين", to: "/admin/craftsmen" },
     { label: "قائمة الخدمات", to: "/admin/services" },
     { label: "الطلبات", to: "/admin/requests" },
