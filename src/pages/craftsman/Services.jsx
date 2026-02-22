@@ -30,16 +30,58 @@ const services = [
 ];
 
 export default function CraftsmanServices() {
-  const [filteredData, setFilteredData] = useState([]);
   const { search } = useSearch();
 
+  const [filteredData, setFilteredData] = useState([]);
   const [isEditModelOpen, setIsEditModelOpen] = useState(false);
+  const [isAddServiceModelOpen, setIsAddServiceModelOpen] = useState(false);
+  const [serviceData, setServiceData] = useState({
+    title: "",
+    desc: "",
+    price: "",
+  });
+  const [editServiceData, setEditServiceData] = useState({
+    title: "",
+    desc: "",
+    price: "",
+  });
+
+  const [selectedService, setSelectedService] = useState(null);
 
   const filtered = services.filter((s) =>
     (s.title + " " + s.desc).toLowerCase().includes(search.toLowerCase()),
   );
+
   const handleDelete = (idx) => {
     setFilteredData((prev) => prev.filter((s) => s.id !== idx));
+  };
+
+  const handleAddService = (service) => {
+    const newService = {
+      id: Date.now(),
+      ...service,
+    };
+    setServiceData({
+      title: service.title,
+      desc: service.desc,
+      price: service.price,
+    });
+    setFilteredData((prev) => [newService, ...prev]);
+    setServiceData({
+      title: "",
+      desc: "",
+      price: "",
+    });
+    setIsAddServiceModelOpen(false);
+  };
+
+  const handleEditService = (updatedService) => {
+    setFilteredData((prev) =>
+      prev.map((s) =>
+        s.id === selectedService.id ? { ...s, ...updatedService } : s,
+      ),
+    );
+    setIsEditModelOpen(false);
   };
 
   useEffect(() => {
@@ -62,8 +104,10 @@ export default function CraftsmanServices() {
                 يمكنك إضافة وتعديل الخدمات التي تظهر لعملائك في التطبيق.
               </p>
             </div>
-
-            <button className="h-10 px-4 rounded-lg bg-[#0B0F2A] text-white font-bold text-[13px] inline-flex items-center gap-2 shadow-sm">
+            <button
+              onClick={() => setIsAddServiceModelOpen(!isAddServiceModelOpen)}
+              className="lg:h-10 px-4 rounded-lg bg-[#0B0F2A] text-white font-bold text-[13px] inline-flex items-center gap-2 shadow-sm cursor-pointer"
+            >
               <span className="lg:text-[18px] leading-none">+</span>
               إضافة خدمة جديدة
             </button>
@@ -96,7 +140,15 @@ export default function CraftsmanServices() {
                         className="p-1 cursor-pointer"
                         aria-label="edit"
                         title="تعديل"
-                        onClick={() => setIsEditModelOpen(!isEditModelOpen)}
+                        onClick={() => {
+                          setSelectedService(s);
+                          setEditServiceData({
+                            title: s.title,
+                            desc: s.desc,
+                            price: s.price,
+                          });
+                          setIsEditModelOpen(!isEditModelOpen);
+                        }}
                       >
                         <BiSolidEditAlt className="text-xl" />
                       </button>
@@ -132,6 +184,20 @@ export default function CraftsmanServices() {
           <EditModel
             setIsEditModelOpen={setIsEditModelOpen}
             isEditModelOpen={isEditModelOpen}
+            handleEditService={handleEditService}
+            editServiceData={editServiceData}
+            setEditServiceData={setEditServiceData}
+          />
+        )}
+      </AnimatePresence>
+      <AnimatePresence initial={false}>
+        {isAddServiceModelOpen && (
+          <AddNewService
+            setIsAddServiceModelOpen={setIsAddServiceModelOpen}
+            isAddServiceModelOpen={isAddServiceModelOpen}
+            serviceData={serviceData}
+            setServiceData={setServiceData}
+            handleAddService={handleAddService}
           />
         )}
       </AnimatePresence>
@@ -139,7 +205,12 @@ export default function CraftsmanServices() {
   );
 }
 
-const EditModel = ({ setIsEditModelOpen, isEditModelOpen }) => {
+const EditModel = ({
+  setIsEditModelOpen,
+  handleEditService,
+  editServiceData,
+  setEditServiceData,
+}) => {
   return (
     <motion.div
       className="absolute inset-0 bg-black/50 flex"
@@ -163,7 +234,10 @@ const EditModel = ({ setIsEditModelOpen, isEditModelOpen }) => {
         <form
           action=""
           className="grid gap-4"
-          onSubmit={(e) => e.preventDefault()}
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleEditService(editServiceData);
+          }}
         >
           <h1 className="lg:text-3xl text-2xl text-[#1E1855] font-semibold">
             تعديل الخدمة
@@ -173,7 +247,18 @@ const EditModel = ({ setIsEditModelOpen, isEditModelOpen }) => {
             <label htmlFor="title">اسم الخدمة </label>
             <div className="flex items-center gap-2 border border-[#BABABA] py-2 px-2 rounded mt-1 bg-white placeholder:text-[#A3A3A3]">
               <MdOutlineMiscellaneousServices className="-rotate-90 text-lg text-[#A3A3A3] " />
-              <input type="text" placeholder="صيانة عامة" />
+              <input
+                type="text"
+                placeholder="صيانة عامة"
+                value={editServiceData.title}
+                onChange={(e) =>
+                  setEditServiceData({
+                    ...editServiceData,
+                    title: e.target.value,
+                  })
+                }
+                className="w-full"
+              />
             </div>
           </div>
 
@@ -181,7 +266,18 @@ const EditModel = ({ setIsEditModelOpen, isEditModelOpen }) => {
             <label htmlFor="title">سعر الخدمة </label>
             <div className="flex items-center gap-2 border border-[#BABABA] py-2 px-2 rounded mt-1 bg-white placeholder:text-[#A3A3A3]">
               <PiMoneyWavyLight className="text-lg text-[#A3A3A3]" />
-              <input type="text" placeholder="500ج.م" />
+              <input
+                type="text"
+                placeholder="500ج.م"
+                value={editServiceData.price}
+                onChange={(e) =>
+                  setEditServiceData({
+                    ...editServiceData,
+                    price: e.target.value,
+                  })
+                }
+                className="w-full"
+              />
             </div>
           </div>
 
@@ -193,12 +289,22 @@ const EditModel = ({ setIsEditModelOpen, isEditModelOpen }) => {
                 rows={4}
                 placeholder="اكتب وصفا مختصرا للخدمة"
                 className="w-full"
+                value={editServiceData.desc}
+                onChange={(e) =>
+                  setEditServiceData({
+                    ...editServiceData,
+                    desc: e.target.value,
+                  })
+                }
               />
             </div>
           </div>
 
           <div className="flex gap-3 m-auto">
-            <button className="bg-[#1E1855] text-white px-4 py-2 rounded cursor-pointer">
+            <button
+              type="submit"
+              className="bg-[#1E1855] text-white px-4 py-2 rounded cursor-pointer"
+            >
               save changes
             </button>
             <button
@@ -206,6 +312,106 @@ const EditModel = ({ setIsEditModelOpen, isEditModelOpen }) => {
               onClick={() => setIsEditModelOpen(false)}
             >
               cancel
+            </button>
+          </div>
+        </form>
+      </motion.div>
+    </motion.div>
+  );
+};
+
+const AddNewService = ({
+  serviceData,
+  setServiceData,
+  handleAddService,
+  setIsAddServiceModelOpen,
+}) => {
+  return (
+    <motion.div
+      className="absolute inset-0 bg-black/50 flex"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8, y: 40 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.8, y: 40 }}
+        transition={{ duration: 0.25 }}
+        className="bg-[#f3f3f7] lg:w-1/2 w-11/12 h-fit mt-6 rounded mx-auto lg:p-6 py-4 p-3 shadow-xl relative"
+      >
+        <button
+          className="absolute lg:left-5 left-3 lg:top-7 top-5 cursor-pointer"
+          onClick={() => setIsAddServiceModelOpen(false)}
+        >
+          <CgClose />
+        </button>
+        <form
+          action=""
+          className="grid gap-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleAddService(serviceData);
+          }}
+        >
+          <h1 className="lg:text-3xl text-2xl text-[#1E1855] font-semibold">
+            إضافة خدمة جديدة
+          </h1>
+
+          <div className="grid gap-2">
+            <label htmlFor="title">اسم الخدمة </label>
+            <div className="flex items-center gap-2 border border-[#BABABA] py-2 px-2 rounded mt-1 bg-white placeholder:text-[#A3A3A3]">
+              <MdOutlineMiscellaneousServices className="-rotate-90 text-lg text-[#A3A3A3] " />
+              <input
+                type="text"
+                placeholder="صيانة عامة"
+                value={serviceData.title || ""}
+                onChange={(e) =>
+                  setServiceData({ ...serviceData, title: e.target.value })
+                }
+                className="w-full"
+              />
+            </div>
+          </div>
+
+          <div className="grid gap-2">
+            <label htmlFor="title">سعر الخدمة </label>
+            <div className="flex items-center gap-2 border border-[#BABABA] py-2 px-2 rounded mt-1 bg-white placeholder:text-[#A3A3A3]">
+              <PiMoneyWavyLight className="text-lg text-[#A3A3A3]" />
+              <input
+                type="text"
+                placeholder="500ج.م"
+                value={serviceData.price || ""}
+                onChange={(e) =>
+                  setServiceData({ ...serviceData, price: e.target.value })
+                }
+                className="w-full"
+              />
+            </div>
+          </div>
+
+          <div className="grid gap-2">
+            <label htmlFor="title">وصف الخدمة </label>
+            <div className="flex gap-2 border border-[#BABABA] py-2 px-2 rounded mt-1 bg-white placeholder:text-[#A3A3A3]">
+              <FaFileLines className="text-lg text-[#A3A3A3]" />
+              <textarea
+                rows={4}
+                placeholder="اكتب وصفا مختصرا للخدمة"
+                className="w-full"
+                value={serviceData.desc || ""}
+                onChange={(e) =>
+                  setServiceData({ ...serviceData, desc: e.target.value })
+                }
+              />
+            </div>
+          </div>
+
+          <div>
+            <button
+              type="submit"
+              className="bg-[#1E1855] w-full text-white px-4 py-2 rounded cursor-pointer"
+            >
+              حفظ الخدمة
             </button>
           </div>
         </form>
