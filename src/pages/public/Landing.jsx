@@ -53,6 +53,76 @@ export default function Landing() {
       
       
       </div>
+      <div className='flex flex-col items-center mt-5 px-4'>
+  <h2 className="text-blue-900 text-2xl font-semibold my-7">خدمتنا</h2>
+  <p className='text-blue-900 text-lg my-8 text-center'>نقدم مجموعه متكامله من الخدمات منها</p>
+
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-5 my-5 justify-items-center">
+    
+    <div className="w-full max-w-[384px]">
+      <img src="/Frame 34 (1).png" alt="نجاره" className="w-full  rounded-lg" />
+      <div className='flex justify-between items-center mt-5'>
+        <p>نجاره</p>
+        <button className="text-white bg-orange-400 hover:bg-warning-strong font-medium rounded-md px-4 py-2 ml-2">اطلب الخدمه</button>
+      </div>
     </div>
+
+    <div className="w-full max-w-[384px]">
+      <img src="/Frame 34 (2).png" alt="كهربا" className="w-full  rounded-lg" />
+      <div className='flex justify-between items-center mt-5'>
+        <p>كهربا</p>
+        <button className="text-white bg-orange-400 hover:bg-warning-strong font-medium rounded-md px-4 py-2  ml-2">اطلب الخدمه</button>
+      </div>
+    </div>
+
+    <div className="w-full max-w-[384px]">
+      <img src="/Frame 34 (3).png" alt="سباكه" className="w-full  rounded-lg" />
+      <div className='flex justify-between items-center mt-5'>
+        <p>سباكه</p>
+        <button className="text-white bg-orange-400 hover:bg-warning-strong font-medium rounded-md px-4 py-2  ml-2">اطلب الخدمه</button>
+      </div>
+    </div>
+
+
+    <div className="w-full max-w-[384px]">
+      <img src="/Frame 34 (4).png" alt="نجاره" className="w-full  rounded-lg" />
+      <div className='flex justify-between items-center mt-5'>
+        <p>نجاره</p>
+        <button className="text-white bg-orange-400 hover:bg-warning-strong font-medium rounded-md px-4 py-2 ml-2">اطلب الخدمه</button>
+      </div>
+    </div>
+
+
+    <div className="w-full max-w-[384px]">
+      <img src="/Frame 34 (5).png" alt="كهربا" className="w-full  rounded-lg" />
+      <div className='flex justify-between items-center mt-5'>
+        <p>كهربا</p>
+        <button className="text-white bg-orange-400 hover:bg-warning-strong font-medium rounded-md px-4 py-2 ml-2">اطلب الخدمه</button>
+      </div>
+    </div>
+
+
+    <div className="w-full max-w-[384px]">
+      <img src="/Frame 34.png" alt="سباكه" className="w-full  rounded-lg" />
+      <div className='flex justify-between items-center mt-5'>
+        <p>سباكه</p>
+        <button className="text-white bg-orange-400 hover:bg-orange-strong font-medium rounded-md px-4 py-2  ml-2">اطلب الخدمه</button>
+      </div>
+    </div>
+
+  
+
+    
+
+    
+
+  </div>
+</div>
+  
+  </div>
+
+
+    
+
   );
 }
