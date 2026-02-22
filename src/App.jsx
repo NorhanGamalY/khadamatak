@@ -20,6 +20,7 @@ import GenreralSettings from './pages/admin/GeneralSettings'
 import Profile from './pages/craftsman/Profile'
 import Conflicts from './pages/admin/Conflicts';
 import CraftsmanServices from "./pages/craftsman/Services";
+import Users from './pages/admin/Users'
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
 
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />
+            <Route path="users" element={<Users/>} />
             <Route path="craftsmen" element={<Craftsmen />} />
             <Route path="settings/*" element={<Settings />}>
               <Route index element={<GenreralSettings />} />
