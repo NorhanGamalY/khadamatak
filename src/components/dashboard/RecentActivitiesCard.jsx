@@ -90,7 +90,7 @@ export default function RecentActivitiesCard({ rows = MOCK_ROWS }) {
       </div>
 
       {/* Tabs */}
-      <div className="mt-4 flex justify-between">
+      <div className="mt-4 flex justify-between gap-4">
         <div className="relative w-full sm:w-[320px]">
           <input
             value={query}
