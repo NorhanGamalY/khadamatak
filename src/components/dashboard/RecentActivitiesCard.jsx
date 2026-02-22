@@ -5,7 +5,6 @@ const TABS = [
   { key: "stopped", label: "موقوف" },
   { key: "all", label: "الكل" },
   
-  
 ];
 
 const MOCK_ROWS = [

@@ -58,10 +58,11 @@ export default function TableCard({
   };
 
   const tabBtnClass = (key) => {
-    const base = "px-6 py-2 text-sm font-bold transition-colors";
+    const base = "px-6 py-2 text-sm font-bold transition-colors min-w-[100px]";
     if (key === tab) return `${base} bg-indigo-950 text-white shadow-xl`;
     if (key === "active") return `${base} bg-white text-green-600 shadow`;
     if (key === "stopped") return `${base} bg-white text-red-600 shadow`;
+    if (key === "review") return `${base} bg-white text-orange-800 shadow`;
     return `${base} bg-white text-gray-700 shadow`;
   };
 
