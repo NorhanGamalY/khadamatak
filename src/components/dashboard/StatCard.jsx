@@ -3,7 +3,7 @@ export default function StatCard({ title, value, icon, trend }) {
   const trendArrow = isUp ? "↑" : "↓";
 
   return (
-    <div className="bg-white p-4 shadow-xl ring-1 ring-black/5">
+    <div className="bg-white p-6 shadow-xl ring-1 ring-black/5">
       <div className="flex items-start justify-between">
         <div className="flex flex-col gap-3">
             
