@@ -66,7 +66,7 @@ export default function TableCard({
   };
 
   return (
-    <section className="bg-white p-4 shadow-xl ring-1 ring-black/5">
+    <section className="bg-white p-6 shadow-xl ring-1 ring-black/5">
       {/* Title */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-xl font-bold text-right">{title}</h3>
