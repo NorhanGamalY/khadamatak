@@ -12,6 +12,7 @@ export default function TableCard({
   selectable = true,
   getRowId = (row) => row.id,
   columns = [],
+  Actions = null,
 }) {
   const [tab, setTab] = useState(initialTab);
   const [query, setQuery] = useState("");
@@ -68,14 +69,13 @@ export default function TableCard({
 
   return (
     <section className="bg-white p-6 shadow-xl ring-1 ring-black/5">
-      {/* Title */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-xl font-bold text-right">{title}</h3>
       </div>
 
-      {/* Tabs + Search */}
+      
+
       <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        {/* Search */}
         <div className="relative w-full sm:w-[320px]">
           <input
             value={query}
@@ -85,23 +85,21 @@ export default function TableCard({
           />
           <FiSearch className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-700" size={18} />
         </div>
-        {/* Tabs */}
-        {tabs?.length ? (
-          <div className="flex flex-wrap items-center gap-3">
-            {tabs.map((t) => (
-              <button key={t.key} onClick={() => setTab(t.key)} className={tabBtnClass(t.key)}>
-                {t.label}
-              </button>
-            ))}
-          </div>
-        ) : (
-          <div />
-        )}
+        
+         <div className="flex flex-wrap items-center gap-3">
+          {Actions}
+    {tabs?.length ? (
+      tabs.map((t) => (
+        <button key={t.key} onClick={() => setTab(t.key)} className={tabBtnClass(t.key)}>
+          {t.label}
+        </button>
+      ))
+    ) : null}
+  </div>
 
         
       </div>
 
-      {/* Table */}
       <div className="mt-4 overflow-x-auto border border-gray-200 shadow-md">
         <table className=" w-full text-end">
           <thead>
