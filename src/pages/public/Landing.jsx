@@ -118,8 +118,30 @@ export default function Landing() {
 
   </div>
 </div>
-  
+  <div className='client-feedback'>
+<div>
+<h1>آراء عملائنا</h1>
+<p>تجارب حقيقية من مستخدمين وثقوا بخدماتنا</p>
+<div className='flex justify-between items-center'>
+  <div>
+  <div className="icons flex justify-center">
+  <i class="fa-solid fa-star" style="color: rgb(255, 212, 59);"></i>
+  <i class="fa-solid fa-star" style="color: rgb(255, 212, 59);"></i>
+  <i class="fa-solid fa-star" style="color: rgb(255, 212, 59);"></i>
+  <i class="fa-solid fa-star" style="color: rgb(255, 212, 59);"></i>
+  <i class="fa-solid fa-star" style="color: rgb(255, 212, 59);"></i>
   </div>
+
+  </div>
+  <div></div>
+  <div></div>
+</div>
+</div>
+<div>
+
+</div>
+  </div>
+    </div>
 
 
     
