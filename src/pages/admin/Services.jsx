@@ -19,14 +19,14 @@ const SERVICES_ROWS = [
 
 function StatusBadge({ status }) {
   const map = {
-    active: { text: "مفعلة", cls: "text-green-600" },
-    stopped: { text: "موقوفة", cls: "text-red-600" },
+    active: { text: "مفعلة", cls: "bg-green-600 text-white" },
+    stopped: { text: "موقوفة", cls: "bg-gray-300" },
   };
 
   const s = map[status] || map.review;
 
   return (
-    <span className={`inline-flex min-w-25 justify-center px-3 py-1 text-sm font-bold shadow-md bg-white ${s.cls}`}>
+    <span className={`inline-flex min-w-25 justify-center px-3 py-1 text-sm font-bold shadow-md rounded ${s.cls}`}>
       {s.text}
     </span>
   );
@@ -40,23 +40,30 @@ export default function Services( { rows = SERVICES_ROWS }) {
           title="ادارة الخدمات"
           rows={rows}
           tabs={TABS}
+          tabStyle={(key, isActive) => {
+    const base = "px-6 py-2 text-sm font-bold transition-colors min-w-[100px] rounded";
+    if (isActive) return `${base} bg-indigo-950 text-white shadow-xl`
+    if (key === "active") return `${base} bg-green-600 text-white`;
+    if (key === "stopped") return `${base} bg-gray-300 `;
+    return `${base} bg-white text-gray-700`;
+  }}
           initialTab="all"
           filterByTab={(row, tab) => (tab === "all" ? true : row.status === tab)}
           searchKeys={["name"]}
           Actions={
     <button
       onClick={() => console.log("add service")}
-      className="flex items-center gap-2 bg-orange-500 px-4 py-2 text-sm font-bold text-white hover:bg-orange-600"
+      className="flex items-center gap-2 bg-orange-500 px-4 py-2 text-sm font-bold text-white rounded hover:bg-orange-600"
     >
       اضافة خدمة
       <IoMdArrowDropdown className="text-xl" />
     </button>
   }
           columns={[
-            { key: "actions", header: "الاجراءات", align: "center", cell: (r) => (<ActionsCell showCheck={false} row={r} />) },
+            { key: "actions", header: "الاجراءات", align: "center", mobileHidden: true, cell: (r) => (<ActionsCell showCheck={false} row={r} />) },
             { key: "lastUpdate", header: "اخر تحديث", align: "center", cell: (r) => r.lastUpdate },
             { key: "craftsmen", header: "عدد الحرفي", align: "center", cell: (r) => r.craftsmen },
-            { key: "status", header: "الحالة", align: "center", cell: (r) => <StatusBadge status={r.status} /> },
+            { key: "status", header: "الحالة", align: "center", mobileHideHeader: true, cell: (r) => <StatusBadge status={r.status} /> },
             { key: "name", header: "الخدمة", align: "right", cell: (r) => r.name },
             { key: "id", header: "", align: "right", cell: (r) => r.id },
           ]}
