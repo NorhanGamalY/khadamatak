@@ -1,0 +1,18 @@
+.hero {
+  position: relative; 
+  margin: 20px;
+  max-width: 1312px;
+  height: 100vh;
+  background-image: url("/landing image (2).png");
+  background-position: center;
+  background-repeat: no-repeat;
+background-size: contain;
+}
+
+.hero .hero-bo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(200, 200, 200, 0.2);
+}

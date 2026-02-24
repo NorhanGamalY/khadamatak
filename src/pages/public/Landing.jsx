@@ -1,19 +1,20 @@
 import React from "react";
 import { FaChevronCircleRight } from "react-icons/fa";
 import { FaStar } from "react-icons/fa";
-
+import '../Landing.css'
 export default function Landing() {
   return (
     <div className="w-full min-h-screen flex flex-col">
-      {/* الصورة */}
-      <div className="w-full relative overflow-hidden h-[900px]  ">
-        <img
-          src="/landing.png"
-          alt="Landing"
-          className="absolute top-1/2 left-1/2 
--translate-x-1/2 -translate-y-1/2 
- object-cover my-20 h-full  "
-        />
+    
+      <div className="w-full relative overflow-hidden h-[900px] hero ">
+      <div className="hero-bo">
+      <h1>هل تبحث عن حرفي موثوق ؟</h1>
+      <p>موقع خدماتك يوفر لك أفضل الحرفيين
+      في منطقتك بسرعة وأسعار مناسبة.</p>
+      <button  className="text-white bg-orange-400 hover:bg-warning-strong font-medium rounded-md px-4 py-2 ml-2 text-center justify-center items-center">
+      اطلب حرفي الان
+      </button>
+      </div>
       </div>
 
       {/* السكشن */}

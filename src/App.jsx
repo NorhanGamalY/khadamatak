@@ -1,4 +1,4 @@
-import { useState } from 'react';
+
 import './App.css'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import MainLayout from './layouts/MainLayout'
@@ -18,7 +18,8 @@ import Services from './pages/admin/Services'
 import PaymentSettings from './pages/admin/PaymentSettings'
 import GenreralSettings from './pages/admin/GeneralSettings'
 import Profile from './pages/craftsman/Profile'
-
+import Works from './pages/public/Works';
+import Details from './pages/public/Details';
 function App() {
 
   return (
@@ -30,6 +31,8 @@ function App() {
             <Route path='/' element={<Landing />} />
             <Route path='/home' element={<Home />} />
             <Route path="about" element={<About />} />
+            <Route path='works' element={<Works/>}/>
+            <Route path="/details" element={<Details/>}/>
           </Route>
 
           <Route path="/admin" element={<AdminLayout />}>
