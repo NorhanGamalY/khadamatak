@@ -5,16 +5,18 @@ import '../Landing.css'
 export default function Landing() {
   return (
     <div className="w-full min-h-screen flex flex-col">
-    
       <div className="w-full relative overflow-hidden h-[900px] hero ">
-      <div className="hero-bo">
-      <h1>هل تبحث عن حرفي موثوق ؟</h1>
-      <p>موقع خدماتك يوفر لك أفضل الحرفيين
-      في منطقتك بسرعة وأسعار مناسبة.</p>
-      <button  className="text-white bg-orange-400 hover:bg-warning-strong font-medium rounded-md px-4 py-2 ml-2 text-center justify-center items-center">
-      اطلب حرفي الان
-      </button>
-      </div>
+        <div className="hero-bo">
+          <h1>هل تبحث عن حرفي موثوق ؟</h1>
+          <p>
+            موقع خدماتك يوفر لك أفضل الحرفيين في منطقتك بسرعة وأسعار مناسبة.
+          </p>
+          <div className=" flex items-center justify-center">
+            <button className="bg-orange-400 hover:bg-orange-500 text-white font-medium rounded-md my-5">
+              اطلب حرفي الآن
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* السكشن */}
@@ -84,7 +86,6 @@ export default function Landing() {
             <div className="flex flex-col md:flex-row  justify-between items-center mt-5">
               <p>كهربا</p>
               <button className="text-white bg-orange-400 hover:bg-warning-strong font-medium rounded-md px-4 py-2  ml-2">
-              
                 اطلب الخدمه
               </button>
             </div>

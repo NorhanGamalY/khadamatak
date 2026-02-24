@@ -1,12 +1,12 @@
 .hero {
-  position: relative; 
-  margin: 20px;
+  position: relative;
+  margin: 70px; 
   max-width: 1312px;
-  height: 100vh;
+  height: calc(100vh - 100px);
   background-image: url("/landing image (2).png");
   background-position: center;
   background-repeat: no-repeat;
-background-size: contain;
+  background-size: cover; 
 }
 
 .hero .hero-bo {
