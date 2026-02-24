@@ -37,7 +37,6 @@ export default function Services( { rows = SERVICES_ROWS }) {
     <div className='min-h-screen flex flex-col gap-4 p-6'>
           <h1 className='text-3xl font-bold'>ادارة الخدمات</h1>
           <TableCard
-          title="ادارة الخدمات"
           rows={rows}
           tabs={TABS}
           tabStyle={(key, isActive) => {

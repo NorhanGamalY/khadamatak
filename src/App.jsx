@@ -22,6 +22,7 @@ import CraftsmanServices from "./pages/craftsman/Services";
 import Users from './pages/admin/Users';
 import Logout from './pages/admin/Logout';
 import Appointments from "./pages/craftsman/Appointments";
+import Orders from "./pages/admin/Orders";
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
             <Route index element={<AdminDashboard />} />
             <Route path="users" element={<Users />} />
             <Route path="craftsmen" element={<Craftsmen />} />
+            <Route path="request01s" element={<Orders />} />
             <Route path="settings/*" element={<Settings />}>
               <Route index element={<GenreralSettings />} />
               <Route path="payment" element={<PaymentSettings />} />
