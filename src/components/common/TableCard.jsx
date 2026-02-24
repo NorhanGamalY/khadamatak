@@ -5,6 +5,7 @@ export default function TableCard({
   title = "",
   rows = [],
   tabs = [],
+  tabStyle, 
   initialTab = "all",
   filterByTab, 
   searchPlaceholder = "بحث...",
@@ -12,6 +13,7 @@ export default function TableCard({
   selectable = true,
   getRowId = (row) => row.id,
   columns = [],
+  Actions = null,
 }) {
   const [tab, setTab] = useState(initialTab);
   const [query, setQuery] = useState("");
@@ -57,26 +59,33 @@ export default function TableCard({
     });
   };
 
-  const tabBtnClass = (key) => {
-    const base = "px-6 py-2 text-sm font-bold transition-colors min-w-[100px]";
-    if (key === tab) return `${base} bg-indigo-950 text-white shadow-xl`;
+   const defaultTabStyle = (key) => {
+    const base =
+      "px-6 py-2 text-sm font-bold transition-colors min-w-[100px]";
+    const isActive = key === tab;
+
+    if (isActive) return `${base} bg-indigo-950 text-white shadow-xl`;
     if (key === "active") return `${base} bg-white text-green-600 shadow`;
     if (key === "stopped") return `${base} bg-white text-red-600 shadow`;
     if (key === "review") return `${base} bg-white text-orange-800 shadow`;
     return `${base} bg-white text-gray-700 shadow`;
   };
 
+  const tabBtnClass = (key) => {
+    const isActive = key === tab;
+    return tabStyle ? tabStyle(key, isActive) : defaultTabStyle(key);
+  };
+
   return (
     <section className="bg-white p-6 shadow-xl ring-1 ring-black/5">
-      {/* Title */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-xl font-bold text-right">{title}</h3>
       </div>
 
-      {/* Tabs + Search */}
-      <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        {/* Search */}
-        <div className="relative w-full sm:w-[320px]">
+      
+
+      <div className="mt-4 flex flex-col items-center gap-3 md:flex-row md:items-center md:justify-between">
+        <div className="relative w-full md:w-[320px]">
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -85,24 +94,21 @@ export default function TableCard({
           />
           <FiSearch className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-700" size={18} />
         </div>
-        {/* Tabs */}
-        {tabs?.length ? (
-          <div className="flex flex-wrap items-center gap-3">
-            {tabs.map((t) => (
-              <button key={t.key} onClick={() => setTab(t.key)} className={tabBtnClass(t.key)}>
-                {t.label}
-              </button>
-            ))}
-          </div>
-        ) : (
-          <div />
-        )}
-
+        
+         <div className="flex flex-wrap items-center gap-3">
+          {Actions}
+    {tabs?.length ? (
+      tabs.map((t) => (
+        <button key={t.key} onClick={() => setTab(t.key)} className={tabBtnClass(t.key)}>
+          {t.label}
+        </button>
+      ))
+    ) : null}
+  </div>
         
       </div>
 
-      {/* Table */}
-      <div className="mt-4 overflow-x-auto border border-gray-200 shadow-md">
+      <div className="hidden md:block mt-4 overflow-x-auto border border-gray-200 shadow-md">
         <table className=" w-full text-end">
           <thead>
             <tr className="text-sm font-bold">
@@ -166,6 +172,45 @@ export default function TableCard({
           </tbody>
         </table>
       </div>
+
+      <div className="mt-4 grid gap-3 md:hidden">
+  {filtered.map((row) => (
+    <div
+      key={getRowId(row)}
+      className="border border-gray-200 bg-white p-4 shadow-sm"
+    >
+      <div className="space-y-3">
+        {columns.map((c) => (
+          <div key={c.key} className="flex items-start justify-between gap-4">
+            <span className="text-xs font-semibold text-gray-600">
+              {c.header}
+            </span>
+            <span className="text-sm font-bold text-gray-900 text-left">
+              {c.cell(row)}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {selectable && (
+        <div className="mt-4 flex items-center justify-between border-t pt-3">
+          <span className="text-sm font-semibold text-gray-700">تحديد</span>
+          <input
+            type="checkbox"
+            checked={selected.has(getRowId(row))}
+            onChange={() => toggleOne(row)}
+          />
+        </div>
+      )}
+    </div>
+  ))}
+
+  {filtered.length === 0 && (
+    <div className="rounded-xl border border-gray-200 bg-white p-6 text-center text-sm text-slate-500">
+      لا توجد نتائج
+    </div>
+  )}
+</div>
     </section>
   );
 }
