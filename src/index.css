@@ -7,6 +7,7 @@ body {
 @theme {
   --color-primary: #111827;
   --color-secondary: #1e1855;
+  --color-lightGray: #ececf2;
   --color-secondary-orange: #d75b19;
   --background-color-main: #ececf2;
 }

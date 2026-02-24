@@ -25,14 +25,14 @@ const Appointments = () => {
     { id: 1, title: "السبت", isActive: false },
   ];
   return (
-    <div dir="rtl" className="min-h-screen bg-main text-primary relative">
-      <main className="mx-auto max-w-7xl px-3 sm:px-4 py-6">
-        <div className="grid lg:gap-8 gap-5 mb-4 py-4 rounded px-2">
+    <div dir="rtl" className="min-h-screen bg-main text-primary">
+      <main className="mx-auto max-w-7xl lg:px-8 px-4 py-6 lg:py-8">
+        <div className="grid lg:gap-8 gap-5">
           <div className="flex flex-col items-start">
-            <h2 className="lg:text-3xl text-2xl font-extrabold text-primary">
+            <h2 className="lg:text-3xl text-2xl font-extrabold">
               إدارة جدول العمل
             </h2>
-            <p className="lg:text-lg text-[#6b7280] mt-1">
+            <p className="lg:text-lg text-[#6b7280] mt-1 text-sm">
               قم بتحديد الأيام والساعات المتاحة لاستقبال الطلبات الجديدة
             </p>
           </div>

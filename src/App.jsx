@@ -19,9 +19,10 @@ import GenreralSettings from "./pages/admin/GeneralSettings";
 import Profile from "./pages/craftsman/Profile";
 import Conflicts from "./pages/admin/Conflicts";
 import CraftsmanServices from "./pages/craftsman/Services";
-import Users from './pages/admin/Users';
-import Logout from './pages/admin/Logout';
+import Users from "./pages/admin/Users";
+import Logout from "./pages/admin/Logout";
 import Appointments from "./pages/craftsman/Appointments";
+import Evaluate from "./pages/craftsman/Evaluate";
 
 function App() {
   return (
@@ -42,7 +43,7 @@ function App() {
             <Route path="settings/*" element={<Settings />}>
               <Route index element={<GenreralSettings />} />
               <Route path="payment" element={<PaymentSettings />} />
-              <Route path='logout' element={<Logout />} />
+              <Route path="logout" element={<Logout />} />
             </Route>
             <Route path="reports" element={<Reports />} />
             <Route path="services" element={<Services />} />
@@ -55,6 +56,7 @@ function App() {
             <Route path="profile" element={<Profile />} />
             <Route path="services" element={<CraftsmanServices />} />
             <Route path="appointments" element={<Appointments />} />
+            <Route path="evaluate" element={<Evaluate />} />
           </Route>
         </Routes>
       </BrowserRouter>
