@@ -37,7 +37,6 @@ export default function Users({rows = MOCK_ROWS }) {
     <div className='min-h-screen flex flex-col gap-4 p-6'>
           <h1 className='text-3xl font-bold'>ادارة المستخدمين</h1>
           <TableCard 
-         title="ادارة المستخدمين"
           rows={rows}
           tabs={TABS}
           initialTab="all"
