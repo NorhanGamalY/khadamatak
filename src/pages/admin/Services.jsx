@@ -37,15 +37,14 @@ export default function Services( { rows = SERVICES_ROWS }) {
     <div className='min-h-screen flex flex-col gap-4 p-6'>
           <h1 className='text-3xl font-bold'>ادارة الخدمات</h1>
           <TableCard
-          title="ادارة الخدمات"
           rows={rows}
           tabs={TABS}
           tabStyle={(key, isActive) => {
     const base = "px-6 py-2 text-sm font-bold transition-colors min-w-[100px] rounded";
     if (isActive) return `${base} bg-indigo-950 text-white shadow-xl`
-    if (key === "active") return `${base} bg-green-600 text-white`;
-    if (key === "stopped") return `${base} bg-gray-300 `;
-    return `${base} bg-white text-gray-700`;
+    if (key === "active") return `${base} bg-green-600 text-white shadow`;
+    if (key === "stopped") return `${base} bg-gray-300 shadow`;
+    return `${base} bg-white text-gray-700 shadow`;
   }}
           initialTab="all"
           filterByTab={(row, tab) => (tab === "all" ? true : row.status === tab)}
