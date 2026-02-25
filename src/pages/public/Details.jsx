@@ -1,5 +1,6 @@
 import React from 'react'
 import { FaStar } from 'react-icons/fa';
+import Avatar from "../../components/common/Avatar";
 function Details() {
   return (
     <>
@@ -60,7 +61,7 @@ function Details() {
         <div className="comments mx-5 ">
           <h3 className="my-5 ">التعليقات</h3>
           <div className="flex  items-center gap-3">
-            <img src="/Ellipse 85.png" alt="" className="w-10" srcset="" />
+            <Avatar/>
             <p>أيسل بلال</p>
           </div>
       
