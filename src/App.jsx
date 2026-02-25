@@ -11,6 +11,7 @@ import Dashboard from "./pages/craftsman/Dashboard";
 import Requests from "./pages/craftsman/Requests";
 import Home from "./pages/public/Home";
 import About from "./pages/public/About";
+import Contact from "./pages/public/Contact";
 import Settings from "./pages/admin/Settings";
 import Reports from "./pages/admin/Reports";
 import Services from "./pages/admin/Services";
@@ -36,6 +37,7 @@ function App() {
             <Route path="/" element={<Landing />} />
             <Route path="/home" element={<Home />} />
             <Route path="about" element={<About />} />
+            <Route path="contacts" element={<Contact />} />
           </Route>
 
           <Route path="/admin" element={<AdminLayout />}>
@@ -47,8 +49,7 @@ function App() {
               <Route index element={<GenreralSettings />} />
               <Route path="payment" element={<PaymentSettings />} />
               <Route path="commission" element={<Commission />} />
-              <Route path='logout' element={<Logout />} />
-
+              <Route path="logout" element={<Logout />} />
             </Route>
             <Route path="reports" element={<Reports />} />
             <Route path="services" element={<Services />} />
