@@ -1,10 +1,14 @@
-import React from 'react'
+import React from "react";
+import HomeHero from "../../components/home/HomeHero";
+import ServicesSection from "../../components/home/ServicesSection";
+import MostRequestedSection from "../../components/home/MostRequestedSection"
 
 export default function Home() {
-    return (
-    <div className="min-h-screen flex items-center justify-center ">
-    <h1 className="text-4xl font-bold text-green-400">      Home page
-    </h1>
+  return (
+    <div className="min-h-screen  ">
+      <HomeHero />
+      <ServicesSection />
+      <MostRequestedSection/>
     </div>
-    )
+  );
 }
