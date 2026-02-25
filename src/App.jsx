@@ -22,6 +22,7 @@ import CraftsmanServices from "./pages/craftsman/Services";
 import Users from "./pages/admin/Users";
 import Logout from "./pages/admin/Logout";
 import Appointments from "./pages/craftsman/Appointments";
+import Commission from "./pages/admin/Commission";
 import Evaluate from "./pages/craftsman/Evaluate";
 import Orders from "./pages/admin/Orders";
 
@@ -45,7 +46,9 @@ function App() {
             <Route path="settings/*" element={<Settings />}>
               <Route index element={<GenreralSettings />} />
               <Route path="payment" element={<PaymentSettings />} />
-              <Route path="logout" element={<Logout />} />
+              <Route path="commission" element={<Commission />} />
+              <Route path='logout' element={<Logout />} />
+
             </Route>
             <Route path="reports" element={<Reports />} />
             <Route path="services" element={<Services />} />

@@ -11,7 +11,7 @@ export default function Settings() {
     const navItems = [
         { label: "إعدادات عامة", to: "/admin/settings" },
         { label: "إعدادات الدفع", to: "payment" },
-        { label: "العمولة والرسوم", to: "services" },
+        { label: "العمولة والرسوم", to: "/admin/settings/commission" },
     ];
 
     return (
