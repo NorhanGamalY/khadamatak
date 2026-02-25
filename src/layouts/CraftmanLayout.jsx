@@ -10,6 +10,7 @@ export default function CraftsmanLayout() {
     { label: "ادارة الطلبات", to: "/craftsman/requests" },
     { label: "جدول المواعيد", to: "/craftsman/appointments" },
     { label: "قائمة الخدمات", to: "/craftsman/services" },
+    { label: "تقيماتي", to: "/craftsman/evaluate" },
     { label: "المحفظة", to: "/craftsman/wallet" },
     { label: "الرسائل", to: "/craftsman/messages" },
     { label: "الاعدادات", to: "/craftsman/settings" },
