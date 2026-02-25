@@ -1,6 +1,8 @@
 import { useState } from "react";
 import Tabs from "../../components/orders/Tabs";
 import { Card } from "../../components/orders/Card";
+import { BsFilterRight } from "react-icons/bs";
+import { IoFilter } from "react-icons/io5";
 
 const orders = [
   {
@@ -62,8 +64,14 @@ export default function Orders() {
 });
 
   return (
-    <div className='min-h-screen flex flex-col gap-4 p-6'>
-      <Tabs active={tab} onChange={setTab} />
+    <div className='min-h-screen flex flex-col gap-2 p-6'>
+      <div className="flex items-center justify-between bg-white shadow-sm border border-gray-100 px-4 py-3">
+        <Tabs active={tab} onChange={setTab} />
+        <button className="flex items-center gap-2 px-4 py-2 rounded-lg border-gray-200 bg-gray-50 shadow ">
+         <IoFilter size={18}/>
+          تصفية النتائج
+        </button>
+      </div>
       <div className="mt-4 space-y-3">
   {filteredOrders.map(order => (
     <Card key={order.id} order={order} />
