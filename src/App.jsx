@@ -26,6 +26,7 @@ import Appointments from "./pages/craftsman/Appointments";
 import Commission from "./pages/admin/Commission";
 import Evaluate from "./pages/craftsman/Evaluate";
 import Orders from "./pages/admin/Orders";
+import Messages from "./pages/craftsman/Messages";
 
 function App() {
   return (
@@ -63,6 +64,7 @@ function App() {
             <Route path="services" element={<CraftsmanServices />} />
             <Route path="appointments" element={<Appointments />} />
             <Route path="evaluate" element={<Evaluate />} />
+            <Route path="messages" element={<Messages />} />
           </Route>
         </Routes>
       </BrowserRouter>
