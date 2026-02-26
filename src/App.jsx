@@ -27,6 +27,8 @@ import Commission from "./pages/admin/Commission";
 import Evaluate from "./pages/craftsman/Evaluate";
 import Orders from "./pages/admin/Orders";
 import Messages from "./pages/craftsman/Messages";
+import Works from './pages/public/Works';
+import Details from './pages/public/Details';
 
 function App() {
   return (
@@ -38,6 +40,8 @@ function App() {
             <Route path="/" element={<Landing />} />
             <Route path="/home" element={<Home />} />
             <Route path="about" element={<About />} />
+            <Route path='works' element={<Works/>}/>
+            <Route path="/details" element={<Details/>}/>
             <Route path="contacts" element={<Contact />} />
           </Route>
 
