@@ -1,14 +1,15 @@
 import React from "react";
-import HomeHero from "../../components/home/HomeHero";
-import ServicesSection from "../../components/home/ServicesSection";
-import MostRequestedSection from "../../components/home/MostRequestedSection"
-
+import HomeHero from "../../components/Home/HomeHero";
+import ServicesSection from "../../components/Home/ServicesSection";
+import MostRequestedSection from "../../components/Home/MostRequestedSection";
+import StatsSection from "../../components/Home/StatsSection";
 export default function Home() {
   return (
     <div className="min-h-screen  ">
       <HomeHero />
       <ServicesSection />
-      <MostRequestedSection/>
+      <MostRequestedSection />
+      <StatsSection />
     </div>
   );
 }
