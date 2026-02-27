@@ -3,7 +3,7 @@ import InputField from "./components/InputField";
 import { useNavigate } from "react-router-dom";
 import { useLogin } from "../../features/auth/mutations";
 import { validateLogin } from "../../features/auth/validation";
-import { saveToken } from "../../features/auth/authHelpers";
+import { saveToken, saveRole, getHomeByRole } from "../../features/auth/authHelpers";
 
 export default function ClientLogin() {
   const navigate = useNavigate();
@@ -34,10 +34,14 @@ export default function ClientLogin() {
       {
         onSuccess: (data) => {
           const token = data?.token;
+          const role  = data?.role;
+
           if (!token) { setServerError("حصل خطأ، حاول تاني"); return; }
 
           saveToken(token, form.rememberMe);
-          navigate("/home", { replace: true }); // ✅ Client دايماً يروح /home
+          saveRole(role, form.rememberMe);        
+
+          navigate(getHomeByRole(), { replace: true }); 
         },
         onError: (err) => {
           const msg =
@@ -92,7 +96,7 @@ export default function ClientLogin() {
 
             <p className="text-xs text-gray-500">
               ليس لديك حساب؟{" "}
-              <button onClick={() => navigate("/client-register")} className="text-[#d75b19]">
+              <button onClick={() => navigate("/select-role")} className="text-[#d75b19]">
                 سجل الآن
               </button>
             </p>

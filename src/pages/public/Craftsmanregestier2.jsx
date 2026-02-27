@@ -11,7 +11,6 @@ export default function Craftsmanregestier2() {
   const { state } = useLocation();
   const registerMutation = useRegisterCraftsman();
 
-  // ✅ الـ useState لازم يكون قبل أي return — مش بعده
   const [form, setForm] = useState({
     fullName: state?.fullName || "",
     email: state?.email || "",
@@ -25,7 +24,6 @@ export default function Craftsmanregestier2() {
   const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState("");
 
-  // ✅ لو مفيش state روح للخطوة الأولى
   useEffect(() => {
     if (!state) navigate("/craftsman-register", { replace: true });
   }, [state]);

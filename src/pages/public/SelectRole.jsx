@@ -10,7 +10,6 @@ export default function SelectRole() {
           <h1 className="text-3xl font-bold text-black">خد<span className='text-[#d75b19]'>ما</span>تك</h1>
           <p className='text-xs text-gray-500'>خدماتك منصة خدمات منزلية بتسهّل على العملاء طلب الحرفيين في أي وقت. من السباكة للكهرباء والنجارة، بنوفّرلك تجربة حجز سهلة وتواصل مباشر مع حرفيين موثوقين.</p>
           <div className='flex flex-col gap-4 items-center text-white'>
-            <button onClick={() => navigate("/admin-login")} className='bg-[#1e1855] text-md text-center w-[90%] px-4 py-1 rounded-lg'>تسجيل الدخول كأدمن </button>
             <button onClick={() => navigate("/craftsman-register")} className='bg-[#1e1855] text-md text-center w-[90%] px-4 py-1 rounded-lg'>تسجيل الدخول كحرفي </button>
             <button onClick={() => navigate("/login")} className='bg-[#1e1855] text-md text-center w-[90%] px-4 py-1 rounded-lg'>تسجيل الدخول كعميل </button>
 

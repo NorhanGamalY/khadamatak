@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useLogin } from "../../features/auth/mutations";
 import { validateLogin } from "../../features/auth/validation";
-import { saveToken } from "../../features/auth/authHelpers";
+import { saveToken, saveRole } from "../../features/auth/authHelpers";
 import InputField from "./components/InputField";
 
 export default function CraftsmanLogin() {
@@ -39,10 +39,13 @@ export default function CraftsmanLogin() {
       {
         onSuccess: (data) => {
           const token = data?.token;
+          const role  = data?.role;
+
           if (!token) { setServerError("حصل خطأ، حاول تاني"); return; }
 
           saveToken(token, form.rememberMe);
-          navigate("/craftsman", { replace: true }); // ✅ Craftsman دايماً يروح /craftsman
+          saveRole(role, form.rememberMe);             
+          navigate("/craftsman", { replace: true });    
         },
         onError: (err) => {
           const msg =
@@ -66,7 +69,6 @@ export default function CraftsmanLogin() {
           <p className="text-s text-gray-500">أهلاً بيك مرة ثانية 👋</p>
           <p className="text-xs text-gray-500">سجّل دخولك وأعرض خدمتك بكل سهولة.</p>
 
-          {/* ✅ pending message بعد التسجيل */}
           {state?.pendingMessage && (
             <p className="text-green-600 text-xs w-full bg-green-50 p-2 rounded-lg">
               {state.pendingMessage}
