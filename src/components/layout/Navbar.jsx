@@ -42,7 +42,7 @@ export default function Navbar() {
       </button>
     ) : (
       <NavLink
-        to="/login"
+        to="/select-role"
         onClick={mobile ? closeMenu : undefined}
         className={`flex items-center gap-2 rounded-4xl text-[14px] transition bg-[#d75b19] text-white hover:bg-[#1e1855]
           ${mobile ? "py-3 px-4 justify-center rounded-lg text-[16px] mt-4" : "py-1 px-3"}
