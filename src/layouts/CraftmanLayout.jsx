@@ -14,6 +14,7 @@ export default function CraftsmanLayout() {
     { label: "المحفظة", to: "/craftsman/wallet" },
     { label: "الرسائل", to: "/craftsman/messages" },
     { label: "الاعدادات", to: "/craftsman/settings" },
+    { label: "الملف الشخصي", to: "/craftsman/profile" },
   ];
   return (
     <div className="flex flex-col lg:flex-row min-h-screen text-black">

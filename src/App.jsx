@@ -45,6 +45,7 @@ import CraftsmanServices from "./pages/craftsman/Services";
 import Appointments from "./pages/craftsman/Appointments";
 import Evaluate from "./pages/craftsman/Evaluate";
 import Messages from "./pages/craftsman/Messages";
+import CraftsmanProfile from "./pages/craftsman/CraftsmanProfile";
 
 function GuestRoute({ children }) {
   if (isAuthenticated()) {
@@ -57,21 +58,41 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-
         <Route path="/select-role" element={<SelectRole />} />
-        <Route path="/login" element={<GuestRoute><ClientLogin /></GuestRoute>} />
-        <Route path="/client-register"      element={<GuestRoute><ClientRegestier /></GuestRoute>} />
-        <Route path="/craftsman-login"      element={<GuestRoute><CraftsmanLogin /></GuestRoute>} />
-        <Route path="/craftsman-register"   element={<CraftsmanRegister />} />
+        <Route
+          path="/login"
+          element={
+            <GuestRoute>
+              <ClientLogin />
+            </GuestRoute>
+          }
+        />
+        <Route
+          path="/client-register"
+          element={
+            <GuestRoute>
+              <ClientRegestier />
+            </GuestRoute>
+          }
+        />
+        <Route
+          path="/craftsman-login"
+          element={
+            <GuestRoute>
+              <CraftsmanLogin />
+            </GuestRoute>
+          }
+        />
+        <Route path="/craftsman-register" element={<CraftsmanRegister />} />
         <Route path="/craftsman-register-2" element={<CraftsmanRegister2 />} />
 
         {/* ─── Main Layout — Public ────────────────────────────────── */}
         <Route element={<MainLayout />}>
-          <Route path="/"         element={<Landing />} />
-          <Route path="/home"     element={<Home />} />
-          <Route path="/about"    element={<About />} />
-          <Route path="/works"    element={<Works />} />
-          <Route path="/details"  element={<Details />} />
+          <Route path="/" element={<Landing />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/works" element={<Works />} />
+          <Route path="/details" element={<Details />} />
           <Route path="/contacts" element={<Contact />} />
         </Route>
 
@@ -85,18 +106,18 @@ function App() {
           }
         >
           <Route index element={<AdminDashboard />} />
-          <Route path="users"      element={<Users />} />
-          <Route path="craftsmen"  element={<Craftsmen />} />
+          <Route path="users" element={<Users />} />
+          <Route path="craftsmen" element={<Craftsmen />} />
           <Route path="request01s" element={<Orders />} />
-          <Route path="reports"    element={<Reports />} />
-          <Route path="services"   element={<Services />} />
-          <Route path="conflicts"  element={<Conflicts />} />
+          <Route path="reports" element={<Reports />} />
+          <Route path="services" element={<Services />} />
+          <Route path="conflicts" element={<Conflicts />} />
 
           <Route path="settings/*" element={<Settings />}>
-            <Route index              element={<GenreralSettings />} />
-            <Route path="payment"    element={<PaymentSettings />} />
+            <Route index element={<GenreralSettings />} />
+            <Route path="payment" element={<PaymentSettings />} />
             <Route path="commission" element={<Commission />} />
-            <Route path="logout"     element={<Logout />} />
+            <Route path="logout" element={<Logout />} />
           </Route>
         </Route>
 
@@ -104,22 +125,25 @@ function App() {
         <Route
           path="/craftsman"
           element={
-            <ProtectedRoute allowedRole="Craftsman" redirectTo="/craftsman-login">
+            <ProtectedRoute
+              allowedRole="Craftsman"
+              redirectTo="/craftsman-login"
+            >
               <CraftsmanLayout />
             </ProtectedRoute>
           }
         >
-          <Route index element={<Dashboard />} />
-          <Route path="requests"     element={<Requests />} />
-          <Route path="profile"      element={<Profile />} />
-          <Route path="services"     element={<CraftsmanServices />} />
+          <Route path="requests" element={<Requests />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="services" element={<CraftsmanServices />} />
           <Route path="appointments" element={<Appointments />} />
-          <Route path="evaluate"     element={<Evaluate />} />
-          <Route path="messages"     element={<Messages />} />
+          <Route path="evaluate" element={<Evaluate />} />
+          <Route path="messages" element={<Messages />} />
+          <Route index element={<Dashboard />} />
+          <Route path="profile" element={<CraftsmanProfile />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />
-
       </Routes>
     </BrowserRouter>
   );
