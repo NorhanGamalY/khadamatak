@@ -45,6 +45,7 @@ import CraftsmanServices from "./pages/craftsman/Services";
 import Appointments from "./pages/craftsman/Appointments";
 import Evaluate from "./pages/craftsman/Evaluate";
 import Messages from "./pages/craftsman/Messages";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 function GuestRoute({ children }) {
   if (isAuthenticated()) {
@@ -53,8 +54,12 @@ function GuestRoute({ children }) {
   return children;
 }
 
+const queryClient = new QueryClient();
+
+
 function App() {
   return (
+    <QueryClientProvider client={queryClient} >
     <BrowserRouter>
       <Routes>
 
@@ -122,6 +127,7 @@ function App() {
 
       </Routes>
     </BrowserRouter>
+    </QueryClientProvider>
   );
 }
 
