@@ -7,52 +7,50 @@ import { AnimatePresence } from "framer-motion";
 import AddService from "../../components/craftsman/AddService";
 import EditService from "../../components/craftsman/EditService";
 
-const services = [
-  {
-    id: 1,
-    title: "تركيب سخان كهربائي",
-    desc: "فك القديم وتركيب الجديد مع فحص الكهرباء.",
-    price: "500 ج.م",
-  },
-  {
-    id: 2,
-    title: "تأسيس سباكة الحمام",
-    desc: "تمديد المواسير وتركيب المحابس (بدون تكسير).",
-    price: "500 ج.م",
-  },
-  {
-    id: 3,
-    title: "صيانة مكيف سبليت",
-    desc: "غسيل الوحدة الداخلية والخارجية وفحص الفريون.",
-    price: "500 ج.م",
-  },
-];
-
 export default function CraftsmanServices() {
   const { search } = useSearch();
+  const token = localStorage.getItem("token");
 
   const [filteredData, setFilteredData] = useState([]);
   const [isEditModelOpen, setIsEditModelOpen] = useState(false);
   const [isAddServiceModelOpen, setIsAddServiceModelOpen] = useState(false);
   const [serviceData, setServiceData] = useState({
-    title: "",
-    desc: "",
+    name: "",
+    description: "",
     price: "",
   });
   const [editServiceData, setEditServiceData] = useState({
-    title: "",
-    desc: "",
+    name: "",
+    description: "",
     price: "",
   });
-
   const [selectedService, setSelectedService] = useState(null);
 
-  const filtered = services.filter((s) =>
-    (s.title + " " + s.desc).toLowerCase().includes(search.toLowerCase()),
-  );
+  const [craftsmanService, setCraftsmanService] = useState({ items: [] });
 
-  const handleDelete = (idx) => {
-    setFilteredData((prev) => prev.filter((s) => s.id !== idx));
+  const handleGetCraftsman = async () => {
+    try {
+      const res = await fetch(
+        `https://herafie.runasp.net/api/Services/craftsman/7`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const data = await res.json();
+      if (!res.ok) {
+        console.log("message:", data.message);
+        setCraftsmanService({});
+        return;
+      }
+      setCraftsmanService(data);
+      setFilteredData(data.items);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleAddService = (service) => {
@@ -61,14 +59,14 @@ export default function CraftsmanServices() {
       ...service,
     };
     setServiceData({
-      title: service.title,
-      desc: service.desc,
+      name: service.name,
+      description: service.description,
       price: service.price,
     });
     setFilteredData((prev) => [newService, ...prev]);
     setServiceData({
-      title: "",
-      desc: "",
+      name: "",
+      description: "",
       price: "",
     });
     setIsAddServiceModelOpen(false);
@@ -83,9 +81,24 @@ export default function CraftsmanServices() {
     setIsEditModelOpen(false);
   };
 
+  const handleDelete = (idx) => {
+    setFilteredData((prev) => prev.filter((s) => s.id !== idx));
+  };
+
   useEffect(() => {
-    setFilteredData(filtered);
-  }, [search]);
+    handleGetCraftsman();
+  }, []);
+
+  useEffect(() => {
+    if (craftsmanService?.items) {
+      const filtered = craftsmanService?.items.filter((s) =>
+        (s.name + " " + s.description)
+          .toLowerCase()
+          .includes(search.toLowerCase()),
+      );
+      setFilteredData(filtered);
+    }
+  }, [search, craftsmanService]);
 
   return (
     <div dir="rtl" className="min-h-screen bg-main text-primary relative">
@@ -123,23 +136,23 @@ export default function CraftsmanServices() {
                       </div>
 
                       <div className="text-[14px] font-extrabold text-primary">
-                        {s.title}
+                        {s.name}
                       </div>
                     </div>
                     <div className="text-[12px] text-[#6b7280] mt-1 leading-relaxed">
-                      {s.desc}
+                      {s.description}
                     </div>
                   </div>
                   <div className="flex items-center gap-1 text-secondary">
                     <button
                       className="p-1 cursor-pointer"
                       aria-label="edit"
-                      title="تعديل"
+                      name="تعديل"
                       onClick={() => {
                         setSelectedService(s);
                         setEditServiceData({
-                          title: s.title,
-                          desc: s.desc,
+                          name: s.name,
+                          description: s.description,
                           price: s.price,
                         });
                         setIsEditModelOpen(!isEditModelOpen);
@@ -151,7 +164,7 @@ export default function CraftsmanServices() {
                       onClick={() => handleDelete(s.id)}
                       className="p-1 cursor-pointer"
                       aria-label="delete"
-                      title="حذف"
+                      name="حذف"
                     >
                       <FaTrashAlt />
                     </button>
