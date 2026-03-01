@@ -4,14 +4,12 @@ import "react-toastify/dist/ReactToastify.css";
 import { motion, AnimatePresence } from "framer-motion";
 import { Phone, MapPin, Edit3, Menu, Search } from "lucide-react";
 // import profileImg from "../../assets/profile img.svg";
-import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
   const token = localStorage.getItem("token");
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({});
   const [tempData, setTempData] = useState(profile);
-  const navigate = useNavigate();
   const services = [
     { name: "تركيب مطابخ" },
     { name: "تصنيع الابواب" },
