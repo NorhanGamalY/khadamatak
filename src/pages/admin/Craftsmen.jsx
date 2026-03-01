@@ -37,7 +37,6 @@ export default function Craftsmen({rows = MOCK_ROWS }) {
     <div className='min-h-screen flex flex-col gap-4 p-6'>
       <h1 className='text-3xl font-bold'>ادارة الحرفيين</h1>
       <TableCard 
-     title="ادارة الحرفيين"
       rows={rows}
       tabs={TABS}
       initialTab="all"

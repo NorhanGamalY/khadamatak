@@ -7,10 +7,24 @@ body {
 @theme {
   --color-primary: #111827;
   --color-secondary: #1e1855;
+  --color-lightGray: #ececf2;
   --color-secondary-orange: #d75b19;
   --background-color-main: #ececf2;
 }
 
 button {
   cursor: pointer;
+}
+
+.overflow-message::-webkit-scrollbar {
+  width: 6px;
+}
+
+.overflow-message::-webkit-scrollbar-thumb {
+  background: #e0e0e0;
+  border-radius: 20px;
+}
+
+.overflow-message::-webkit-scrollbar-thumb:hover {
+  background: #9ea3ac;
 }

@@ -11,21 +11,27 @@ export default function Conflicts() {
         { id: "#234", user: "منال ابراهيم", craftsman: "سارة قاسم", reason: "متعلقة بالدفع", status: "قيد المراجعة", color: "bg-amber-900/90" },
         { id: "#160", user: "ليلى حسون", craftsman: "مهند سمير", reason: "مشاكل فنية", status: "تم الحل", color: "bg-green-600" },
     ];
-
+    const [search, setSearch] = useState("");
     const [filter, setFilter] = useState("الكل");
-    const filteredData =
-        filter === "الكل"
-            ? data
-            : data.filter(item => item.reason === filter);
+
+    const filteredData = data.filter((item) => {
+        const text = search.toLowerCase();
+
+        const matchesFilter =
+            filter === "الكل" || item.reason === filter;
+
+        const matchesSearch = Object.values(item).some((val) =>
+            String(val).toLowerCase().includes(text)
+        );
+
+        return matchesFilter && matchesSearch;
+    });
 
     return (
         <div className="p-8 bg-gray-100 min-h-screen">
-            {/* main header */}
             <h1 className="text-3xl font-bold mb-6 text-gray-800">إدارة النزاعات</h1>
-            {/* the main card */}
             <div className="bg-white rounded shadow-xl pb-2">
 
-                {/* inside header*/}
                 <h2 className="text-xl font-bold py-4 px-6">إدارة النزاعات</h2>
 
                 {/* filter btn*/}
@@ -34,6 +40,7 @@ export default function Conflicts() {
                         <input
                             type="search"
                             placeholder="بحث ..."
+                            onChange={(e) => setSearch(e.target.value)}
                             className="w-full pr-10 pl-4 py-2 bg-gray-100 rounded-full border-none outline-none"
                         />
                         <Search className="absolute right-3 top-2.5 text-gray-600 w-5 h-5" />
