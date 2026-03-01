@@ -6,6 +6,7 @@ import OurServicesSection from "../../components/landing/OurServicesSection";
 import TestimonialsSection from "../../components/landing/TestimonialsSection";
 import QualityGuaranteeSection from "../../components/landing/QualityGuaranteeSection";
 import CtaSection from "../../components/landing/CtaSection";
+import CraftmanDetails from "../public/CraftmanDetails/CraftmanDetails"
 export default function Home() {
   return (
     <div className="min-h-screen  ">
@@ -15,6 +16,7 @@ export default function Home() {
       <TestimonialsSection />
       <QualityGuaranteeSection />
       <CtaSection />
+      <CraftmanDetails />
     </div>
   );
 }
