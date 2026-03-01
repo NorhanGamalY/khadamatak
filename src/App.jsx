@@ -45,7 +45,6 @@ import CraftsmanServices from "./pages/craftsman/Services";
 import Appointments from "./pages/craftsman/Appointments";
 import Evaluate from "./pages/craftsman/Evaluate";
 import Messages from "./pages/craftsman/Messages";
-import CraftsmanProfile from "./pages/craftsman/CraftsmanProfile";
 
 function GuestRoute({ children }) {
   if (isAuthenticated()) {
@@ -140,7 +139,6 @@ function App() {
           <Route path="evaluate" element={<Evaluate />} />
           <Route path="messages" element={<Messages />} />
           <Route index element={<Dashboard />} />
-          <Route path="profile" element={<CraftsmanProfile />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />
