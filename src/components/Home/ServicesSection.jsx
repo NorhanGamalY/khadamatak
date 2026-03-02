@@ -335,4 +335,4 @@ function ServiceCard({ card, onBook }) {
       </div>
     </div>
   );
-
+}
