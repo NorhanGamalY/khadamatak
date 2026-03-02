@@ -16,6 +16,7 @@ import About from "./pages/public/About";
 import Contact from "./pages/public/Contact";
 import Works from "./pages/public/Works";
 import Details from "./pages/public/Details";
+import ServicesPage from "./pages/public/ServicesPage";
 import CraftmanDetails from './pages/public/CraftmanDetails/CraftmanDetails'
 
 
@@ -60,6 +61,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/select-role" element={<SelectRole />} />
+
         <Route path="/login" element={<GuestRoute><ClientLogin /></GuestRoute>} />
         <Route path="/client-register" element={<GuestRoute><ClientRegestier /></GuestRoute>} />
         <Route path="/craftsman-login" element={<GuestRoute><CraftsmanLogin /></GuestRoute>} />
@@ -71,6 +73,7 @@ function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/home" element={<Home />} />
           <Route path="/about" element={<About />} />
+          <Route path="/services" element={<ServicesPage />} />
           <Route path="/works" element={<Works />} />
           <Route path="/details" element={<Details />} />
           <Route path="/contacts" element={<Contact />} />
