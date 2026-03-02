@@ -59,7 +59,6 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-
         <Route path="/select-role" element={<SelectRole />} />
         <Route path="/login" element={<GuestRoute><ClientLogin /></GuestRoute>} />
         <Route path="/client-register" element={<GuestRoute><ClientRegestier /></GuestRoute>} />
@@ -108,7 +107,10 @@ function App() {
         <Route
           path="/craftsman"
           element={
-            <ProtectedRoute allowedRole="Craftsman" redirectTo="/craftsman-login">
+            <ProtectedRoute
+              allowedRole="Craftsman"
+              redirectTo="/craftsman-login"
+            >
               <CraftsmanLayout />
             </ProtectedRoute>
           }
@@ -120,10 +122,10 @@ function App() {
           <Route path="appointments" element={<Appointments />} />
           <Route path="evaluate" element={<Evaluate />} />
           <Route path="messages" element={<Messages />} />
-        </Route>
+
+            </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />
-
       </Routes>
     </BrowserRouter>
   );

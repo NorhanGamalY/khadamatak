@@ -1,30 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { motion, AnimatePresence } from "framer-motion";
 import { Phone, MapPin, Edit3, Menu, Search } from "lucide-react";
-import profileImg from "../../assets/profile img.svg";
-
+// import profileImg from "../../assets/profile img.svg";
 
 export default function Profile() {
+  const token = localStorage.getItem("token");
   const [isEditing, setIsEditing] = useState(false);
-
-
-  const [profile, setProfile] = useState({
-    name: "احمد لطفي",
-    phone: "0541234567",
-    city: "القاهرة",
-    image: profileImg,
-    services: [
-      "تركيب مطابخ",
-      "تصنيع الابواب",
-      "صيانه وتصليح الاخشاب",
-      "ديكورات خشبية",
-    ],
-  });
-
+  const [profile, setProfile] = useState({});
   const [tempData, setTempData] = useState(profile);
-
+  const services = [
+    { name: "تركيب مطابخ" },
+    { name: "تصنيع الابواب" },
+    { name: "صيانه وتصليح الاخشاب" },
+    { name: "ديكورات خشبية" },
+  ];
   const handleSave = () => {
     setProfile(tempData);
     setIsEditing(false);
@@ -38,7 +29,18 @@ export default function Profile() {
     setIsEditing(false);
   };
 
+  const handleData = async () => {
+    const res = await fetch(`https://herafie.runasp.net/api/Craftsmen/me`, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await res.json();
+    setProfile(data);
+  };
 
+  useEffect(() => {
+    handleData();
+  }, []);
 
   return (
     <div dir="rtl" className="min-h-screen bg-gray-100">
@@ -52,21 +54,21 @@ export default function Profile() {
           <div className="p-0">
             <div className="bg-[#f7f7f7] p-8 flex flex-col md:flex-row items-center gap-6 text-center md:text-right">
               <img
-                src={profile.image}
+                src={"https://randomuser.me/api/portraits/men/1.jpg"}
                 alt="worker"
                 className="w-28 h-28 object-cover rounded-full shadow-md"
               />
               <div className="flex-1 space-y-3">
                 <h2 className="text-2xl font-bold text-indigo-900">
-                  {profile.name}
+                  {profile.fullName}
                 </h2>
                 <div className="flex items-center justify-center md:justify-start gap-2 text-indigo-900">
                   <Phone size={18} />
-                  <span>{profile.phone}</span>
+                  <span>{profile.phoneNumber}</span>
                 </div>
                 <div className="flex items-center justify-center md:justify-start gap-2 text-indigo-900">
                   <MapPin size={18} />
-                  <span>{profile.city}</span>
+                  <span>المنصورة</span>
                 </div>
               </div>
             </div>
@@ -74,25 +76,40 @@ export default function Profile() {
               الخدمات
             </div>
             <div className="p-8 space-y-4 text-indigo-900 text-lg">
-              {profile.services.map((service, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, x: 30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.1 }}
-                  className="flex items-center gap-3 bg-gray-50 rounded-xl p-4 shadow-sm"
-                >
-                  <span>✓</span>
-                  <span>{service}</span>
-                </motion.div>
-              ))}
+              {profile?.services?.length > 0
+                ? profile?.services?.map((service, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, x: 30 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.1 }}
+                      className="flex items-center gap-3 bg-gray-50 rounded-xl p-4 shadow-sm"
+                    >
+                      <span>✓</span>
+                      <span>{service.name}</span>
+                    </motion.div>
+                  ))
+                : services.map((service, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, x: 30 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.1 }}
+                      className="flex items-center gap-3 bg-gray-50 rounded-xl p-4 shadow-sm"
+                    >
+                      <span>✓</span>
+                      <span>{service.name}</span>
+                    </motion.div>
+                  ))}
             </div>
             <div className="flex flex-col md:flex-row gap-4 p-8 pt-0">
               <button
                 onClick={() => setIsEditing(true)}
                 className="bg-[#171240] cursor-pointer hover:bg-indigo-900 text-white p-3 rounded-2xl w-full flex items-center justify-center gap-2"
               >
-                <Edit3 className="mr-2" size={16} /> تعديل البيانات
+                <p className="flex items-center justify-center ">
+                  <Edit3 className="mr-2" size={16} /> تعديل البيانات
+                </p>
               </button>
             </div>
           </div>
@@ -119,7 +136,7 @@ export default function Profile() {
 
               <input
                 className="w-full border rounded-xl p-2"
-                value={tempData.name}
+                value={tempData?.name}
                 onChange={(e) =>
                   setTempData({ ...tempData, name: e.target.value })
                 }
@@ -156,7 +173,7 @@ export default function Profile() {
               />
 
               <div className="space-y-2">
-                {tempData.services.map((service, index) => (
+                {tempData?.services?.map((service, index) => (
                   <input
                     key={index}
                     className="w-full border rounded-xl p-2"
