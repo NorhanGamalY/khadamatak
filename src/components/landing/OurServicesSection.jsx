@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const services = [
   {
@@ -75,12 +76,12 @@ function ServiceCard({ item }) {
         <div className="text-3xl font-extrabold text-[#1E1855]">
           {item.title}
         </div>
-        <a
-          href={item.href || "#"}
+        <Link
+          to={`/services/${item.id}`}
           className="inline-flex h-13 w-50 items-center justify-center rounded-lg bg-[#D75B19] px-4 lg:text-2xl text-lg font-extrabold text-white hover:bg-[#1E1855] transition"
         >
           اطلب الخدمة
-        </a>
+        </Link>
       </div>
     </div>
   );

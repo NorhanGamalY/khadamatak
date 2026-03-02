@@ -4,19 +4,18 @@ import AvalibaleTimes from './AvalibaleTimes'
 import Rating from './Rating'
 import Craftmanimg from '../../../assets/craftman-details/Craftsman.png';
 import { FaStar } from "react-icons/fa";
-import OrderBtn from './OrderBtn';
-
+import { useParams } from "react-router-dom";
 
 function CraftmanDetails() {
     // Craftsmen Data
     const [craftman, setCraftman] = useState(null);
-
+    const { id } = useParams();
     useEffect(() => {
-        fetch("https://herafie.runasp.net/api/Craftsmen/3/profile")
+        fetch("https://herafie.runasp.net/api/Craftsmen/${id}/profile")
             .then(res => res.json())
             .then(data => setCraftman(data))
             .catch(err => console.log(err));
-    }, []);
+    }, [id]);
     // OrderBtn
     const handleOrder = async () => {
         if (!craftman) return;
@@ -42,7 +41,7 @@ function CraftmanDetails() {
                 })
             });
 
-            if (!response.ok) Error("فشل إرسال الطلب");
+            if (!response.ok) throw new Error("فشل إرسال الطلب");
 
             const data = await response.json();
             console.log(data);
@@ -56,7 +55,7 @@ function CraftmanDetails() {
     if (!craftman) return <p>Loading ...</p>
     return (
         <>
-            <div className="min-h-screen bg-gray-100 py-10 px-4" dir="rtl">
+            <div className="min-h-screen bg-gray-100 py-10 px-4 mt-20" dir="rtl">
                 <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
 
                     {/* Header Section */}
@@ -69,7 +68,7 @@ function CraftmanDetails() {
                                 <span><FaStar /></span>
                             </div>
                         </div>
-                        <div className="absolute top-0 left-0 w-50 h-55 overflow-hidden">
+                        <div className="absolute top-0 left-0 w-40 h-40 overflow-hidden">
                             <img src={Craftmanimg} alt="craftsman" className="w-full h-full object-cover" />
                         </div>
                     </div>
