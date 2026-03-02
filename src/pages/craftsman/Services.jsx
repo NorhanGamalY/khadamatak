@@ -6,11 +6,12 @@ import { BiSolidEditAlt } from "react-icons/bi";
 import { AnimatePresence } from "framer-motion";
 import AddService from "../../components/craftsman/AddService";
 import EditService from "../../components/craftsman/EditService";
+import { getId } from "../../features/auth/authHelpers";
 
 export default function CraftsmanServices() {
   const { search } = useSearch();
   const token = localStorage.getItem("token");
-
+  const id = getId();
   const [filteredData, setFilteredData] = useState([]);
   const [isEditModelOpen, setIsEditModelOpen] = useState(false);
   const [isAddServiceModelOpen, setIsAddServiceModelOpen] = useState(false);
@@ -31,7 +32,7 @@ export default function CraftsmanServices() {
   const handleGetCraftsman = async () => {
     try {
       const res = await fetch(
-        `https://herafie.runasp.net/api/Services/craftsman/7`,
+        `https://herafie.runasp.net/api/Services/craftsman/${id}`,
         {
           method: "GET",
           headers: {
