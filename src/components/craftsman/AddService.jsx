@@ -50,9 +50,9 @@ const AddService = ({
               <input
                 type="text"
                 placeholder="صيانة عامة"
-                value={serviceData.title || ""}
+                value={serviceData.name || ""}
                 onChange={(e) =>
-                  setServiceData({ ...serviceData, title: e.target.value })
+                  setServiceData({ ...serviceData, name: e.target.value })
                 }
                 className="w-full"
               />
@@ -83,9 +83,12 @@ const AddService = ({
                 rows={4}
                 placeholder="اكتب وصفا مختصرا للخدمة"
                 className="w-full"
-                value={serviceData.desc || ""}
+                value={serviceData.description || ""}
                 onChange={(e) =>
-                  setServiceData({ ...serviceData, desc: e.target.value })
+                  setServiceData({
+                    ...serviceData,
+                    description: e.target.value,
+                  })
                 }
               />
             </div>
