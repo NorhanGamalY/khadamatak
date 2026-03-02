@@ -1,16 +1,45 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { Search } from "lucide-react";
 import { FaEdit } from "react-icons/fa";
 
 
 export default function Conflicts() {
 
-    const data = [
+    const defaultData = [
         { id: "#060", user: "سارة كريم", craftsman: "جنى الأشرف", reason: "متعلقة بالخدمة", status: "تم الحل", color: "bg-gray-400" },
         { id: "#045", user: "أحمد سامي", craftsman: "طارق الأحمد", reason: "متعلقة بالحرفي", status: "مغلق", color: "bg-orange-700" },
         { id: "#234", user: "منال ابراهيم", craftsman: "سارة قاسم", reason: "متعلقة بالدفع", status: "قيد المراجعة", color: "bg-amber-900/90" },
         { id: "#160", user: "ليلى حسون", craftsman: "مهند سمير", reason: "مشاكل فنية", status: "تم الحل", color: "bg-green-600" },
     ];
+
+    const [data, setData] = useState(defaultData);
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        axios
+            .get("https://herafie.runasp.net/api/Complaints/admin/complaints", {
+                headers: { Authorization: `Bearer ${token}` },
+            })
+            .then((res) => {
+                const mappedData = res.data.map((item) => ({
+                    id: item.id || item.complaintId,
+                    user: item.userName || item.email,
+                    craftsman: item.craftsmanName || item.craftsmanEmail,
+                    reason: item.complaintReason,
+                    status: item.status,
+                    color:
+                        item.status === "تم الحل"
+                            ? "bg-green-600"
+                            : item.status === "مغلق"
+                                ? "bg-orange-700"
+                                : "bg-amber-900/90",
+                }));
+                setData(mappedData);
+            })
+            .catch((err) => console.log(err));
+    }, []);
+
+
     const [search, setSearch] = useState("");
     const [filter, setFilter] = useState("الكل");
 

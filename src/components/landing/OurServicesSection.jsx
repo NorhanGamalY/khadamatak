@@ -69,6 +69,7 @@ function ServiceCard({ item }) {
       </div>
 
       <div className="flex items-center justify-between gap-4 bg-white px-4 py-4">
+
         <div className="text-3xl font-extrabold text-[#1E1855]">{title}</div>
 
         <Link
