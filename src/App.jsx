@@ -17,6 +17,8 @@ import Contact from "./pages/public/Contact";
 import Works from "./pages/public/Works";
 import Details from "./pages/public/Details";
 import ServicesPage from "./pages/public/ServicesPage";
+import CraftmanDetails from './pages/public/CraftmanDetails/CraftmanDetails'
+
 
 import ClientRegestier from "./pages/public/ClientRegestier";
 import ClientLogin from "./pages/public/ClientLogin";
@@ -59,30 +61,10 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/select-role" element={<SelectRole />} />
-        <Route
-          path="/login"
-          element={
-            <GuestRoute>
-              <ClientLogin />
-            </GuestRoute>
-          }
-        />
-        <Route
-          path="/client-register"
-          element={
-            <GuestRoute>
-              <ClientRegestier />
-            </GuestRoute>
-          }
-        />
-        <Route
-          path="/craftsman-login"
-          element={
-            <GuestRoute>
-              <CraftsmanLogin />
-            </GuestRoute>
-          }
-        />
+
+        <Route path="/login" element={<GuestRoute><ClientLogin /></GuestRoute>} />
+        <Route path="/client-register" element={<GuestRoute><ClientRegestier /></GuestRoute>} />
+        <Route path="/craftsman-login" element={<GuestRoute><CraftsmanLogin /></GuestRoute>} />
         <Route path="/craftsman-register" element={<CraftsmanRegister />} />
         <Route path="/craftsman-register-2" element={<CraftsmanRegister2 />} />
 
@@ -95,6 +77,8 @@ function App() {
           <Route path="/works" element={<Works />} />
           <Route path="/details" element={<Details />} />
           <Route path="/contacts" element={<Contact />} />
+          <Route path="/services/:id" element={<CraftmanDetails />} />
+
         </Route>
 
         {/* ─── Admin Routes ─────────────────────────────────────── */}
@@ -141,7 +125,8 @@ function App() {
           <Route path="appointments" element={<Appointments />} />
           <Route path="evaluate" element={<Evaluate />} />
           <Route path="messages" element={<Messages />} />
-        </Route>
+
+            </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

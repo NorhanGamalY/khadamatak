@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useLogin } from "../../features/auth/mutations";
 import { validateLogin } from "../../features/auth/validation";
-import { saveToken, saveRole } from "../../features/auth/authHelpers";
+import { saveToken, saveRole,saveId, getHomeByRole } from "../../features/auth/authHelpers";
 import InputField from "./components/InputField";
 
 export default function CraftsmanLogin() {
@@ -42,10 +42,11 @@ export default function CraftsmanLogin() {
           const role  = data?.role;
 
           if (!token) { setServerError("حصل خطأ، حاول تاني"); return; }
-
+          const id = data?.craftsmanId ?? data?.clientId ?? data?.id;
           saveToken(token, form.rememberMe);
-          saveRole(role, form.rememberMe);             
-          navigate("/craftsman", { replace: true });    
+          saveRole(role, form.rememberMe);    
+          if (id != null) saveId(id, form.rememberMe);         
+          navigate(getHomeByRole(), { replace: true });    
         },
         onError: (err) => {
           const msg =

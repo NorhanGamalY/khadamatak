@@ -50,11 +50,11 @@ const EditService = ({
               <input
                 type="text"
                 placeholder="صيانة عامة"
-                value={editServiceData.title}
+                value={editServiceData.name}
                 onChange={(e) =>
                   setEditServiceData({
                     ...editServiceData,
-                    title: e.target.value,
+                    name: e.target.value,
                   })
                 }
                 className="w-full"
@@ -89,11 +89,11 @@ const EditService = ({
                 rows={4}
                 placeholder="اكتب وصفا مختصرا للخدمة"
                 className="w-full"
-                value={editServiceData.desc}
+                value={editServiceData.description}
                 onChange={(e) =>
                   setEditServiceData({
                     ...editServiceData,
-                    desc: e.target.value,
+                    description: e.target.value,
                   })
                 }
               />
