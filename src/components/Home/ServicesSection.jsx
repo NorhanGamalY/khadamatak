@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { Star } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -118,6 +119,7 @@ function useCraftsmen() {
 }
 
 export default function ServicesSection() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("top");
   const wantedNames = ["سباكة", "كهرباء", "نجارة", "دهانات"];
 
@@ -219,6 +221,7 @@ export default function ServicesSection() {
               <ServiceCard
                 key={card.id}
                 card={card}
+                onOpen={() => navigate(`/services/${card.id}`)}
                 onBook={() => {
                   console.log("Book:", {
                     categoryId: card.id,
@@ -254,20 +257,26 @@ function TabButton({ children, icon = false, onClick }) {
   );
 }
 
-function ServiceCard({ card, onBook }) {
+function ServiceCard({ card, onBook, onOpen }) {
   return (
-    <div className="rounded-3xl bg-[#E8E9E8] p-6 sm:p-7">
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={onOpen}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") onOpen();
+      }}
+      className={[
+        "rounded-3xl bg-[#E8E9E8] p-6 sm:p-7 cursor-pointer",
+        "transition hover:shadow-[0_12px_34px_rgba(0,0,0,0.12)] active:scale-[0.99]",
+        "outline-none focus-visible:ring-2 focus-visible:ring-[#d75b19]/60",
+      ].join(" ")}
+    >
       <div className="flex items-start justify-between gap-6">
-        <div className="flex-1">
+        <div className="flex-1 mt-10 mr-5">
           <h3 className="text-2xl sm:text-3xl font-extrabold text-[#1E1855] leading-snug">
             {card.title}
           </h3>
-
-          {card.description && (
-            <div className="mt-2 text-[#1E1855] opacity-80 font-semibold">
-              {card.description}
-            </div>
-          )}
 
           <div className="mt-3 flex items-center gap-3 text-[#1E1855]">
             <span className="font-extrabold text-xl">
@@ -275,23 +284,6 @@ function ServiceCard({ card, onBook }) {
             </span>
             <StarsRow rating={card.rating} />
           </div>
-
-          <div className="mt-3 text-[#1E1855] font-bold">
-            <span className="opacity-80">الحرفي:</span>{" "}
-            <span className="font-extrabold">{card.name}</span>
-            {card.isVerified ? (
-              <span className="ms-2 inline-block rounded-lg bg-white px-2 py-1 text-sm font-extrabold text-[#1E1855]">
-                موثّق
-              </span>
-            ) : null}
-          </div>
-
-          {card.yearsOfExperience != null && (
-            <div className="mt-2 text-[#1E1855] font-bold opacity-90">
-              سنوات الخبرة:{" "}
-              <span className="font-extrabold">{card.yearsOfExperience}</span>
-            </div>
-          )}
 
           <div className="mt-4 text-lg sm:text-xl text-[#1E1855] font-bold">
             السعر:{" "}
@@ -303,7 +295,10 @@ function ServiceCard({ card, onBook }) {
 
           <button
             type="button"
-            onClick={onBook}
+            onClick={(e) => {
+              e.stopPropagation();
+              onBook();
+            }}
             className="mt-5 h-12 px-8 rounded-xl bg-[#d75b19] text-white text-md sm:text-lg font-extrabold hover:bg-[#1E1855] transition"
           >
             احجز الآن
@@ -315,7 +310,7 @@ function ServiceCard({ card, onBook }) {
             className="rounded-2xl bg-white overflow-hidden
                        w-[140px] h-[130px]
                        sm:w-[210px] sm:h-[180px]
-                       md:w-[270px] md:h-[200px] lg:w-[230px] lg:h-[230px]
+                       md:w-[200px] md:h-[200px] lg:w-[230px] lg:h-[230px]
                        shadow-[0_8px_20px_rgba(0,0,0,0.08)] mb-6"
           >
             <img

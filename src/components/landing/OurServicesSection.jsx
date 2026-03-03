@@ -20,6 +20,8 @@ export default function OurServicesSection() {
     queryFn: getServiceCategories,
   });
 
+    const dataCards = data?.slice(0, 6) || [];
+
   return (
     <section dir="rtl" className="bg-white py-14">
       <div className="mx-auto w-full max-w-[1400px] px-4">
@@ -43,8 +45,8 @@ export default function OurServicesSection() {
         )}
 
         {!isLoading && !isError && (
-          <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {data?.map((item) => (
+          <div className="mt-10 mx-20 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {dataCards?.map((item) => (
               <ServiceCard key={item.id} item={item} />
             ))}
           </div>
@@ -60,7 +62,7 @@ function ServiceCard({ item }) {
 
   return (
     <div className="overflow-hidden bg-white">
-      <div className="relative w-full aspect-[1]">
+      <div className="relative w-full aspect-[1.1]">
         <img
           src={image}
           alt={title}

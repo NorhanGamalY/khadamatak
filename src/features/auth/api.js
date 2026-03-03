@@ -2,12 +2,12 @@ import { http } from "../../lib/http";
 
 export const authApi = {
     registerClient: (payload) =>
-    http.post("api/auth/register-client", payload).then((r) => r.data),
+    http.post("/auth/register-client", payload).then((r) => r.data),
     login: (payload) =>
-    http.post("api/auth/login", payload).then((r) => r.data),
+    http.post("/auth/login", payload).then((r) => r.data),
 
     registerCraftsman: (payload) =>
-    http.post("/api/auth/register-craftsman", payload).then((r) => r.data),
+    http.post("/auth/register-craftsman", payload).then((r) => r.data),
 
     // forgotPassword: (payload) =>
     // http.post("/api/auth/forgot-password", payload).then((r) => r.data),
