@@ -92,7 +92,7 @@ function App() {
               <AdminLayout />
             </ProtectedRoute>
           }
-        >
+          >
           <Route index element={<AdminDashboard />} />
           <Route path="users" element={<Users />} />
           <Route path="craftsmen" element={<Craftsmen />} />
@@ -100,7 +100,6 @@ function App() {
           <Route path="reports" element={<Reports />} />
           <Route path="services" element={<Services />} />
           <Route path="conflicts" element={<Conflicts />} />
-
           <Route path="settings/*" element={<Settings />}>
             <Route index element={<GenreralSettings />} />
             <Route path="payment" element={<PaymentSettings />} />
@@ -108,17 +107,6 @@ function App() {
             <Route path="logout" element={<Logout />} />
           </Route>
         </Route>
-
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<AdminDashboard />} />
-            <Route path="users" element={<Users />} />
-            <Route path="craftsmen" element={<Craftsmen />} />
-            <Route path="request01s" element={<Orders />} />
-            <Route path="settings/*" element={<Settings />}>
-              <Route index element={<GenreralSettings />} />
-              <Route path="payment" element={<PaymentSettings />} />
-              <Route path="commission" element={<Commission />} />
-              <Route path="logout" element={<Logout />} />
         {/* ─── Craftsman Routes ───────────────────────────── */}
         <Route
           path="/craftsman"
@@ -138,27 +126,13 @@ function App() {
           <Route path="appointments" element={<Appointments />} />
           <Route path="evaluate" element={<Evaluate />} />
           <Route path="messages" element={<Messages />} />
-
-            </Route>
-
-          <Route path="/craftsman" element={<CraftsmanLayout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="services" element={<CraftsmanServices />} />
-            <Route path="appointments" element={<Appointments />} />
-            <Route path="evaluate" element={<Evaluate />} />
-
             <Route path="requests" element={<Requests />}>
               <Route index element={<NewRequest />} />{" "}
-              {/* يفتح تلقائي على الطلبات الجديدة */}
               <Route path="new" element={<NewRequest />} />
               <Route path="coming" element={<ComingRequest />} />
               <Route path="ended" element={<EndidRequest />} />
             </Route>
           </Route>
-        </Routes>
-      </BrowserRouter>
-    </>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
