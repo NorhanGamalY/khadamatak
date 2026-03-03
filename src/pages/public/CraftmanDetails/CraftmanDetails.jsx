@@ -11,7 +11,7 @@ function CraftmanDetails() {
     const [craftman, setCraftman] = useState(null);
     const { id } = useParams();
     useEffect(() => {
-        fetch(`gihttps://herafie.runasp.net/api/Craftsmen/${id}/profile`)
+        fetch(`https://herafie.runasp.net/api/Craftsmen/${id}/profile`)
             .then(res => res.json())
             .then(data => setCraftman(data))
             .catch(err => console.log(err));
