@@ -11,7 +11,7 @@ function CraftmanDetails() {
     const [craftman, setCraftman] = useState(null);
     const { id } = useParams();
     useEffect(() => {
-        fetch("https://herafie.runasp.net/api/Craftsmen/${id}/profile")
+        fetch(`gihttps://herafie.runasp.net/api/Craftsmen/${id}/profile`)
             .then(res => res.json())
             .then(data => setCraftman(data))
             .catch(err => console.log(err));
@@ -52,7 +52,8 @@ function CraftmanDetails() {
             alert("حدث خطأ أثناء إرسال الطلب");
         }
     };
-    if (!craftman) return <p>Loading ...</p>
+    if (!craftman) return <p className='min-h-screen py-10 px-4 mt-20 text-center font-bold text-3xl'>
+        <span className='text-red-500'>...</span> Loading </p>
     return (
         <>
             <div className="min-h-screen bg-gray-100 py-10 px-4 mt-20" dir="rtl">
