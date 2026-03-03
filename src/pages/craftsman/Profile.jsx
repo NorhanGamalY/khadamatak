@@ -3,21 +3,21 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { motion, AnimatePresence } from "framer-motion";
 import { Phone, MapPin, Edit3, Menu, Search } from "lucide-react";
-// import profileImg from "../../assets/profile img.svg";
+import Avatar from "../../components/common/Avatar";
 
 export default function Profile() {
   const token = localStorage.getItem("token");
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({});
   const [tempData, setTempData] = useState(profile);
-  const services = [
-    { name: "تركيب مطابخ" },
-    { name: "تصنيع الابواب" },
-    { name: "صيانه وتصليح الاخشاب" },
-    { name: "ديكورات خشبية" },
-  ];
+
   const handleSave = () => {
-    setProfile(tempData);
+    const cleanServices = tempData.services.filter(
+      (ser) => ser.name && ser.name.trim() !== "",
+    );
+    const finalData = { ...tempData, services: cleanServices };
+    setProfile(finalData);
+    setTempData(finalData);
     setIsEditing(false);
     toast.success("تم حفظ التعديلات بنجاح", {
       position: "bottom-center",
@@ -35,7 +35,11 @@ export default function Profile() {
       headers: { Authorization: `Bearer ${token}` },
     });
     const data = await res.json();
+
     setProfile(data);
+    setTempData(data);
+
+    console.log(data);
   };
 
   useEffect(() => {
@@ -48,15 +52,15 @@ export default function Profile() {
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="max-w-3xl mx-auto py-5  px-4"
+        className="max-w-3xl mx-auto py-5 px-4"
       >
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="p-0">
             <div className="bg-[#f7f7f7] p-8 flex flex-col md:flex-row items-center gap-6 text-center md:text-right">
-              <img
-                src={"https://randomuser.me/api/portraits/men/1.jpg"}
-                alt="worker"
-                className="w-28 h-28 object-cover rounded-full shadow-md"
+              <Avatar
+                src={tempData.image ? tempData.image : ""}
+                name={profile.fullName}
+                size={80}
               />
               <div className="flex-1 space-y-3">
                 <h2 className="text-2xl font-bold text-indigo-900">
@@ -76,31 +80,25 @@ export default function Profile() {
               الخدمات
             </div>
             <div className="p-8 space-y-4 text-indigo-900 text-lg">
-              {profile?.services?.length > 0
-                ? profile?.services?.map((service, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, x: 30 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.1 }}
-                      className="flex items-center gap-3 bg-gray-50 rounded-xl p-4 shadow-sm"
-                    >
-                      <span>✓</span>
-                      <span>{service.name}</span>
-                    </motion.div>
-                  ))
-                : services.map((service, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, x: 30 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.1 }}
-                      className="flex items-center gap-3 bg-gray-50 rounded-xl p-4 shadow-sm"
-                    >
-                      <span>✓</span>
-                      <span>{service.name}</span>
-                    </motion.div>
-                  ))}
+              {profile?.services?.length > 0 &&
+                profile?.services?.map((service, i) => {
+                  if (service.name.length > 0) {
+                    return (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, x: 30 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: i * 0.1 }}
+                        className="flex items-center gap-3 bg-gray-50 rounded-xl p-4 shadow-sm"
+                      >
+                        <span>✓</span>
+                        <span>{service.name}</span>
+                      </motion.div>
+                    );
+                  } else {
+                    return;
+                  }
+                })}
             </div>
             <div className="flex flex-col md:flex-row gap-4 p-8 pt-0">
               <button
@@ -136,17 +134,19 @@ export default function Profile() {
 
               <input
                 className="w-full border rounded-xl p-2"
-                value={tempData?.name}
+                placeholder="اسم الحرفي"
+                value={tempData.fullName}
                 onChange={(e) =>
                   setTempData({ ...tempData, name: e.target.value })
                 }
               />
               <input
                 className="w-full border rounded-xl p-2"
-                value={tempData.phone}
+                value={tempData.phoneNumber}
                 onChange={(e) =>
                   setTempData({ ...tempData, phone: e.target.value })
                 }
+                placeholder="01012345678"
               />
               <input
                 className="w-full border rounded-xl p-2"
@@ -154,6 +154,7 @@ export default function Profile() {
                 onChange={(e) =>
                   setTempData({ ...tempData, city: e.target.value })
                 }
+                placeholder="المنصورة"
               />
 
               <input
@@ -172,15 +173,19 @@ export default function Profile() {
                 }}
               />
 
-              <div className="space-y-2">
+              <div className="space-y-2 overflow-y-auto lg:h-38 h-40 overflow-message">
                 {tempData?.services?.map((service, index) => (
                   <input
                     key={index}
+                    placeholder="اضافة خدمة جديدة"
                     className="w-full border rounded-xl p-2"
-                    value={service}
+                    value={service.name}
                     onChange={(e) => {
                       const updated = [...tempData.services];
-                      updated[index] = e.target.value;
+                      updated[index] = {
+                        ...updated[index],
+                        name: e.target.value,
+                      };
                       setTempData({ ...tempData, services: updated });
                     }}
                   />
