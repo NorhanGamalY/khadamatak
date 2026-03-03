@@ -38,6 +38,9 @@ import Users from "./pages/admin/Users";
 import Logout from "./pages/admin/Logout";
 import Commission from "./pages/admin/Commission";
 import Orders from "./pages/admin/Orders";
+import NewRequest from './pages/craftsman/NewRequest'
+import EndidRequest from './pages/craftsman/EndidRequest'
+import ComingRequest from './pages/craftsman/ComingRequest'
 import Craftsmen from "./pages/admin/Craftsmen";
 
 // Craftsman Pages
@@ -106,6 +109,16 @@ function App() {
           </Route>
         </Route>
 
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="users" element={<Users />} />
+            <Route path="craftsmen" element={<Craftsmen />} />
+            <Route path="request01s" element={<Orders />} />
+            <Route path="settings/*" element={<Settings />}>
+              <Route index element={<GenreralSettings />} />
+              <Route path="payment" element={<PaymentSettings />} />
+              <Route path="commission" element={<Commission />} />
+              <Route path="logout" element={<Logout />} />
         {/* ─── Craftsman Routes ───────────────────────────── */}
         <Route
           path="/craftsman"
@@ -128,6 +141,24 @@ function App() {
 
             </Route>
 
+          <Route path="/craftsman" element={<CraftsmanLayout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="profile" element={<Profile />} />
+            <Route path="services" element={<CraftsmanServices />} />
+            <Route path="appointments" element={<Appointments />} />
+            <Route path="evaluate" element={<Evaluate />} />
+
+            <Route path="requests" element={<Requests />}>
+              <Route index element={<NewRequest />} />{" "}
+              {/* يفتح تلقائي على الطلبات الجديدة */}
+              <Route path="new" element={<NewRequest />} />
+              <Route path="coming" element={<ComingRequest />} />
+              <Route path="ended" element={<EndidRequest />} />
+            </Route>
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
