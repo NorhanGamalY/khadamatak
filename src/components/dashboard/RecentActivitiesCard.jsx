@@ -7,12 +7,6 @@ const TABS = [
   
 ];
 
-const MOCK_ROWS = [
-  { id: 1, name: "جنى الأشرف", phone: "0795621348", city: "عمان", status: "active" },
-  { id: 2, name: "طارق الأحمد", phone: "0778932140", city: "الزرقاء", status: "stopped" },
-  { id: 3, name: "سارة قاسم", phone: "0783321145", city: "العقبة", status: "active" },
-  { id: 4, name: "مؤيد سمير", phone: "0771239087", city: "اربد", status: "active" },
-];
 
 function StatusBadge({ status }) {
   const isActive = status === "active";
@@ -28,11 +22,19 @@ function StatusBadge({ status }) {
   );
 }
 
-export default function RecentActivitiesCard({ rows = MOCK_ROWS }) {
+export default function RecentActivitiesCard({ rows = [] }) {
+  const data = rows.map((r) => ({
+    id: r.id,
+    name: r.name,
+    phone: r.phone,
+    status: r.isVerified ? "active" : "stopped",
+    city: r.city ?? "-",
+  }));
+
   return (
     <TableCard
       title="اخر النشاطات"
-      rows={rows}
+      rows={data}
       tabs={TABS}
       initialTab="all"
       filterByTab={(row, tab) =>
