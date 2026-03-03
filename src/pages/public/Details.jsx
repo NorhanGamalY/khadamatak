@@ -1,5 +1,6 @@
-import React from "react";
-import { FaStar } from "react-icons/fa";
+
+import React from 'react'
+import { FaStar } from 'react-icons/fa';
 import Avatar from "../../components/common/Avatar";
 function Details() {
   return (
@@ -64,6 +65,7 @@ function Details() {
             <p>أيسل بلال</p>
           </div>
 
+
           <div className="flex justify-start items-center  mx-12">
             <FaStar className="text-gray-300 text-sm" />
             <FaStar className="text-gray-300 text-sm" />
@@ -73,6 +75,7 @@ function Details() {
           </div>
           <div className="flex justify-end items-center">شهر</div>
           <p className="my-5">
+
             .موسبيإ ميرول صن نم خسن ىلع اًضيأ توح يتلاو ركيام جياب سودلأ لثم
             ينورتكلإلا رشنلا جمارب روهظ عم اَرخؤم ىرخأ ةرم رشتنيل داعو ،صنلا اذه
             نم عطاقم يوحت ةيكيتسالبلا تيسارتيل قئاقر رادصإ عم نرقلا اذه تايّنيتس

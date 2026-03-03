@@ -15,3 +15,16 @@ body {
 button {
   cursor: pointer;
 }
+
+.overflow-message::-webkit-scrollbar {
+  width: 6px;
+}
+
+.overflow-message::-webkit-scrollbar-thumb {
+  background: #e0e0e0;
+  border-radius: 20px;
+}
+
+.overflow-message::-webkit-scrollbar-thumb:hover {
+  background: #9ea3ac;
+}
