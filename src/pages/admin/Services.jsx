@@ -55,7 +55,7 @@ export default function Services() {
     if (!form.name) return;
     if (editingId) {
   const payload = {
-    id: editingId, // 👈 لازم يتحط في البادي
+    id: editingId, 
     name: form.name,
     type: form.type,
     description: form.description,
