@@ -42,10 +42,13 @@ export default function RecentActivitiesCard({ rows = [] }) {
       }
       searchKeys={["name", "phone", "city"]}
       columns={[
-        { key: "status", header: "الحالة", align: "center", cell: (r) => <StatusBadge status={r.status} /> },
-        { key: "city", header: "المدينة", align: "center", cell: (r) => r.city },
-        { key: "phone", header: "الهاتف", align: "center", cell: (r) => r.phone },
         { key: "name", header: "الاسم", align: "", cell: (r) => r.name },
+        { key: "phone", header: "الهاتف", align: "center", cell: (r) => r.phone },
+        { key: "city", header: "المدينة", align: "center", cell: (r) => r.city },
+        { key: "status", header: "الحالة", align: "center", cell: (r) => <StatusBadge status={r.status} /> },
+        
+        
+        
       ]}
     />
   );
