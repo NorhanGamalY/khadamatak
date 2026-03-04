@@ -17,7 +17,6 @@ export default function TableCard({
 }) {
   const [tab, setTab] = useState(initialTab);
   const [query, setQuery] = useState("");
-  const [selected, setSelected] = useState(() => new Set());
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -33,31 +32,10 @@ export default function TableCard({
     });
   }, [rows, tab, query, filterByTab, searchKeys]);
 
-  const allChecked =
-    selectable && filtered.length > 0 && filtered.every((r) => selected.has(getRowId(r)));
+  
 
-  const toggleAll = () => {
-    if (!selectable) return;
 
-    setSelected((prev) => {
-      const next = new Set(prev);
-      if (allChecked) filtered.forEach((r) => next.delete(getRowId(r)));
-      else filtered.forEach((r) => next.add(getRowId(r)));
-      return next;
-    });
-  };
-
-  const toggleOne = (row) => {
-    if (!selectable) return;
-
-    const id = getRowId(row);
-    setSelected((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
+  
 
    const defaultTabStyle = (key) => {
     const base =
@@ -109,7 +87,7 @@ export default function TableCard({
       </div>
 
       <div className="hidden md:block mt-4 overflow-x-auto border border-gray-200 shadow-md">
-        <table className=" w-full text-end">
+        <table className=" w-full text-center">
           <thead>
             <tr className="text-sm font-bold">
               {columns.map((c) => (
@@ -117,18 +95,13 @@ export default function TableCard({
                   key={c.key}
                   className={[
                     "px-4 py-3",
-                    c.align === "center" ? "text-center" : "text-end",
                   ].join(" ")}
                 >
                   {c.header}
                 </th>
               ))}
 
-              {selectable && (
-                <th className="w-10 px-3 py-3 text-center">
-                  <input type="checkbox" checked={allChecked} onChange={toggleAll} />
-                </th>
-              )}
+            
             </tr>
           </thead>
 
@@ -140,22 +113,11 @@ export default function TableCard({
                     key={c.key}
                     className={[
                       "px-4 py-3",
-                      c.align === "center" ? "text-center" : "text-end",
                     ].join(" ")}
                   >
                     {c.cell(row)}
                   </td>
                 ))}
-
-                {selectable && (
-                  <td className="px-3 py-3 text-center">
-                    <input
-                      type="checkbox"
-                      checked={selected.has(getRowId(row))}
-                      onChange={() => toggleOne(row)}
-                    />
-                  </td>
-                )}
               </tr>
             ))}
 
@@ -192,16 +154,7 @@ export default function TableCard({
         ))}
       </div>
 
-      {selectable && (
-        <div className="mt-4 flex items-center justify-between border-t pt-3">
-          <span className="text-sm font-semibold text-gray-700">تحديد</span>
-          <input
-            type="checkbox"
-            checked={selected.has(getRowId(row))}
-            onChange={() => toggleOne(row)}
-          />
-        </div>
-      )}
+      
     </div>
   ))}
 

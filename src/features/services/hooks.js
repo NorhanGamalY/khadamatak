@@ -28,7 +28,7 @@ export function useEditService() {
   return useMutation({
     mutationFn: editService,
     onSuccess: () => {
-      // refetch fresh list after edit so UI shows server state
+
       queryClient.invalidateQueries(['services']);
     },
     onError: (err) => {

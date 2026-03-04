@@ -232,6 +232,7 @@ export default function ServicesSection() {
             ))}
           </div>
         )}
+
       </div>
     </section>
   );
@@ -242,11 +243,13 @@ function TabButton({ children, icon = false, onClick }) {
     <button
       type="button"
       onClick={onClick}
+
       className={[
         "h-14 w-full sm:w-[360px] rounded-xl bg-white px-6",
         "ring-1 ring-[#EAEAEA] shadow-[0_10px_22px_rgba(0,0,0,0.08)]",
         "flex items-center justify-center",
         "text-[#1E1855]",
+
       ].join(" ")}
     >
       <span className="flex items-center gap-2 font-extrabold text-lg">
@@ -277,6 +280,12 @@ function ServiceCard({ card, onBook, onOpen }) {
           <h3 className="text-2xl sm:text-3xl font-extrabold text-[#1E1855] leading-snug">
             {card.title}
           </h3>
+
+          {card.description && (
+            <div className="mt-2 text-[#1E1855] opacity-80 font-semibold">
+              {card.description}
+            </div>
+          )}
 
           <div className="mt-3 flex items-center gap-3 text-[#1E1855]">
             <span className="font-extrabold text-xl">

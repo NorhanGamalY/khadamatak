@@ -6,71 +6,84 @@ import { BiSolidEditAlt } from "react-icons/bi";
 import { AnimatePresence } from "framer-motion";
 import AddService from "../../components/craftsman/AddService";
 import EditService from "../../components/craftsman/EditService";
-import { getId } from "../../features/auth/authHelpers";
+import { getId, getToken } from "../../features/auth/authHelpers";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 export default function CraftsmanServices() {
   const { search } = useSearch();
-  const token = localStorage.getItem("token");
+  const token = getToken();
   const id = getId();
-  const [filteredData, setFilteredData] = useState([]);
-  const [isEditModelOpen, setIsEditModelOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [isAddServiceModelOpen, setIsAddServiceModelOpen] = useState(false);
-  const [serviceData, setServiceData] = useState({
-    name: "",
-    description: "",
-    price: "",
+  const [isEditModelOpen, setIsEditModelOpen] = useState(false);
+  const [filteredData, setFilteredData] = useState([]);
+  const [craftsmanService, setCraftsmanService] = useState({ items: [] });
+  const [serviceCategories, setServiceCategories] = useState([]);
+  const [serviceData, setServiceData] = useState({});
+  const [editServiceData, setEditServiceData] = useState({});
+  const [pagination, setPagination] = useState({
+    current: 1,
+    total: 0,
+    pageNumber: 0,
   });
-  const [editServiceData, setEditServiceData] = useState({
+  const [selectedCategory, setSelectedCategory] = useState({
+    id: null,
     name: "",
-    description: "",
-    price: "",
   });
   const [selectedService, setSelectedService] = useState(null);
 
-  const [craftsmanService, setCraftsmanService] = useState({ items: [] });
-
   const handleGetCraftsman = async () => {
     try {
-      const res = await fetch(
-        `https://herafie.runasp.net/api/Services/craftsman/${id}`,
+      const res = await axios.get(
+        `https://herafie.runasp.net/api/Services/craftsman/${id}?pageNumber=${pagination.current}&pageSize=10`,
         {
-          method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
           },
         },
       );
 
-      const data = await res.json();
-      if (!res.ok) {
-        console.log("message:", data.message);
-        setCraftsmanService({});
-        return;
-      }
-      setCraftsmanService(data);
-      setFilteredData(data.items);
+      const itemsList = res.data.items;
+      setCraftsmanService(itemsList);
+      setFilteredData(itemsList);
+      setPagination((prev) => ({
+        ...prev,
+        total: res.data.totalCount,
+        pageNumber: res.data.pageNumber,
+        pageSize: res.data.pageSize,
+      }));
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleAddService = (service) => {
-    const newService = {
-      id: Date.now(),
-      ...service,
-    };
-    setServiceData({
-      name: service.name,
-      description: service.description,
-      price: service.price,
-    });
-    setFilteredData((prev) => [newService, ...prev]);
-    setServiceData({
-      name: "",
-      description: "",
-      price: "",
-    });
-    setIsAddServiceModelOpen(false);
+  const handleAddService = async (service) => {
+    try {
+      const payload = {
+        craftsmanId: id,
+        description: service.description,
+        name: service.name,
+        price: Number(service.price),
+        ServiceCategoryId: selectedCategory.id,
+        serviceCategoryName: selectedCategory.name,
+      };
+      const res = await axios.post(
+        "https://herafie.runasp.net/api/Services",
+        payload,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+      if (res.status === 200) {
+        await handleGetCraftsman();
+        setServiceData({});
+        setSelectedCategory({ id: null, name: "" });
+        toast.success("تمت الاضافة بنجاح");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleEditService = (updatedService) => {
@@ -87,7 +100,17 @@ export default function CraftsmanServices() {
   };
 
   useEffect(() => {
-    handleGetCraftsman();
+
+    async function GetAllCategories() {
+      try {
+        await axios
+          .get("https://herafie.runasp.net/api/ServiceCategory")
+          .then((res) => setServiceCategories(res.data));
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    GetAllCategories();
   }, []);
 
   useEffect(() => {
@@ -100,6 +123,12 @@ export default function CraftsmanServices() {
       setFilteredData(filtered);
     }
   }, [search, craftsmanService]);
+
+  useEffect(() => {
+    if (id && token) {
+      handleGetCraftsman();
+    }
+  }, [id, token, pagination.current]);
 
   return (
     <div dir="rtl" className="min-h-screen bg-main text-primary relative">
@@ -123,62 +152,63 @@ export default function CraftsmanServices() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredData.length > 0 &&
-            filteredData.map((s, idx) => (
-              <div
-                key={idx}
-                className="bg-white rounded-xl shadow-[0_6px_16px_rgba(17,24,39,0.08)] px-4 border border-lightGray py-4"
-              >
-                <div className="flex justify-between items-start">
-                  <div className="text-right">
-                    <div className="flex items-center gap-4">
-                      <div className="bg-[#E9E8EE] text-secondary w-8 h-8 flex items-center justify-center rounded text-2xl">
-                        <MdOutlineMiscellaneousServices className="-rotate-90" />
-                      </div>
-
-                      <div className="text-[14px] font-extrabold text-primary">
-                        {s.name}
-                      </div>
+          {filteredData.map((s, idx) => (
+            <div
+              key={idx}
+              className="bg-white rounded-xl shadow-[0_6px_16px_rgba(17,24,39,0.08)] px-4 border border-lightGray py-4"
+            >
+              <div className="flex justify-between items-start">
+                <div className="text-right">
+                  <div className="flex items-center gap-4">
+                    <div className="bg-[#E9E8EE] text-secondary w-8 h-8 flex items-center justify-center rounded text-2xl">
+                      <MdOutlineMiscellaneousServices className="-rotate-90" />
                     </div>
-                    <div className="text-[12px] text-[#6b7280] mt-1 leading-relaxed">
-                      {s.description}
+
+                    <div className="text-[14px] font-extrabold text-primary">
+                      {s.name}
                     </div>
                   </div>
-                  <div className="flex items-center gap-1 text-secondary">
-                    <button
-                      className="p-1 cursor-pointer"
-                      aria-label="edit"
-                      name="تعديل"
-                      onClick={() => {
-                        setSelectedService(s);
-                        setEditServiceData({
-                          name: s.name,
-                          description: s.description,
-                          price: s.price,
-                        });
-                        setIsEditModelOpen(!isEditModelOpen);
-                      }}
-                    >
-                      <BiSolidEditAlt className="text-xl" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(s.id)}
-                      className="p-1 cursor-pointer"
-                      aria-label="delete"
-                      name="حذف"
-                    >
-                      <FaTrashAlt />
-                    </button>
+                  <div className="text-[12px] text-[#6b7280] mt-1 leading-relaxed">
+                    {s.description}
                   </div>
                 </div>
-                <div className="mt-6 flex items-center justify-between">
-                  <div className="text-[12px] font-extrabold text-[#D75B19]">
-                    {s.price}
-                  </div>
-                  <div className="text-[11px] text-[#6b7280]">سعر الخدمة</div>
+                <div className="flex items-center gap-1 text-secondary">
+                  <button
+                    className="p-1 cursor-pointer"
+                    aria-label="edit"
+                    name="تعديل"
+                    onClick={() => {
+                      setSelectedService(s);
+                      setEditServiceData({
+                        id: s.id,
+                        name: s.name,
+                        description: s.description,
+                        price: s.price,
+                        serviceCategoryName: s.serviceCategoryName,
+                      });
+                      setIsEditModelOpen(!isEditModelOpen);
+                    }}
+                  >
+                    <BiSolidEditAlt className="text-xl" />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(s.id)}
+                    className="p-1 cursor-pointer"
+                    aria-label="delete"
+                    name="حذف"
+                  >
+                    <FaTrashAlt />
+                  </button>
                 </div>
               </div>
-            ))}
+              <div className="mt-6 flex items-center justify-between">
+                <div className="text-[12px] font-extrabold text-[#D75B19]">
+                  {s.price}
+                </div>
+                <div className="text-[11px] text-[#6b7280]">سعر الخدمة</div>
+              </div>
+            </div>
+          ))}
         </div>
 
         {filteredData.length === 0 && (
@@ -186,6 +216,13 @@ export default function CraftsmanServices() {
             لا توجد نتائج مطابقة.
           </div>
         )}
+        <div>
+          <Pagination
+            current={pagination.current}
+            onChange={(page) => setPagination((p) => ({ ...p, current: page }))}
+            total={pagination.total}
+          />
+        </div>
       </main>
       <AnimatePresence initial={false}>
         {isEditModelOpen && (
@@ -205,9 +242,35 @@ export default function CraftsmanServices() {
             serviceData={serviceData}
             setServiceData={setServiceData}
             handleAddService={handleAddService}
+            serviceCategories={serviceCategories}
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
           />
         )}
       </AnimatePresence>
     </div>
   );
 }
+
+const Pagination = ({ current, total, onChange }) => {
+  const totalPages = Math.ceil(total / 10);
+  if (total <= 1) return null;
+  return (
+    <div className="w-fit m-auto rounded px-10 flex items-center gap-1 justify-center lg:mt-12 mt-6 border border-slate-100 bg-white py-2">
+      {Array.from({ length: totalPages }).map((_, i) => {
+        const pageNum = i + 1;
+        return (
+          <button
+            key={i}
+            onClick={() => onChange(pageNum)}
+            className={`${current === pageNum ? "bg-secondary text-white " : " "} text-secondary border border-slate-200 rounded px-2 text-lg`}
+          >
+            {pageNum}
+          </button>
+        );
+      })}
+    </div>
+  );
+};
