@@ -11,6 +11,6 @@ export const getDashboardStats = async () => {
 // };
 
 export const getRecentActivities = async () => {
-  const res = await http.get('/AdminDashboard/craftmen');
+  const res = await http.get('/Craftsmen');
   return res.data;
 };
