@@ -87,6 +87,7 @@ function App() {
           <Route path="/contacts" element={<Contact />} />
           <Route path="/services/:id" element={<CraftmanDetails />} />
           <Route path="/craftman-results" element={<CraftmanResults />} />
+          <Route path="/service-request" element={<Service />} />
 
         </Route>
 
