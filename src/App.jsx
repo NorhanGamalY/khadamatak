@@ -16,6 +16,7 @@ import About from "./pages/public/About";
 import Contact from "./pages/public/Contact";
 import Works from "./pages/public/Works";
 import Details from "./pages/public/Details";
+import ServicesPage from "./pages/public/ServicesPage";
 import CraftmanDetails from './pages/public/CraftmanDetails/CraftmanDetails'
 
 
@@ -37,6 +38,9 @@ import Users from "./pages/admin/Users";
 import Logout from "./pages/admin/Logout";
 import Commission from "./pages/admin/Commission";
 import Orders from "./pages/admin/Orders";
+import NewRequest from './pages/craftsman/NewRequest'
+import EndidRequest from './pages/craftsman/EndidRequest'
+import ComingRequest from './pages/craftsman/ComingRequest'
 import Craftsmen from "./pages/admin/Craftsmen";
 
 // Craftsman Pages
@@ -47,6 +51,7 @@ import CraftsmanServices from "./pages/craftsman/Services";
 import Appointments from "./pages/craftsman/Appointments";
 import Evaluate from "./pages/craftsman/Evaluate";
 import Messages from "./pages/craftsman/Messages";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 function GuestRoute({ children }) {
   if (isAuthenticated()) {
@@ -55,12 +60,16 @@ function GuestRoute({ children }) {
   return children;
 }
 
+const queryClient = new QueryClient();
+
+
 function App() {
   return (
+    <QueryClientProvider client={queryClient} >
     <BrowserRouter>
       <Routes>
-
         <Route path="/select-role" element={<SelectRole />} />
+
         <Route path="/login" element={<GuestRoute><ClientLogin /></GuestRoute>} />
         <Route path="/client-register" element={<GuestRoute><ClientRegestier /></GuestRoute>} />
         <Route path="/craftsman-login" element={<GuestRoute><CraftsmanLogin /></GuestRoute>} />
@@ -72,6 +81,7 @@ function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/home" element={<Home />} />
           <Route path="/about" element={<About />} />
+          <Route path="/services" element={<ServicesPage />} />
           <Route path="/works" element={<Works />} />
           <Route path="/details" element={<Details />} />
           <Route path="/contacts" element={<Contact />} />
@@ -87,7 +97,7 @@ function App() {
               <AdminLayout />
             </ProtectedRoute>
           }
-        >
+          >
           <Route index element={<AdminDashboard />} />
           <Route path="users" element={<Users />} />
           <Route path="craftsmen" element={<Craftsmen />} />
@@ -95,7 +105,6 @@ function App() {
           <Route path="reports" element={<Reports />} />
           <Route path="services" element={<Services />} />
           <Route path="conflicts" element={<Conflicts />} />
-
           <Route path="settings/*" element={<Settings />}>
             <Route index element={<GenreralSettings />} />
             <Route path="payment" element={<PaymentSettings />} />
@@ -103,12 +112,14 @@ function App() {
             <Route path="logout" element={<Logout />} />
           </Route>
         </Route>
-
         {/* ─── Craftsman Routes ───────────────────────────── */}
         <Route
           path="/craftsman"
           element={
-            <ProtectedRoute allowedRole="Craftsman" redirectTo="/craftsman-login">
+            <ProtectedRoute
+              allowedRole="Craftsman"
+              redirectTo="/craftsman-login"
+            >
               <CraftsmanLayout />
             </ProtectedRoute>
           }
@@ -120,12 +131,17 @@ function App() {
           <Route path="appointments" element={<Appointments />} />
           <Route path="evaluate" element={<Evaluate />} />
           <Route path="messages" element={<Messages />} />
-        </Route>
-
+            <Route path="requests" element={<Requests />}>
+              <Route index element={<NewRequest />} />{" "}
+              <Route path="new" element={<NewRequest />} />
+              <Route path="coming" element={<ComingRequest />} />
+              <Route path="ended" element={<EndidRequest />} />
+            </Route>
+          </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
-
       </Routes>
     </BrowserRouter>
+    </QueryClientProvider>
   );
 }
 

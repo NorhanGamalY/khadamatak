@@ -7,12 +7,6 @@ const TABS = [
   
 ];
 
-const MOCK_ROWS = [
-  { id: 1, name: "جنى الأشرف", phone: "0795621348", city: "عمان", status: "active" },
-  { id: 2, name: "طارق الأحمد", phone: "0778932140", city: "الزرقاء", status: "stopped" },
-  { id: 3, name: "سارة قاسم", phone: "0783321145", city: "العقبة", status: "active" },
-  { id: 4, name: "مؤيد سمير", phone: "0771239087", city: "اربد", status: "active" },
-];
 
 function StatusBadge({ status }) {
   const isActive = status === "active";
@@ -28,11 +22,19 @@ function StatusBadge({ status }) {
   );
 }
 
-export default function RecentActivitiesCard({ rows = MOCK_ROWS }) {
+export default function RecentActivitiesCard({ rows = [] }) {
+  const data = rows.map((r) => ({
+    id: r.id,
+    name: r.fullName,
+    phone: r.phone,
+    status: r.isVerified ? "active" : "stopped",
+    city: r.city ?? "-",
+  }));
+
   return (
     <TableCard
       title="اخر النشاطات"
-      rows={rows}
+      rows={data}
       tabs={TABS}
       initialTab="all"
       filterByTab={(row, tab) =>
@@ -40,10 +42,13 @@ export default function RecentActivitiesCard({ rows = MOCK_ROWS }) {
       }
       searchKeys={["name", "phone", "city"]}
       columns={[
-        { key: "status", header: "الحالة", align: "center", cell: (r) => <StatusBadge status={r.status} /> },
-        { key: "city", header: "المدينة", align: "center", cell: (r) => r.city },
-        { key: "phone", header: "الهاتف", align: "center", cell: (r) => r.phone },
         { key: "name", header: "الاسم", align: "", cell: (r) => r.name },
+        { key: "phone", header: "الهاتف", align: "center", cell: (r) => r.phone },
+        { key: "city", header: "المدينة", align: "center", cell: (r) => r.city },
+        { key: "status", header: "الحالة", align: "center", cell: (r) => <StatusBadge status={r.status} /> },
+        
+        
+        
       ]}
     />
   );

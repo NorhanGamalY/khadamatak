@@ -1,25 +1,21 @@
-import ActionsCell from '../../components/common/ActionCell';
+import { FaRegTimesCircle } from 'react-icons/fa';
 import TableCard from '../../components/common/TableCard'
+import { FiCheckCircle } from 'react-icons/fi';
+import { useRecentActivites } from '../../features/dashboard/hooks';
+import SplashLoader from '../../components/common/SplashLoader';
+import { useApproveCraftsman, useRejectCraftsman } from '../../features/craftmen/hooks';
 
 const TABS = [
   { key: "review", label: "قيد المراجعة" },
   { key: "active", label: "نشط" },
-  { key: "stopped", label: "موقوف" },
   { key: "all", label: "الكل" },
   
 ];
 
-const MOCK_ROWS = [
-  { id: 1, name: "جنى الأشرف", phone: "0795621348", city: "عمان", status: "active" },
-  { id: 2, name: "طارق الأحمد", phone: "0778932140", city: "الزرقاء", status: "stopped" },
-  { id: 3, name: "سارة قاسم", phone: "0783321145", city: "العقبة", status: "review" },
-  { id: 4, name: "مؤيد سمير", phone: "0771239087", city: "اربد", status: "active" },
-];
 
 function StatusBadge({ status }) {
   const map = {
     active: { text: "نشط", cls: "text-green-600" },
-    stopped: { text: "موقوف", cls: "text-red-600" },
     review: { text: "قيد المراجعة", cls: "text-orange-800" },
   };
 
@@ -32,22 +28,58 @@ function StatusBadge({ status }) {
   );
 }
 
-export default function Craftsmen({rows = MOCK_ROWS }) {
+export default function Craftsmen() {
+  const { data, isLoading, isError } = useRecentActivites();
+  const approveMutation = useApproveCraftsman();
+  const rejectMutation = useRejectCraftsman();
+
+  if (isLoading) return <SplashLoader />;
+  if (isError) return <p>حدث خطأ أثناء تحميل البيانات</p>;
+  
+  const tableData = (data || []).map((r) => ({
+  id: r.id,
+  name: r.fullName,
+  phone: r.phone,
+  status: r.isVerified ? "active" : "review", 
+  city: r.city ?? "-",
+}));
+
+  
+
   return (
     <div className='min-h-screen flex flex-col gap-4 p-6'>
       <h1 className='text-3xl font-bold'>ادارة الحرفيين</h1>
       <TableCard 
-      rows={rows}
+      rows={tableData}
       tabs={TABS}
       initialTab="all"
       filterByTab={(row, tab) => (tab === "all" ? true : row.status === tab)}
       searchKeys={["name", "phone", "city"]}
       columns={[
-        { key: "actions", header: "الاجراءات", align: "center", cell: (r) => (<ActionsCell row={r} />) },
-        { key: "status", header: "الحالة", align: "center", cell: (r) => <StatusBadge status={r.status} /> },
-        { key: "city", header: "المدينة", align: "center", cell: (r) => r.city },
-        { key: "phone", header: "الهاتف", align: "center", cell: (r) => r.phone },
-        { key: "name", header: "الاسم", align: "right", cell: (r) => r.name },
+        { key: "name", header: "الاسم", cell: (r) => r.name },
+        { key: "phone", header: "الهاتف", cell: (r) => r.phone },
+        { key: "city", header: "المدينة", cell: (r) => r.city },
+        { key: "status", header: "الحالة", cell: (r) => <StatusBadge status={r.status} /> },
+        { 
+  key: "actions",
+  header: "الاجراءات",
+  cell: (r) => (
+    <div className="flex items-center justify-center gap-3 text-xl">
+      <FiCheckCircle 
+  className="cursor-pointer hover:scale-110 transition"
+  onClick={() =>  {
+  console.log("clicked approve", r.id);
+  approveMutation.mutate(r.id);
+}}
+/>
+
+<FaRegTimesCircle 
+  className="cursor-pointer hover:scale-110 transition"
+  onClick={() => rejectMutation.mutate(r.id)}
+/>
+    </div>
+  )
+},       
       ]} />
     </div>
   )
