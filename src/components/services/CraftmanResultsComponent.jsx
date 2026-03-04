@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { Star } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-
+import { useNavigate } from "react-router-dom";
 const DEFAULT_AVATAR = "";
 
 export default function CraftsmanResultsSection() {
@@ -20,8 +20,10 @@ export default function CraftsmanResultsSection() {
   function getCraftsmanImage(fullName) {
     return imageByName[fullName] || DEFAULT_AVATAR;
   }
+const navigate = useNavigate();
 
   function onViewProfile(item) {
+      navigate(`/services/${item.id}`);
     console.log("View profile:", item);
   }
 
