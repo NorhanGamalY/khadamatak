@@ -31,7 +31,6 @@ export default function CraftsmanServices() {
     id: null,
     name: "",
   });
-
   const [selectedService, setSelectedService] = useState(null);
 
   const handleGetCraftsman = async () => {
@@ -44,6 +43,7 @@ export default function CraftsmanServices() {
           },
         },
       );
+
       const itemsList = res.data.items;
       setCraftsmanService(itemsList);
       setFilteredData(itemsList);
@@ -57,6 +57,7 @@ export default function CraftsmanServices() {
       console.log(error);
     }
   };
+
   const handleAddService = async (service) => {
     try {
       const payload = {
@@ -99,6 +100,7 @@ export default function CraftsmanServices() {
   };
 
   useEffect(() => {
+
     async function GetAllCategories() {
       try {
         await axios

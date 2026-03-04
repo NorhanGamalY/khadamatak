@@ -10,7 +10,12 @@ export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({});
   const [tempData, setTempData] = useState(profile);
-
+  const services = [
+    { name: "تركيب مطابخ" },
+    { name: "تصنيع الابواب" },
+    { name: "صيانه وتصليح الاخشاب" },
+    { name: "ديكورات خشبية" },
+  ];
   const handleSave = () => {
     const cleanServices = tempData.services.filter(
       (ser) => ser.name && ser.name.trim() !== "",
@@ -57,6 +62,7 @@ export default function Profile() {
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="p-0">
             <div className="bg-[#f7f7f7] p-8 flex flex-col md:flex-row items-center gap-6 text-center md:text-right">
+
               <Avatar
                 src={tempData.image ? tempData.image : ""}
                 name={profile.fullName}
@@ -80,6 +86,7 @@ export default function Profile() {
               الخدمات
             </div>
             <div className="p-8 space-y-4 text-indigo-900 text-lg">
+              
               {profile?.services?.length > 0 &&
                 profile?.services?.map((service, i) => {
                   if (service.name.length > 0) {
@@ -134,6 +141,7 @@ export default function Profile() {
 
               <input
                 className="w-full border rounded-xl p-2"
+
                 placeholder="اسم الحرفي"
                 value={tempData.fullName}
                 onChange={(e) =>
@@ -172,6 +180,7 @@ export default function Profile() {
                   }
                 }}
               />
+
 
               <div className="space-y-2 overflow-y-auto lg:h-38 h-40 overflow-message">
                 {tempData?.services?.map((service, index) => (

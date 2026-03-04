@@ -55,6 +55,7 @@ export default function Services() {
     if (!form.name) return;
     if (editingId) {
   const payload = {
+
     id: editingId, 
     name: form.name,
     type: form.type,

@@ -28,6 +28,7 @@ export function useEditService() {
   return useMutation({
     mutationFn: editService,
     onSuccess: () => {
+
       queryClient.invalidateQueries(['services']);
     },
     onError: (err) => {

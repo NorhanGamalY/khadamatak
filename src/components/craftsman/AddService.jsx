@@ -131,7 +131,7 @@ const AddService = ({
               <textarea
                 rows={4}
                 placeholder="اكتب وصفا مختصرا للخدمة"
-                className="w-full focus:outline-none"
+                className="w-full"
                 value={serviceData.description || ""}
                 onChange={(e) =>
                   setServiceData({
