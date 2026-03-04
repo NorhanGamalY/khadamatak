@@ -52,6 +52,7 @@ import Appointments from "./pages/craftsman/Appointments";
 import Evaluate from "./pages/craftsman/Evaluate";
 import Messages from "./pages/craftsman/Messages";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Service from "./pages/public/Service";
 
 function GuestRoute({ children }) {
   if (isAuthenticated()) {
