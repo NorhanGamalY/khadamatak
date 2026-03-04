@@ -1,39 +1,31 @@
 import React, { useState } from 'react'
 import { GoDotFill } from "react-icons/go";
 
-const days = [
-    { name: "السبت", available: false },
-    { name: "الأحد", available: true },
-    { name: "الأثنين", available: true },
-    { name: "الثلاثاء", available: false },
-    { name: "الأربعاء", available: true },
-    { name: "الخميس", available: true },
-    { name: "الجمعة", available: false },
-];
+const dayNames = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
 
 const priceInfo = {
     range: "300 - 900 جنية",
     note: "يتم تحديد السعر بعد المعاينة",
 };
 
-function AvalibaleTimes() {
-    // const [active, setActive] = useState(false);
-    // const handelClick = () => {
-    //     setActive(!active);
-    // }
+function AvalibaleTimes({availabilities}) {
+    const daysAvailability = dayNames.map((name, index) => {
+        const Works = availabilities?.find(a => a.day === index);
+        return {
+            name,
+            available: Works ? true : false,
+            from: Works?.from,
+            to: Works?.to
+        };
+    });
     return (
         <>
-
             <div className="bg-white p-4 rounded-xl border border-gray-50 shadow-sm">
                 <h3 className="font-bold mb-3">المواعيد المتاحة</h3>
                 <div className="flex flex-wrap justify-center gap-2">
-                    {days.map((day, idx) => (
-                        <span
-                            key={idx}
-                            className={`px-2 py-1 rounded text-sm font-semibold ${day.available ? "bg-[#38BD0E]" : "bg-[#BD0E0E]"
-                                }`}
-                        >
-                            {day.name}
+                    {daysAvailability.map((day, x) => (
+                        <span key={x} className={`... ${day.available ? "bg-[#38BD0E] px-2 rounded-lg " : "bg-[#BD0E0E] px-2 rounded-lg"}`}>
+                            {day.name} {day.available && `(${day.from} - ${day.to})`}
                         </span>
                     ))}
                 </div>

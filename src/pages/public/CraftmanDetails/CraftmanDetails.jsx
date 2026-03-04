@@ -1,5 +1,5 @@
 import { React, useEffect, useState } from 'react'
-import Ourservices from './Ourservices'
+import OurServices from './Ourservices'
 import AvalibaleTimes from './AvalibaleTimes'
 import Rating from './Rating'
 import Craftmanimg from '../../../assets/craftman-details/Craftsman.png';
@@ -56,20 +56,21 @@ function CraftmanDetails() {
         <span className='text-red-500'>...</span> Loading </p>
     return (
         <>
-            <div className="min-h-screen bg-gray-100 py-10 px-4 mt-20" dir="rtl">
+            <div className="min-h-screen bg-gray-100 py-10 px-4 mt-20">
                 <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
 
                     {/* Header Section */}
                     <div className="bg-secondary p-8 relative flex  items-center justify-between text-white ">
                         <div className="z-10 ">
                             <h1 className="text-2xl font-bold ">{craftman.fullName}</h1>
-                            <p className="text-gray-300">{craftman.yearsOfExperience}</p>
+                            <p className="text-gray-300"> الخبره: {craftman.yearsOfExperience} <br />{craftman.bio}</p>
                             <div className="flex items-center gap-1 mt-1 text-yellow-400">
-                                <span className="text-sm"> {craftman.rating}</span>
-                                <span><FaStar /></span>
+                                <span className='flex gap-2 items-center'> تقييم :{[...Array(craftman.rating)].map((_, index) => (
+                                    <FaStar key={index} />
+                                ))}</span>
                             </div>
                         </div>
-                        <div className="absolute top-0 left-0 w-40 h-40 overflow-hidden">
+                        <div className="absolute top-0 left-0 w-40 h-50 overflow-hidden">
                             <img src={Craftmanimg} alt="craftsman" className="w-full h-full object-cover" />
                         </div>
                     </div>
@@ -77,24 +78,25 @@ function CraftmanDetails() {
                     <div className="p-6 space-y-6">
                         <section className="bg-white p-4 rounded-xl border border-gray-50 shadow-sm">
                             <h2 className="text-lg font-bold mb-2">نبذة عن الحرفي</h2>
-                            <p className="text-gray-600 text-sm leading-relaxed ">
-                                سباك بخبرة أكثر من 8 سنوات في أعمال الصيانة والتمديدات المنزلية، ملتزم بالمواعيد وجودة العمل.
+                            <p className="text-gray-800 text-sm ">
+                                {craftman.bio}
                             </p>
                         </section>
 
                         {/* الخدمات المقدمة */}
                         <section className="bg-white p-4 rounded-xl border border-gray-50 shadow-sm">
-                            <Ourservices />
+                            <OurServices />
                         </section>
                         {/* السعر التقريبي */} {/* المواعيد المتاحة */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <AvalibaleTimes />
+                            <AvalibaleTimes
+                                availabilities={craftman.availabilities} />
                         </div>
 
                         <section className='shadow-sm rounded-xl p-4'>
                             <h2 className="text-lg font-bold mb-2">التقييمات</h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <Rating />
+                                <Rating reviews={craftman.reviews}/>
                             </div>
                         </section>
 
@@ -106,7 +108,7 @@ function CraftmanDetails() {
                         </button>
                     </div>
                 </div>
-            </div>
+            </div >
         </>
     )
 }
