@@ -36,7 +36,6 @@ const EditService = ({
           className="grid gap-4"
           onSubmit={(e) => {
             e.preventDefault();
-            handleEditService(editServiceData);
           }}
         >
           <h1 className="lg:text-3xl text-2xl text-secondary font-semibold">
@@ -50,7 +49,7 @@ const EditService = ({
               <input
                 type="text"
                 placeholder="صيانة عامة"
-                value={editServiceData.name}
+                value={editServiceData.name || ""}
                 onChange={(e) =>
                   setEditServiceData({
                     ...editServiceData,
@@ -69,7 +68,7 @@ const EditService = ({
               <input
                 type="text"
                 placeholder="500ج.م"
-                value={editServiceData.price}
+                value={editServiceData.price || ""}
                 onChange={(e) =>
                   setEditServiceData({
                     ...editServiceData,
@@ -89,7 +88,7 @@ const EditService = ({
                 rows={4}
                 placeholder="اكتب وصفا مختصرا للخدمة"
                 className="w-full"
-                value={editServiceData.description}
+                value={editServiceData.description || ""}
                 onChange={(e) =>
                   setEditServiceData({
                     ...editServiceData,
@@ -102,7 +101,7 @@ const EditService = ({
 
           <div className="flex gap-3 m-auto">
             <button
-              type="submit"
+              onClick={() => handleEditService(editServiceData)}
               className="bg-secondary text-white px-4 py-2 rounded cursor-pointer"
             >
               save changes
