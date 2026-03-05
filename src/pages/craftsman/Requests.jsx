@@ -1,7 +1,4 @@
 
-
-
-
 import { NavLink, Outlet } from "react-router-dom";
 
 export default function Requests() {
@@ -10,7 +7,7 @@ export default function Requests() {
   return (
     <div className="bg-gray-100 w-full min-h-screen p-5">
       <div className="bg-white p-6 rounded-md">
-        {/* tabs */}
+    
         <div className="flex justify-between">
           <div className="flex gap-4">
             <NavLink
@@ -59,7 +56,6 @@ export default function Requests() {
         </div>
       </div>
 
-      {/* المحتوى بيتعرض هنا */}
       <div className="mt-6">
         <Outlet />
       </div>
