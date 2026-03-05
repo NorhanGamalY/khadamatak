@@ -10,13 +10,21 @@ export default function Dashboard() {
   return (
     <>
       <Orders />
-      <div className="bg-gray-300 p-5">
-        <div className="flex justify-between my-5 mx-5 ">
-          <h2 className="text-2xl">أخر الطلبات الجديدة</h2>
-          <p className="text-orange-500 text-xl">عرض الكل</p>
-        </div>
+      <div className="p-4 md:p-10 bg-gray-300">
+        <div
+          className="flex flex-col md:flex-row 
+                justify-between items-start md:items-center 
+                gap-2 md:gap-0 mb-8"
+        >
+          <h4 className="text-lg font-bold">اخر الطلبات الجديدة</h4>
 
+          <h4 className="text-orange-500 cursor-pointer hover:underline">
+            عرض الكل
+          </h4>
+        </div>
       <CraftCard/>
+      </div>
+
     
         <div className="bg-white p-4 ">
           <h3 className="text-2xl my-4">تزكير سريع</h3>
@@ -27,7 +35,6 @@ export default function Dashboard() {
             <p className="text-amber-700 text-sm">بقي 50 دقيقة على الموعد</p>
           </div>
         </div>
-      </div>
     </>
   );
 }
