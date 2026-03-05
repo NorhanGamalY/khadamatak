@@ -6,6 +6,7 @@ import OrderSummary from "../../components/createService/OrderSummary";
 import DateSelector from "../../components/createService/DataSelector";
 import TimeSelector from "../../components/createService/TimeSelector";
 import { MdKeyboardDoubleArrowLeft } from "react-icons/md";
+import { useLocation} from "react-router-dom";
 const service = {
     category: "سباكة",
     name: "يوسف النجار",
@@ -20,6 +21,9 @@ export default function Service() {
   const [selectedDay, setSelectedDay] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
 
+const { state } = useLocation();
+const {craftsman }= state || {};
+console.log("here"  , craftsman);
   const days = [
     { name: "الأحد", date: 8 },
     { name: "الاثنين", date: 9 },
@@ -34,7 +38,7 @@ export default function Service() {
       انشاء طلب الخدمة
     </h2>
 
-      <ServiceCard service={service} />
+      <ServiceCard craftsman={craftsman} />
 
        <div>
         <h3 className="text-lg mb-3 font-medium ">

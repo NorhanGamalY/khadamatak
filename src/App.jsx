@@ -87,7 +87,13 @@ function App() {
           <Route path="/contacts" element={<Contact />} />
           <Route path="/services/:id" element={<CraftmanDetails />} />
           <Route path="/craftman-results" element={<CraftmanResults />} />
-
+       <Route
+          path="/service-request"
+          element={
+            <ProtectedRoute allowedRole="Client" redirectTo="/login">
+              <Service />
+            </ProtectedRoute>
+          }></Route>
         </Route>
 
         {/* ─── Admin Routes ─────────────────────────────────────── */}
@@ -138,6 +144,7 @@ function App() {
               <Route path="ended" element={<EndidRequest />} />
             </Route>
           </Route>
+
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
