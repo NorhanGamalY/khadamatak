@@ -4,6 +4,7 @@ import ActionsCell from "../../components/common/ActionCell";
 import TableCard from "../../components/common/TableCard";
 import { useServices, useAddService, useEditService, useDeleteService } from "../../features/services/hooks";
 import SplashLoader from "../../components/common/SplashLoader";
+import Toast from "../../components/common/Toast";
 
 const TABS = [
   { key: "active", label: "مفعلة" },
@@ -30,7 +31,7 @@ function StatusBadge({ status }) {
 export default function Services() {
   const { data: services, isLoading, error } = useServices();
   const addMutation = useAddService();
-  
+  const [showToast, setShowToast] = useState(false);
 
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({
@@ -89,6 +90,7 @@ export default function Services() {
   addMutation.mutate(payload, {
     onSuccess: () => {
       setShowForm(false);
+      setShowToast(true);
       setForm({
         name: '',
         type: 'Home',
@@ -105,7 +107,6 @@ export default function Services() {
   };
 
   const handleEdit = (row) => {
-    // populate form and open modal
     setForm({
       name: row.name || '',
       type: row.type || '',
@@ -238,7 +239,7 @@ isActive:
                 >
                   إلغاء
                 </button>
-               <button
+              <button
   type="submit"
   disabled={addMutation.isLoading || editMutation.isLoading}
   className="bg-green-600 px-4 py-2 text-white rounded"
@@ -312,9 +313,17 @@ isActive:
           selectable={false}
 
           />
+
+<Toast
+  isOpen={showToast}
+  type="success"
+  title="تم بنجاح"
+  message="تم اضافة الخدمة بنجاح"
+  actionLabel="تمام"
+  onClose={() => setShowToast(false)}
+/>
     </div>
 
-   
   );
 }
 
