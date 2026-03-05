@@ -3,12 +3,11 @@ import { GoDotFill } from "react-icons/go";
 
 const dayNames = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
 
-const priceInfo = {
-    range: "300 - 900 جنية",
-    note: "يتم تحديد السعر بعد المعاينة",
-};
-
-function AvalibaleTimes({availabilities}) {
+function AvalibaleTimes({ availabilities, prices }) {
+            const priceInfo = prices ? {
+            range: `${Math.min(...prices)} - ${Math.max(...prices)} جنية`,
+            note: "يتم تحديد السعر بعد المعاينة",
+        } : null;
     const daysAvailability = dayNames.map((name, index) => {
         const Works = availabilities?.find(a => a.day === index);
         return {
@@ -25,7 +24,7 @@ function AvalibaleTimes({availabilities}) {
                 <div className="flex flex-wrap justify-center gap-2">
                     {daysAvailability.map((day, x) => (
                         <span key={x} className={`... ${day.available ? "bg-[#38BD0E] px-2 rounded-lg " : "bg-[#BD0E0E] px-2 rounded-lg"}`}>
-                            {day.name} {day.available && `(${day.from} - ${day.to})`}
+                            {day.name}
                         </span>
                     ))}
                 </div>
