@@ -6,15 +6,17 @@ import OrderSummary from "../../components/createService/OrderSummary";
 import DateSelector from "../../components/createService/DataSelector";
 import TimeSelector from "../../components/createService/TimeSelector";
 import { MdKeyboardDoubleArrowLeft } from "react-icons/md";
-import { useLocation} from "react-router-dom";
+import { useLocation, useNavigate} from "react-router-dom";
 import ServiceDropdown from "../../components/createService/serviceDropdown";
 import { useCreateOrder } from "../../features/order/hooks";
-
+import toast, { Toaster } from "react-hot-toast";
   
 export default function Service() {
   const [description, setDescription] = useState("");
   const [selectedTime, setSelectedTime] = useState(null);
   const [selectedService, setSelectedService] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
+
 
 const { state } = useLocation();
 const {craftsman }= state || {};
@@ -70,7 +72,8 @@ function buildScheduleDate() {
   if (!selectedDay || !selectedTime) return null;
 
   const today = new Date();
-  const dayOffset = selectedDay.date - today.getDay(); 
+  let dayOffset = selectedDay.date - today.getDay(); 
+  if (dayOffset < 0) dayOffset += 7;
   const scheduledDate = new Date(today);
   scheduledDate.setDate(today.getDate() + dayOffset);
 
@@ -84,8 +87,8 @@ function buildScheduleDate() {
   return scheduledDate.toISOString();
 }
 
-const { mutate: createOrder} = useCreateOrder();
-
+const { mutate: createOrder , isPending} = useCreateOrder();
+const navigat = useNavigate();
 
 function handleCreateOrder() {
   const scheduledAt = buildScheduleDate();
@@ -100,11 +103,28 @@ function handleCreateOrder() {
 
   createOrder(payload, {
     onSuccess: (data) => {
-      console.log("order created", data);
+toast.success("تم إنشاء الطلب بنجاح!", {
+  icon: "✅",
+  style: {
+    borderRadius: "12px",
+    background: "#f0fdf4",
+    color: "#166534",
+    border: "1px solid #bbf7d0",
+    fontWeight: "600",
+  },
+});     
+  setTimeout(() => {
+    navigat("/home", { state: { order: data } });
+  }, 1500);
     },
-    onError: (err) => {
-      console.log("error", err);
-    },
+  onError: (err) => {
+  const errors = err?.response?.data?.errorsList;
+  if (errors && errors.length > 0) {
+    setErrorMessage(errors[0].message);
+  } else {
+    setErrorMessage(err?.response?.data?.message || "حدث خطأ، حاول مرة أخرى");
+  }
+}
   });
 }
 
@@ -112,6 +132,7 @@ function handleCreateOrder() {
 
   return (
     <div className="min-h-screen m-25 flex flex-col gap-8 max-w-5xl mx-auto ">
+        <Toaster position="top-center" />
       <h2 className="text-2xl text-center font-bold ">
       انشاء طلب الخدمة
     </h2>
@@ -166,10 +187,16 @@ function handleCreateOrder() {
 />
       </div>
 
-      <div className="flex justify-center">
+<div className="flex flex-col items-center gap-2">
+        {errorMessage && (
+  <p className="text-red-500 text-center text-sm font-medium">
+    {errorMessage}
+  </p>
+)}
         <button
   onClick={handleCreateOrder}
-  className="flex items-center justify-center gap-2 w-full max-w-md bg-blue-900 text-white py-2 rounded-xl text-lg font-semibold"
+  disabled={isPending || !selectedService || !selectedDay || !selectedTime || !description.trim()}
+  className="flex items-center justify-center gap-2 w-full max-w-md bg-blue-900 text-white py-2 rounded-xl text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
 >
   متابعة الدفع <MdKeyboardDoubleArrowLeft size={24} />
 </button>
