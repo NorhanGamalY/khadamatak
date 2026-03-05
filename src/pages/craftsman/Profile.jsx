@@ -78,6 +78,7 @@ export default function Profile() {
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="p-0">
             <div className="bg-[#f7f7f7] p-8 flex flex-col md:flex-row items-center gap-6 text-center md:text-right">
+
               <Avatar
                 src={profile.image ? profile.image : ""}
                 name={profile.fullName}
@@ -101,6 +102,7 @@ export default function Profile() {
               الخدمات
             </div>
             <div className="p-8 space-y-4 text-indigo-900 text-lg">
+              
               {profile?.services?.length > 0 &&
                 profile?.services?.map((service, i) => {
                   if (service.name.length > 0) {
@@ -155,6 +157,7 @@ export default function Profile() {
 
               <input
                 className="w-full border rounded-xl p-2"
+
                 placeholder="اسم الحرفي"
                 value={tempData.fullName || ""}
                 onChange={(e) =>
@@ -194,6 +197,38 @@ export default function Profile() {
                 }}
               />
 
+
+              <div className="space-y-2 overflow-y-auto lg:h-38 h-40 overflow-message">
+                {tempData?.services?.map((service, index) => (
+                  <input
+                    key={index}
+                    placeholder="اضافة خدمة جديدة"
+                    className="w-full border rounded-xl p-2"
+                    value={service.name}
+                    onChange={(e) => {
+                      const updated = [...tempData.services];
+                      updated[index] = {
+                        ...updated[index],
+                        name: e.target.value,
+                      };
+                      setTempData({ ...tempData, services: updated });
+                    }}
+                  />
+                ))}
+              </div>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setTempData({
+                    ...tempData,
+                    services: [...tempData.services, ""],
+                  })
+                }
+                className="text-sm text-indigo-900 underline"
+              >
+                + اضافة خدمة
+              </button>
               <div className="flex gap-3">
                 <button
                   onClick={handleEdit}

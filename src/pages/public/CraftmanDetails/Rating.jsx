@@ -4,25 +4,28 @@ import rating2 from '../../../assets/craftman-details/rating2.png';
 import { FaStar } from "react-icons/fa";
 
 
-const RatingData = [
-    { id: 1, img: rating1, rate: 5, description: `"خدمة سريعة وتعامل محترم، أنصح بها"` },
-    { id: 2, img: rating2, rate: 4, description: `"سرعة في العمل وضمان على الخدمة"` }
+const RatingIMG = [
+    { id: 2, img: rating1 },
+    { id: 1, img: rating2 }
 ]
 
-function Rating() {
+function Rating({ reviews }) {
+     if (!reviews || reviews.length === 0) return <p className='text-sm text-red-600'>لا توجد تقييمات </p>;
+
     return (
         <>
-            {RatingData.map((items) => (
-                <div key={items.id} className='shadow-sm rounded-xl p-4 flex items-center'>
+            {reviews.map((Rating ) => (
+                <div key={Rating.id} className='shadow-sm rounded-xl p-4 flex items-center'>
                     <div>
-                        <img className='size-[70%]' src={items.img} alt='ratingavatar' />
+                        <img className='size-[70%]' src={RatingIMG.find(r => r.id === Rating.id)?.img ||rating2 } alt='ratingavatar' />
                     </div>
                     <div>
-                        <span className='text-yellow-400 block text-xl flex'>
-                            {[...Array(items.rate)].map((_, index) => (
-                                <FaStar key={index} />
+                        <span className='text-yellow-400 block text-xl flex gap-1 my-1'>
+                            {[...Array(Rating.rating)].map((_, i) => (
+                                <FaStar key={i} />
                             ))}</span>
-                        <span className='font-bold text-sm'>{items.description}</span>
+                        <span className='font-bold text-sm block '>{Rating.comment}</span>
+                        <span className='text-xs text-gray-400'>{Rating.createdAt}</span>
                     </div>
                 </div>
             ))}

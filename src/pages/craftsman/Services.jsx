@@ -52,6 +52,7 @@ export default function CraftsmanServices() {
           },
         },
       );
+
       const itemsList = res.data.items;
       setCraftsmanService(itemsList);
 
@@ -66,6 +67,7 @@ export default function CraftsmanServices() {
       console.log(error);
     }
   };
+
   const handleAddService = async (service) => {
     try {
       const payload = {
@@ -125,6 +127,15 @@ export default function CraftsmanServices() {
   };
 
   useEffect(() => {
+    async function GetAllCategories() {
+      try {
+        await axios
+          .get("https://herafie.runasp.net/api/ServiceCategory")
+          .then((res) => setServiceCategories(res.data));
+      } catch (error) {
+        console.log(error);
+      }
+    }
     GetAllCategories();
   }, []);
 

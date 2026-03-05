@@ -55,6 +55,7 @@ export default function Services() {
     if (!form.name) return;
     if (editingId) {
   const payload = {
+
     id: editingId, 
     name: form.name,
     type: form.type,
@@ -300,12 +301,13 @@ isActive:
     </button>
   }
           columns={[
-            { key: "actions", header: "الاجراءات", align: "center", mobileHidden: true, cell: (r) => (<ActionsCell showCheck={false} row={r} onEdit={handleEdit} onDelete={handleDelete} />) },
-            { key: "lastUpdate", header: "اخر تحديث", align: "center", cell: (r) => r.lastUpdate },
-            { key: "craftsmen", header: "عدد الحرفي", align: "center", cell: (r) => r.craftsmen },
-            { key: "status", header: "الحالة", align: "center", mobileHideHeader: true, cell: (r) => <StatusBadge status={r.status} /> },
-            { key: "name", header: "الخدمة", align: "right", cell: (r) => r.name },
             { key: "id", header: "", align: "right", cell: (r) => r.id },
+            { key: "name", header: "الخدمة", align: "right", cell: (r) => r.name },
+            { key: "status", header: "الحالة", align: "center", mobileHideHeader: true, cell: (r) => <StatusBadge status={r.status} /> },
+            { key: "craftsmen", header: "عدد الحرفي", align: "center", cell: (r) => r.craftsmen },
+            { key: "lastUpdate", header: "اخر تحديث", align: "center", cell: (r) => r.lastUpdate },
+            { key: "actions", header: "الاجراءات", align: "center", mobileHidden: true, cell: (r) => (<ActionsCell showCheck={false} row={r} onEdit={handleEdit} onDelete={handleDelete} />) },
+            
           ]}
           selectable={false}
 
