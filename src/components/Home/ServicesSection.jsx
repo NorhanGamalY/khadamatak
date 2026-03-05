@@ -10,6 +10,8 @@ const ENDPOINTS = {
   categories: `${API_BASE_URL}/api/ServiceCategory`,
 };
 
+
+
 function categoryImageByName(name) {
   const n = (name || "").trim();
   const map = {
@@ -221,6 +223,7 @@ export default function ServicesSection() {
               <ServiceCard
                 key={card.id}
                 card={card}
+                obj={craftsmen.find((c) => c.id === card.craftsmanId)}
                 onOpen={() => navigate(`/services/${card.id}`)}
                 onBook={() => {
                   console.log("Book:", {
@@ -260,7 +263,8 @@ function TabButton({ children, icon = false, onClick }) {
   );
 }
 
-function ServiceCard({ card, onBook, onOpen }) {
+function ServiceCard({ card, onBook, onOpen, obj }) {
+  const navigate = useNavigate();
   return (
     <div
       role="button"
@@ -306,6 +310,7 @@ function ServiceCard({ card, onBook, onOpen }) {
             type="button"
             onClick={(e) => {
               e.stopPropagation();
+              navigate(`/service-request/`, { state: { craftsman: obj } });
               onBook();
             }}
             className="mt-5 h-12 px-8 rounded-xl bg-[#d75b19] text-white text-md sm:text-lg font-extrabold hover:bg-[#1E1855] transition"
