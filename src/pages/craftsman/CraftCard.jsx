@@ -19,21 +19,22 @@ function CraftCard() {
     fetchOrders();
   }, []);
   return (
+
     <div>
       {orderStatus.map((order) => (
         <div
           key={order.orderId}
           className="bg-white rounded-lg shadow p-4 
-               flex flex-col md:flex-row 
-               gap-4 md:items-center md:justify-between mb-4 items-center"
+                  flex flex-col md:flex-row 
+                  gap-4 md:items-center md:justify-between mb-4"
         >
-          <div className="flex  justify-between gap-4 items-center">
+          <div className="flex flex-col justify-center items-center w-30 h-18 mx-auto md:mx-0">
             <Avatar />
-  
-              <h3 className="font-bold">{order.clientName}</h3>
 
-            
-        
+            <h3 className="font-bold">{order.clientName}</h3>
+
+
+
           </div>
 
           <div className="flex flex-col justify-center items-center">
