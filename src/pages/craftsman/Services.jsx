@@ -32,7 +32,15 @@ export default function CraftsmanServices() {
     name: "",
   });
 
-  const [selectedService, setSelectedService] = useState(null);
+  async function GetAllCategories() {
+    try {
+      await axios
+        .get("https://herafie.runasp.net/api/ServiceCategory")
+        .then((res) => setServiceCategories(res.data));
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   const handleGetCraftsman = async () => {
     try {
@@ -46,6 +54,7 @@ export default function CraftsmanServices() {
       );
       const itemsList = res.data.items;
       setCraftsmanService(itemsList);
+
       setFilteredData(itemsList);
       setPagination((prev) => ({
         ...prev,
@@ -63,51 +72,59 @@ export default function CraftsmanServices() {
         craftsmanId: id,
         description: service.description,
         name: service.name,
-        price: Number(service.price),
+        price: service.price,
         ServiceCategoryId: selectedCategory.id,
-        serviceCategoryName: selectedCategory.name,
       };
-      const res = await axios.post(
-        "https://herafie.runasp.net/api/Services",
-        payload,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
-      if (res.status === 200) {
-        await handleGetCraftsman();
-        setServiceData({});
-        setSelectedCategory({ id: null, name: "" });
-        toast.success("تمت الاضافة بنجاح");
-      }
+      await axios.post("https://herafie.runasp.net/api/Services", payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      handleGetCraftsman();
+      setServiceData({});
+      setSelectedCategory({ id: null, name: "" });
+      toast.success("تمت الاضافة بنجاح");
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleEditService = (updatedService) => {
-    setFilteredData((prev) =>
-      prev.map((s) =>
-        s.id === selectedService.id ? { ...s, ...updatedService } : s,
+  const handleEditService = async (updatedService) => {
+    const payload = {
+      craftsmanId: id,
+      description: updatedService.description || editServiceData.description,
+      name: updatedService.name || editServiceData.name,
+      price: Number(updatedService.price || editServiceData.price),
+      serviceCategoryId: Number(
+        selectedCategory.id || updatedService.serviceCategoryId,
       ),
-    );
-    setIsEditModelOpen(false);
+    };
+    try {
+      await axios.put(
+        `https://herafie.runasp.net/api/Services/${updatedService.id}`,
+        payload,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+      setSelectedCategory({ id: null, name: "" });
+      setIsEditModelOpen(false);
+      handleGetCraftsman();
+    } catch (error) {
+      console.log(errorMessage);
+    }
   };
 
-  const handleDelete = (idx) => {
-    setFilteredData((prev) => prev.filter((s) => s.id !== idx));
+  const handleDelete = async (idx) => {
+    try {
+      await axios.delete(`https://herafie.runasp.net/api/Services/${idx}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      handleGetCraftsman();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
-    async function GetAllCategories() {
-      try {
-        await axios
-          .get("https://herafie.runasp.net/api/ServiceCategory")
-          .then((res) => setServiceCategories(res.data));
-      } catch (error) {
-        console.log(error);
-      }
-    }
     GetAllCategories();
   }, []);
 
@@ -176,13 +193,9 @@ export default function CraftsmanServices() {
                     aria-label="edit"
                     name="تعديل"
                     onClick={() => {
-                      setSelectedService(s);
                       setEditServiceData({
-                        id: s.id,
-                        name: s.name,
-                        description: s.description,
-                        price: s.price,
-                        serviceCategoryName: s.serviceCategoryName,
+                        ...s,
+                        serviceCategoryId: s.serviceCategoryId,
                       });
                       setIsEditModelOpen(!isEditModelOpen);
                     }}
