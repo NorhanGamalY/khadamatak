@@ -3,12 +3,24 @@ import { Pie } from "react-chartjs-2";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export default function ServicesPieChart() {
+export default function ServicesPieChart({craftsmen}) {
+const serviceCounts = {};
+
+  craftsmen.forEach((c) => {
+    c.services.forEach((service) => {
+      const name = service.serviceCategoreyName;
+      serviceCounts[name] = (serviceCounts[name] || 0) + 1;
+    });
+  });
+
+  const labels = Object.keys(serviceCounts);
+  const dataValues = Object.values(serviceCounts);
+
   const data = {
-    labels: ["خدمة 1", "خدمة 2", "خدمة 3", "خدمة 4", "خدمة 5"],
+    labels: labels,
     datasets: [
       {
-        data: [28, 24, 19, 19, 28],
+        data: dataValues,
         borderWidth: 2,
         backgroundColor: ['#4f46e5', '#ef4444', '#f59e0b', '#06b6d4', '#10b981'],
         borderColor: '#ffffff',
