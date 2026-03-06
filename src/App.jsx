@@ -53,7 +53,9 @@ import Evaluate from "./pages/craftsman/Evaluate";
 import Messages from "./pages/craftsman/Messages";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Service from "./pages/public/Service";
-
+import DetailsCraftMan from "./pages/craftsman/DetailsCraftMan";
+import AcceptCraftman from "./api/Acceptcraftman";
+import Cancelcraftman from "./api/Cancelcraftman";
 function GuestRoute({ children }) {
   if (isAuthenticated()) {
     return <Navigate to={getHomeByRole()} replace />;
@@ -65,90 +67,118 @@ const queryClient = new QueryClient();
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient} >
-    <BrowserRouter>
-      <Routes>
-        <Route path="/select-role" element={<SelectRole />} />
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/select-role" element={<SelectRole />} />
 
-        <Route path="/login" element={<GuestRoute><ClientLogin /></GuestRoute>} />
-        <Route path="/client-register" element={<GuestRoute><ClientRegestier /></GuestRoute>} />
-        <Route path="/craftsman-login" element={<GuestRoute><CraftsmanLogin /></GuestRoute>} />
-        <Route path="/craftsman-register" element={<CraftsmanRegister />} />
-        <Route path="/craftsman-register-2" element={<CraftsmanRegister2 />} />
+          <Route
+            path="/login"
+            element={
+              <GuestRoute>
+                <ClientLogin />
+              </GuestRoute>
+            }
+          />
+          <Route
+            path="/client-register"
+            element={
+              <GuestRoute>
+                <ClientRegestier />
+              </GuestRoute>
+            }
+          />
+          <Route
+            path="/craftsman-login"
+            element={
+              <GuestRoute>
+                <CraftsmanLogin />
+              </GuestRoute>
+            }
+          />
+          <Route path="/craftsman-register" element={<CraftsmanRegister />} />
+          <Route
+            path="/craftsman-register-2"
+            element={<CraftsmanRegister2 />}
+          />
 
-        {/* ─── Main Layout — Public ────────────────────────────────── */}
-        <Route element={<MainLayout />}>
-          <Route path="/" element={<Landing />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/services" element={<ServicesPage />} />
-          <Route path="/works" element={<Works />} />
-          <Route path="/details" element={<Details />} />
-          <Route path="/contacts" element={<Contact />} />
-          <Route path="/services/:id" element={<CraftmanDetails />} />
-          <Route path="/craftman-results" element={<CraftmanResults />} />
-       <Route
-          path="/service-request"
-          element={
-            <ProtectedRoute allowedRole="Client" redirectTo="/login">
-              <Service />
-            </ProtectedRoute>
-          }></Route>
-        </Route>
-
-        {/* ─── Admin Routes ─────────────────────────────────────── */}
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute allowedRole="Admin" redirectTo="/login">
-              <AdminLayout />
-            </ProtectedRoute>
-          }
-          >
-          <Route index element={<AdminDashboard />} />
-          <Route path="users" element={<Users />} />
-          <Route path="craftsmen" element={<Craftsmen />} />
-          <Route path="request01s" element={<Orders />} />
-          <Route path="reports" element={<Reports />} />
-          <Route path="services" element={<Services />} />
-          <Route path="conflicts" element={<Conflicts />} />
-          <Route path="settings/*" element={<Settings />}>
-            <Route index element={<GenreralSettings />} />
-            <Route path="payment" element={<PaymentSettings />} />
-            <Route path="commission" element={<Commission />} />
-            <Route path="logout" element={<Logout />} />
+          {/* ─── Main Layout — Public ────────────────────────────────── */}
+          <Route element={<MainLayout />}>
+            <Route path="/" element={<Landing />} />
+            <Route path="/home" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/services" element={<ServicesPage />} />
+            <Route path="/works" element={<Works />} />
+            <Route path="/details" element={<Details />} />
+            <Route path="/contacts" element={<Contact />} />
+            <Route path="/services/:id" element={<CraftmanDetails />} />
+            <Route path="/craftman-results" element={<CraftmanResults />} />
+            <Route
+              path="/service-request"
+              element={
+                <ProtectedRoute allowedRole="Client" redirectTo="/login">
+                  <Service />
+                </ProtectedRoute>
+              }
+            ></Route>
           </Route>
-        </Route>
-        {/* ─── Craftsman Routes ───────────────────────────── */}
-        <Route
-          path="/craftsman"
-          element={
-            <ProtectedRoute
-              allowedRole="Craftsman"
-              redirectTo="/craftsman-login"
-            >
-              <CraftsmanLayout />
-            </ProtectedRoute>
-          }
-        >
-          <Route index element={<Dashboard />} />
-          <Route path="profile" element={<Profile />} />
-          <Route path="services" element={<CraftsmanServices />} />
-          <Route path="appointments" element={<Appointments />} />
-          <Route path="evaluate" element={<Evaluate />} />
-          <Route path="messages" element={<Messages />} />
+
+          {/* ─── Admin Routes ─────────────────────────────────────── */}
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute allowedRole="Admin" redirectTo="/login">
+                <AdminLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<AdminDashboard />} />
+            <Route path="users" element={<Users />} />
+            <Route path="craftsmen" element={<Craftsmen />} />
+            <Route path="request01s" element={<Orders />} />
+            <Route path="reports" element={<Reports />} />
+            <Route path="services" element={<Services />} />
+            <Route path="conflicts" element={<Conflicts />} />
+            <Route path="settings/*" element={<Settings />}>
+              <Route index element={<GenreralSettings />} />
+              <Route path="payment" element={<PaymentSettings />} />
+              <Route path="commission" element={<Commission />} />
+              <Route path="logout" element={<Logout />} />
+            </Route>
+          </Route>
+          {/* ─── Craftsman Routes ───────────────────────────── */}
+          <Route
+            path="/craftsman"
+            element={
+              <ProtectedRoute
+                allowedRole="Craftsman"
+                redirectTo="/craftsman-login"
+              >
+                <CraftsmanLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<Dashboard />} />
+            <Route path="profile" element={<Profile />} />
+            <Route path="services" element={<CraftsmanServices />} />
+            <Route path="appointments" element={<Appointments />} />
+            <Route path="evaluate" element={<Evaluate />} />
+            <Route path="messages" element={<Messages />} />
             <Route path="requests" element={<Requests />}>
               <Route index element={<NewRequest />} />{" "}
               <Route path="new" element={<NewRequest />} />
               <Route path="coming" element={<ComingRequest />} />
               <Route path="ended" element={<EndidRequest />} />
+              <Route path="details/:id" element={<DetailsCraftMan />} />
+              <Route path="accepted/:id" element={<AcceptCraftman/>}/>
+              <Route path="cancelled/:id" element={<Cancelcraftman/>}/>
+              
             </Route>
           </Route>
 
-
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </BrowserRouter>
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
     </QueryClientProvider>
   );
 }
