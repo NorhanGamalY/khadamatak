@@ -1,4 +1,5 @@
 import { Flame, Star, Zap } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const mostRequested = [
   {
@@ -78,6 +79,7 @@ export default function MostRequestedSection() {
 
 function MostRequestedCard({ item }) {
   const Icon = item.icon;
+  const navigate = useNavigate();
 
   return (
     <div className=" bg-white shadow-[0_10px_25px_rgba(0,0,0,0.18)] px-6 py-6 text-center">
@@ -106,6 +108,9 @@ function MostRequestedCard({ item }) {
 
       <button
         type="button"
+        onClick={() =>
+          navigate("/craftman-results", { state: { serviceName: item.title } })
+        }
         className="mt-5 h-11 w-full sm:w-55 rounded-xl bg-[#D75B19] text-white text-2xl shadow-[0_8px_16px_rgba(215,91,25,0.25)] hover:bg-[#1E1855] transition"
       >
         أطلب الآن

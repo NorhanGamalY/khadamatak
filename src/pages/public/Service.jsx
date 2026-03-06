@@ -62,7 +62,6 @@ console.log("here"  , craftsman);
         <h3 className="text-lg mb-3 font-medium ">
     اختيار الموعد
     </h3>
-        {/* container with gray background, rounded corners */}
         <div className="bg-gray-200 rounded-xl p-4 flex flex-col items-center gap-2">
           <DateSelector
             days={days}
