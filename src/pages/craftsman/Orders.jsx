@@ -20,6 +20,7 @@ function Orders() {
     fetchOrders()
   },[])
 
+  console.log(newOrders,currentOrders,completedOrders);
   const dashboardData = [
     { title: "الطلبات الجديدة",
       count: newOrders.length,
