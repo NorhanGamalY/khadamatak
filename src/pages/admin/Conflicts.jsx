@@ -6,14 +6,15 @@ import { FaEdit } from "react-icons/fa";
 
 export default function Conflicts() {
 
-    const defaultData = [
-        { id: "#060", user: "سارة كريم", craftsman: "جنى الأشرف", reason: "متعلقة بالخدمة", status: "تم الحل", color: "bg-gray-400" },
-        { id: "#045", user: "أحمد سامي", craftsman: "طارق الأحمد", reason: "متعلقة بالحرفي", status: "مغلق", color: "bg-orange-700" },
-        { id: "#234", user: "منال ابراهيم", craftsman: "سارة قاسم", reason: "متعلقة بالدفع", status: "قيد المراجعة", color: "bg-amber-900/90" },
-        { id: "#160", user: "ليلى حسون", craftsman: "مهند سمير", reason: "مشاكل فنية", status: "تم الحل", color: "bg-green-600" },
-    ];
+    // const defaultData = [
+    //     { id: "#060", user: "سارة كريم", craftsman: "جنى الأشرف", reason: "متعلقة بالخدمة", status: "تم الحل", color: "bg-gray-400" },
+    //     { id: "#045", user: "أحمد سامي", craftsman: "طارق الأحمد", reason: "متعلقة بالحرفي", status: "مغلق", color: "bg-orange-700" },
+    //     { id: "#234", user: "منال ابراهيم", craftsman: "سارة قاسم", reason: "متعلقة بالدفع", status: "قيد المراجعة", color: "bg-amber-900/90" },
+    //     { id: "#160", user: "ليلى حسون", craftsman: "مهند سمير", reason: "مشاكل فنية", status: "تم الحل", color: "bg-green-600" },
+    // ];q
 
-    const [data, setData] = useState(defaultData);
+    const [data, setData] = useState([]);
+
     useEffect(() => {
         const token = localStorage.getItem("token");
         axios
@@ -95,39 +96,50 @@ export default function Conflicts() {
                                     <th className="p-4 border-b border-gray-300">المستخدم</th>
                                 </tr>
                             </thead>
+
                             <tbody>
-                                {filteredData.map((item, index) => {
-                                    const statusConfig = {
-                                        "تم الحل": { class: "bg-gray-200 text-gray-700 font-bold", icon: null },
-                                        "مغلق": { class: "bg-orange-700/50 text-orange-700 font-bold", icon: null },
-                                        "قيد المراجعة": { class: "bg-amber-900/40 text-amber-900/60 font-bold", icon: <FaEdit className="text-gray-900 text-sm" /> }
 
-                                    };
+                                {filteredData.length === 0 ? (
+                                    <tr>
+                                        <td colSpan="4" className="text-center p-6 text-gray-500">
+                                            لا توجد شكاوى
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    filteredData.map((item) => {
 
-                                    const currentStatus = statusConfig[item.status] || { class: "bg-gray-100", icon: null };
+                                        const statusConfig = {
+                                            "تم الحل": { class: "bg-gray-200 text-gray-700 font-bold", icon: null },
+                                            "مغلق": { class: "bg-orange-700/50 text-orange-700 font-bold", icon: null },
+                                            "قيد المراجعة": { class: "bg-amber-900/40 text-amber-900/60 font-bold", icon: <FaEdit className="text-gray-900 text-sm" /> }
 
-                                    return (
-                                        <tr key={index} className="border-b border-gray-300 last:border-0 hover:bg-gray-50 transition-colors">
-                                            <td className="p-4">
-                                                <div className="flex items-center gap-2">
-                                                    <span className={`px-3 py-1 rounded text-white text-xs ${item.color}`}>
-                                                        {item.reason}
-                                                    </span>
+                                        };
 
-                                                    <span className={`text-xs rounded px-2 py-1 flex items-center gap-1 ${currentStatus.class}`}>
-                                                        {item.status}
-                                                        {currentStatus.icon && <span >{currentStatus.icon}</span>}
+                                        const currentStatus = statusConfig[item.status] || { class: "bg-gray-100", icon: null };
 
-                                                    </span>
-                                                </div>
-                                            </td>
-                                            <td className="p-4 text-sm font-bold">{item.craftsman}</td>
-                                            <td className="p-4 text-sm font-bold">{item.id}</td>
-                                            <td className="p-4 text-sm font-bold">{item.user}</td>
-                                        </tr>
-                                    );
-                                })}
+                                        return (
+                                            <tr key={index} className="border-b border-gray-300 last:border-0 hover:bg-gray-50 transition-colors">
+                                                <td className="p-4">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className={`px-3 py-1 rounded text-white text-xs ${item.color}`}>
+                                                            {item.reason}
+                                                        </span>
 
+                                                        <span className={`text-xs rounded px-2 py-1 flex items-center gap-1 ${currentStatus.class}`}>
+                                                            {item.status}
+                                                            {currentStatus.icon && <span >{currentStatus.icon}</span>}
+
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td className="p-4 text-sm font-bold">{item.craftsman}</td>
+                                                <td className="p-4 text-sm font-bold">{item.id}</td>
+                                                <td className="p-4 text-sm font-bold">{item.user}</td>
+                                            </tr>
+                                        );
+                                    })
+
+                                )}
                             </tbody>
                         </table>
                     </div>

@@ -62,15 +62,17 @@ function CraftmanDetails() {
                     {/* Header Section */}
                     <div className="bg-secondary p-8 relative flex  items-center justify-between text-white ">
                         <div className="z-10 ">
-                            <h1 className="text-2xl font-bold ">{craftman.fullName}</h1>
+                            <h1 className="lg:text-2xl text-xl font-bold ">{craftman.fullName}</h1>
                             <p className="text-gray-300"> الخبره: {craftman.yearsOfExperience} <br />{craftman.bio}</p>
-                            <div className="flex items-center gap-1 mt-1 text-yellow-400">
-                                <span className='flex gap-2 items-center'> تقييم :{[...Array(craftman.rating)].map((_, index) => (
-                                    <FaStar key={index} />
-                                ))}</span>
+                            <div className=" mt-1 text-yellow-400">
+                                <span className='flex lg:gap-2 gap-1 items-center'> تقييم :
+                                    {[...Array(Math.min(5, Math.round(craftman.rating || 0)))].map((_, index) => (
+                                        <FaStar key={index} />
+                                    ))}
+                                </span>
                             </div>
                         </div>
-                        <div className="absolute top-0 left-0 w-40 h-50 overflow-hidden">
+                        <div className="absolute top-0 left-0 lg:w-40 lg:h-50 h-55 w-40 overflow-hidden">
                             <img src={Craftmanimg} alt="craftsman" className="w-full h-full object-cover" />
                         </div>
                     </div>
@@ -85,18 +87,20 @@ function CraftmanDetails() {
 
                         {/* الخدمات المقدمة */}
                         <section className="bg-white p-4 rounded-xl border border-gray-50 shadow-sm">
-                            <OurServices />
+                            <OurServices services={craftman.services}/>
                         </section>
                         {/* السعر التقريبي */} {/* المواعيد المتاحة */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <AvalibaleTimes
-                                availabilities={craftman.availabilities} />
+                                availabilities={craftman.availabilities}
+                                services={craftman.services}
+                            />
                         </div>
 
                         <section className='shadow-sm rounded-xl p-4'>
                             <h2 className="text-lg font-bold mb-2">التقييمات</h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <Rating reviews={craftman.reviews}/>
+                                <Rating reviews={craftman.reviews} />
                             </div>
                         </section>
 

@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { Star } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -257,7 +258,13 @@ function TabButton({ children, icon = false, onClick }) {
   );
 }
 
-function ServiceCard({ card, onBook }) {
+function ServiceCard({ card }) {
+  const navigate = useNavigate();
+
+  const handleBook = () => {
+    navigate(`/services/${card.craftsmanId}`);
+  };
+
   return (
     <div className="rounded-3xl bg-[#E8E9E8] p-6 sm:p-7">
       <div className="flex items-start justify-between gap-6">
@@ -305,7 +312,7 @@ function ServiceCard({ card, onBook }) {
 
           <button
             type="button"
-            onClick={onBook}
+            onClick={handleBook}
             className="mt-5 h-12 px-8 rounded-xl bg-[#d75b19] text-white text-md sm:text-lg font-extrabold hover:bg-[#1E1855] transition"
           >
             احجز الآن
