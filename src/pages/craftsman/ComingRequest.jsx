@@ -5,7 +5,7 @@ import { NavLink } from "react-router-dom";
 
 function ComingRequest() {
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true); // تعريف loading
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchRequest() {
@@ -27,7 +27,7 @@ function ComingRequest() {
 
   return (
     <>
-      {data.map((order) => (
+      {data.filter((order) => order.status === 3).map((order) => (
         <div
           key={order.id}
           className="bg-white rounded-xl shadow-sm p-4 md:p-6
@@ -51,14 +51,21 @@ function ComingRequest() {
             <p className="text-green-600 font-medium">{order.amount} جم</p>
           </div>
 
-          <div className="flex flex-col justify-center text-center">
-            <h3 className="text-sm font-medium">10/2/2026</h3>
-            <p className="text-gray-500 text-sm">02:00 م</p>
+          <div className="flex flex-col justify-center items-center text-center md:text-left">
+            <h3 className="font-semibold text-sm">
+              {new Date(order.scheduledAt).toLocaleDateString("ar-EG")}
+            </h3>
+            <p className="text-sm">
+              {new Date(order.scheduledAt).toLocaleTimeString("ar-EG", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </p>
           </div>
 
           <div className="flex flex-col gap-3 w-full md:w-auto">
             <NavLink
-              to={`details/${order.id}`}
+              to={`/craftsman/requests/details/${order.id}`}
               className="bg-white border border-gray-300
                          hover:bg-gray-100 transition
                          text-gray-700 font-medium text-sm
