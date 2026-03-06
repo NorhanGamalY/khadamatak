@@ -27,13 +27,13 @@ export default function EndedRequest() {
 
   return (
     <>
-      {data.map((order) => (
+      {data.filter((order) => order.status === 4).map((order) => (
         <div
           key={order.id}
           className="bg-white rounded-xl shadow-sm p-4 md:p-6
-                     flex flex-col md:flex-row gap-4 md:gap-2
-                     md:items-center md:justify-between
-                     mb-4 hover:shadow-md transition"
+                    flex flex-col md:flex-row gap-4 md:gap-2
+                    md:items-center md:justify-between
+                    mb-4 hover:shadow-md transition"
         >
           <Avatar />
 
@@ -67,7 +67,9 @@ export default function EndedRequest() {
           </div>
 
           <div className="flex flex-col justify-center items-center gap-2">
-            <NavLink   to={`details/${order.id}`} className="bg-white border border-gray-300 hover:bg-gray-100 transition text-blue-400 font-medium text-sm px-4 py-2 rounded-md w-full md:w-auto">
+            <NavLink                 
+            to={`/craftsman/requests/details/${order.id}`}
+            className="bg-white border border-gray-300 hover:bg-gray-100 transition text-blue-400 font-medium text-sm px-4 py-2 rounded-md w-full md:w-auto">
               عرض التفاصيل
             </NavLink>
 
