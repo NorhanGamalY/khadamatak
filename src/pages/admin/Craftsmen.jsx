@@ -39,9 +39,9 @@ export default function Craftsmen() {
   const tableData = (data || []).map((r) => ({
   id: r.id,
   name: r.fullName,
-  phone: r.phone,
+  phone: r.phoneNumber,
   status: r.isVerified ? "active" : "review", 
-  city: r.city ?? "-",
+  city: r.cityName ?? "-",
 }));
 
   
