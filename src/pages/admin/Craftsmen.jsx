@@ -33,7 +33,7 @@ export default function Craftsmen() {
   const approveMutation = useApproveCraftsman();
   const rejectMutation = useRejectCraftsman();
 
-  if (isLoading) return <SplashLoader />;
+  if (isLoading) return <div className='flex min-h-screen  justify-center items-center gap-4'><SplashLoader /></div>;
   if (isError) return <p>حدث خطأ أثناء تحميل البيانات</p>;
   
   const tableData = (data || []).map((r) => ({
