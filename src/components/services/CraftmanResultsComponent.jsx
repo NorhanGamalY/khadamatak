@@ -2,13 +2,53 @@ import React, { useMemo, useState } from "react";
 import { Star } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-const DEFAULT_AVATAR = "";
+
+const DEFAULT_AVATAR = "/unknown.jpg";
+const EMPTY_ARR = [];
+
+function isClientLoggedIn() {
+  const keys = [
+    "clientToken",
+    "client_token",
+    "client_access_token",
+    "accessToken",
+    "access_token",
+    "token",
+    "authToken",
+    "auth_token",
+    "jwt",
+  ];
+
+  for (const k of keys) {
+    const v = localStorage.getItem(k) || sessionStorage.getItem(k);
+    if (v && String(v).trim().length > 10) return true;
+  }
+
+  const userRaw =
+    localStorage.getItem("user") || sessionStorage.getItem("user");
+  if (userRaw) {
+    try {
+      const u = JSON.parse(userRaw);
+      const t = u?.token || u?.accessToken || u?.authToken;
+      if (t && String(t).trim().length > 10) return true;
+    } catch {
+      return false;
+    }
+  }
+
+  return false;
+}
 
 export default function CraftsmanResultsSection() {
+  const navigate = useNavigate();
+
   const [governorate, setGovernorate] = useState("");
   const [sortBy, setSortBy] = useState("topRated");
 
-  const imageByName = useMemo(
+  const [draftGovernorate, setDraftGovernorate] = useState("");
+  const [draftSortBy, setDraftSortBy] = useState("topRated");
+
+  const imageById = useMemo(
     () => ({
       1: "/workers/najjar.png",
       2: "/workers/paint.png",
@@ -17,14 +57,23 @@ export default function CraftsmanResultsSection() {
     [],
   );
 
-  function getCraftsmanImage(fullName) {
-    return imageByName[fullName] || DEFAULT_AVATAR;
+  function getCraftsmanImage(id) {
+    return imageById[id] || DEFAULT_AVATAR;
   }
-const navigate = useNavigate();
 
   function onViewProfile(item) {
-      navigate(`/services/${item.id}`);
-    console.log("View profile:", item);
+    navigate(`/services/${item.id}`);
+  }
+
+  function onRequestService(item) {
+    const next = "/service-request";
+
+    if (!isClientLoggedIn()) {
+      navigate(`/login?next=${encodeURIComponent(next)}`);
+      return;
+    }
+
+    navigate(next, { state: { craftsman: item } });
   }
 
   const { data, isLoading } = useQuery({
@@ -34,26 +83,37 @@ const navigate = useNavigate();
       if (!res.ok) throw new Error("Failed to fetch craftsmen");
       return res.json();
     },
+    staleTime: 60_000,
   });
 
-  const list = Array.isArray(data) ? data : data?.data || [];
+  const list = useMemo(() => {
+    if (Array.isArray(data)) return data;
+    if (Array.isArray(data?.data)) return data.data;
+    return EMPTY_ARR;
+  }, [data]);
 
   const governorates = useMemo(() => {
-    const set = new Set(list.map((x) => x?.governorate).filter(Boolean));
-    return Array.from(set);
+    const set = new Set(
+      list.map((x) => (x?.cityName || "").trim()).filter(Boolean),
+    );
+
+    return Array.from(set).sort((a, b) => a.localeCompare(b, "ar"));
   }, [list]);
 
   const results = useMemo(() => {
     let next = [...list];
 
     if (governorate) {
-      next = next.filter((x) => String(x?.governorate || "") === governorate);
+      next = next.filter((x) => (x?.cityName || "").trim() === governorate);
     }
 
     if (sortBy === "topRated") {
       next.sort((a, b) => Number(b?.rating || 0) - Number(a?.rating || 0));
-    } else if (sortBy === "newest") {
-      next.sort((a, b) => Number(b?.id || 0) - Number(a?.id || 0));
+    } else if (sortBy === "mostExperienced") {
+      next.sort(
+        (a, b) =>
+          Number(b?.yearsOfExperience || 0) - Number(a?.yearsOfExperience || 0),
+      );
     }
 
     return next;
@@ -68,18 +128,22 @@ const navigate = useNavigate();
           نتائج الحرفيين
         </h2>
 
-        <div className="mt-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-center">
-          <button
-            type="button"
-            className="w-full md:w-[260px] h-[52px] bg-[#D75B19] text-white text-[18px] font-extrabold shadow-[0_8px_20px_rgba(0,0,0,0.12)] transition hover:bg-[#1E1855] active:scale-[0.98]"
-          >
-            اعرض النتائج
-          </button>
-
-          <div className="w-full md:w-[260px]">
+        <div className="mt-10 flex flex-col md:flex-row items-stretch md:items-center justify-center gap-4">
+          <div className="w-full md:w-[300px]">
             <select
-              value={governorate}
-              onChange={(e) => setGovernorate(e.target.value)}
+              value={draftSortBy}
+              onChange={(e) => setDraftSortBy(e.target.value)}
+              className="w-full h-[52px] border border-[#E5E5E5] bg-white px-4 text-[#1E1855] font-extrabold shadow-[0_8px_20px_rgba(0,0,0,0.10)] focus:outline-none"
+            >
+              <option value="topRated">الاعلى تقييم</option>
+              <option value="mostExperienced">الأكثر خبرة</option>
+            </select>
+          </div>
+
+          <div className="w-full md:w-[300px]">
+            <select
+              value={draftGovernorate}
+              onChange={(e) => setDraftGovernorate(e.target.value)}
               className="w-full h-[52px] border border-[#E5E5E5] bg-white px-4 text-[#1E1855] font-extrabold shadow-[0_8px_20px_rgba(0,0,0,0.10)] focus:outline-none"
             >
               <option value="">اختر المحافظه</option>
@@ -91,15 +155,16 @@ const navigate = useNavigate();
             </select>
           </div>
 
-          <div className="w-full md:w-[260px]">
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="w-full h-[52px] border border-[#E5E5E5] bg-white px-4 text-[#1E1855] font-extrabold shadow-[0_8px_20px_rgba(0,0,0,0.10)] focus:outline-none"
-            >
-              <option value="topRated">الاعلى تقييم</option>
-            </select>
-          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setGovernorate(draftGovernorate);
+              setSortBy(draftSortBy);
+            }}
+            className="w-full md:w-[300px] h-[52px] bg-[#D75B19] text-white text-[18px] font-extrabold shadow-[0_8px_20px_rgba(0,0,0,0.12)] transition hover:bg-[#1E1855] active:scale-[0.98]"
+          >
+            اعرض النتائج
+          </button>
         </div>
 
         <div className="mt-8 space-y-6">
@@ -108,16 +173,15 @@ const navigate = useNavigate();
               لا توجد نتائج مطابقة للفلاتر الحالية
             </div>
           ) : (
-            results
-              .slice(0, 3)
-              .map((item) => (
-                <CraftsmanCard
-                  key={item.id}
-                  item={item}
-                  onViewProfile={onViewProfile}
-                  getCraftsmanImage={getCraftsmanImage}
-                />
-              ))
+            results.map((item) => (
+              <CraftsmanCard
+                key={item.id}
+                item={item}
+                onViewProfile={onViewProfile}
+                onRequestService={onRequestService}
+                getCraftsmanImage={getCraftsmanImage}
+              />
+            ))
           )}
         </div>
       </div>
@@ -172,7 +236,16 @@ function Stars({ rating }) {
   );
 }
 
-function CraftsmanCard({ item, onViewProfile, getCraftsmanImage }) {
+function CraftsmanCard({
+  item,
+  onViewProfile,
+  onRequestService,
+  getCraftsmanImage,
+}) {
+  const servicesCount = Array.isArray(item?.services)
+    ? item.services.length
+    : 0;
+
   return (
     <div className="bg-white border border-[#EAEAEA] shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
       <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4 md:gap-6 p-4 sm:p-6">
@@ -186,16 +259,30 @@ function CraftsmanCard({ item, onViewProfile, getCraftsmanImage }) {
           </div>
 
           <p className="mt-3 text-[16px] sm:text-[18px] font-extrabold text-[#1E1855]">
-            {item.bio}
+            {item.bio || "بدون وصف"}
           </p>
 
-          <div className="mt-5 flex md:block">
+          <div className="mt-3 text-[14px] sm:text-[16px] font-extrabold text-[#1E1855] opacity-90">
+            {item.cityName ? `${item.cityName}` : ""}
+            {item.areaName ? ` - ${item.areaName}` : ""}
+            {servicesCount ? ` • خدمات: ${servicesCount}` : ""}
+          </div>
+
+          <div className="mt-5 flex flex-col sm:flex-row gap-3">
             <button
               type="button"
               onClick={() => onViewProfile(item)}
-              className="w-full md:w-auto inline-flex items-center justify-center rounded-md bg-[#D75B19] px-10 py-3 text-[16px] font-extrabold text-white transition hover:bg-[#1E1855] active:scale-[0.98]"
+              className="w-full sm:w-auto inline-flex items-center justify-center rounded-md bg-[#D75B19] px-10 py-3 text-[16px] font-extrabold text-white transition hover:bg-[#1E1855] active:scale-[0.98]"
             >
               عرض الملف
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onRequestService(item)}
+              className="w-full sm:w-auto inline-flex items-center justify-center rounded-md bg-[#1E1855] px-10 py-3 text-[16px] font-extrabold text-white transition hover:bg-[#D75B19] active:scale-[0.98]"
+            >
+              اطلب خدمة
             </button>
           </div>
         </div>
