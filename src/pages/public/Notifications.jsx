@@ -23,7 +23,7 @@ export default function Notifications() {
               <p className="text-sm text-gray-500 mt-1">{n.message}</p>
               <p className="text-xs text-gray-400 mt-1">{formatTime(n.createdAt)}</p>
             </div>
-           {n.isRead && (
+           {!n.isRead && (
     <FaCheckCircle className="text-green-500 text-2xl" />
   )}
 
