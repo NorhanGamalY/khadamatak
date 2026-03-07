@@ -68,40 +68,15 @@ const queryClient = new QueryClient();
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient} >
       <BrowserRouter>
         <Routes>
           <Route path="/select-role" element={<SelectRole />} />
-
-          <Route
-            path="/login"
-            element={
-              <GuestRoute>
-                <ClientLogin />
-              </GuestRoute>
-            }
-          />
-          <Route
-            path="/client-register"
-            element={
-              <GuestRoute>
-                <ClientRegestier />
-              </GuestRoute>
-            }
-          />
-          <Route
-            path="/craftsman-login"
-            element={
-              <GuestRoute>
-                <CraftsmanLogin />
-              </GuestRoute>
-            }
-          />
+          <Route path="/login" element={<GuestRoute><ClientLogin /></GuestRoute>} />
+          <Route path="/client-register" element={<GuestRoute><ClientRegestier /></GuestRoute>} />
+          <Route path="/craftsman-login" element={<GuestRoute><CraftsmanLogin /></GuestRoute>} />
           <Route path="/craftsman-register" element={<CraftsmanRegister />} />
-          <Route
-            path="/craftsman-register-2"
-            element={<CraftsmanRegister2 />}
-          />
+          <Route path="/craftsman-register-2" element={<CraftsmanRegister2 />} />
 
           {/* ─── Main Layout — Public ────────────────────────────────── */}
           <Route element={<MainLayout />}>
@@ -113,6 +88,7 @@ function App() {
             <Route path="/details" element={<Details />} />
             <Route path="/contacts" element={<Contact />} />
             <Route path="/services/:id" element={<CraftmanDetails />} />
+          </Route>
             <Route path="/craftman-results" element={<CraftmanResults />} />
             <Route path="/service-request" element={
                 <ProtectedRoute allowedRole="Client" redirectTo="/login">
