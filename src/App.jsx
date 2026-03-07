@@ -17,8 +17,8 @@ import Contact from "./pages/public/Contact";
 import Works from "./pages/public/Works";
 import Details from "./pages/public/Details";
 import ServicesPage from "./pages/public/ServicesPage";
-import CraftmanDetails from './pages/public/CraftmanDetails/CraftmanDetails'
-
+import CraftmanDetails from "./pages/public/CraftmanDetails/CraftmanDetails";
+import CraftmanResults from "./pages/public/CraftmanResults";
 
 import ClientRegestier from "./pages/public/ClientRegestier";
 import ClientLogin from "./pages/public/ClientLogin";
@@ -52,7 +52,11 @@ import Appointments from "./pages/craftsman/Appointments";
 import Evaluate from "./pages/craftsman/Evaluate";
 import Messages from "./pages/craftsman/Messages";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
+import Service from "./pages/public/Service";
+import DetailsCraftMan from "./pages/craftsman/DetailsCraftMan";
+import AcceptCraftman from "./api/Acceptcraftman";
+import Cancelcraftman from "./api/Cancelcraftman";
+import Chat from "./pages/client/Chat";
 function GuestRoute({ children }) {
   if (isAuthenticated()) {
     return <Navigate to={getHomeByRole()} replace />;
@@ -62,14 +66,12 @@ function GuestRoute({ children }) {
 
 const queryClient = new QueryClient();
 
-
 function App() {
   return (
     <QueryClientProvider client={queryClient} >
       <BrowserRouter>
         <Routes>
           <Route path="/select-role" element={<SelectRole />} />
-
           <Route path="/login" element={<GuestRoute><ClientLogin /></GuestRoute>} />
           <Route path="/client-register" element={<GuestRoute><ClientRegestier /></GuestRoute>} />
           <Route path="/craftsman-login" element={<GuestRoute><CraftsmanLogin /></GuestRoute>} />
@@ -86,9 +88,19 @@ function App() {
             <Route path="/details" element={<Details />} />
             <Route path="/contacts" element={<Contact />} />
             <Route path="/services/:id" element={<CraftmanDetails />} />
-            
-
           </Route>
+            <Route path="/craftman-results" element={<CraftmanResults />} />
+            <Route path="/service-request" element={
+                <ProtectedRoute allowedRole="Client" redirectTo="/login">
+                  <Service />
+                </ProtectedRoute>
+              }></Route>
+            <Route path="/chat/:id" element={
+                <ProtectedRoute allowedRole="Client" redirectTo="/login">
+                  <Chat />
+                </ProtectedRoute>
+              }/>
+            </Route>
 
           {/* ─── Admin Routes ─────────────────────────────────────── */}
           <Route
@@ -126,7 +138,6 @@ function App() {
             }
           >
             <Route index element={<Dashboard />} />
-            <Route path="requests" element={<Requests />} />
             <Route path="profile" element={<Profile />} />
             <Route path="services" element={<CraftsmanServices />} />
             <Route path="appointments" element={<Appointments />} />
@@ -137,8 +148,13 @@ function App() {
               <Route path="new" element={<NewRequest />} />
               <Route path="coming" element={<ComingRequest />} />
               <Route path="ended" element={<EndidRequest />} />
+              <Route path="details/:id" element={<DetailsCraftMan />} />
+              <Route path="accepted/:id" element={<AcceptCraftman />} />
+              <Route path="cancelled/:id" element={<Cancelcraftman />} />
+
             </Route>
           </Route>
+
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>

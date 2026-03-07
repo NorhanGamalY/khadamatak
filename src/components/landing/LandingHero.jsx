@@ -1,4 +1,8 @@
+import { useNavigate } from "react-router-dom";
+
 export default function LandingHero() {
+  const navigate = useNavigate();
+
   return (
     <section className="w-full bg-[#F5F5F5] pt-20">
       <div className="mx-auto w-full max-w-[1400px] px-4">
@@ -22,6 +26,7 @@ export default function LandingHero() {
 
               <button
                 type="button"
+                onClick={() => navigate("/craftman-results")}
                 className="cursor-pointer mt-5 h-11 rounded-xl bg-[#D75B19] px-8 text-white text-2xl font-extrabold shadow-[0_10px_20px_rgba(215,91,25,0.28)] hover:bg-[#1E1855] transition"
               >
                 اطلب حرفي الآن

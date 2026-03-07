@@ -25,10 +25,11 @@ function StatusBadge({ status }) {
 export default function RecentActivitiesCard({ rows = [] }) {
   const data = rows.map((r) => ({
     id: r.id,
+
     name: r.fullName,
-    phone: r.phone,
+    phone: r.phoneNumber,
     status: r.isVerified ? "active" : "stopped",
-    city: r.city ?? "-",
+    city: r.cityName ?? "-",
   }));
 
   return (

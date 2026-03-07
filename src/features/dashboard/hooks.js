@@ -19,3 +19,11 @@ export function useRecentActivites(){
         staleTime: 1000 * 60,
     })
 }
+
+export function useCraftsmen(){
+  return useQuery({
+    queryKey: ['dashboard', 'craftsmen'],
+    queryFn: getRecentActivities,
+  })
+}
+

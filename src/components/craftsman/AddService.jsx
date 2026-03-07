@@ -43,6 +43,7 @@ const AddService = ({
           onSubmit={(e) => {
             e.preventDefault();
             handleAddService(serviceData);
+            setIsAddServiceModelOpen(false);
           }}
         >
           <h1 className="lg:text-3xl text-2xl text-secondary font-semibold">
@@ -61,6 +62,7 @@ const AddService = ({
                   setServiceData({ ...serviceData, name: e.target.value })
                 }
                 className="w-full focus:outline-none"
+                required
               />
             </div>
           </div>
@@ -77,6 +79,7 @@ const AddService = ({
                   setServiceData({ ...serviceData, price: e.target.value })
                 }
                 className="w-full focus:outline-none"
+                required
               />
             </div>
           </div>
@@ -131,7 +134,7 @@ const AddService = ({
               <textarea
                 rows={4}
                 placeholder="اكتب وصفا مختصرا للخدمة"
-                className="w-full focus:outline-none"
+                className="w-full"
                 value={serviceData.description || ""}
                 onChange={(e) =>
                   setServiceData({
@@ -139,6 +142,7 @@ const AddService = ({
                     description: e.target.value,
                   })
                 }
+                required
               />
             </div>
           </div>
@@ -146,7 +150,6 @@ const AddService = ({
           <div>
             <button
               type="submit"
-              onClick={() => setIsAddServiceModelOpen(false)}
               className="bg-secondary w-full text-white px-4 py-2 rounded cursor-pointer"
             >
               حفظ الخدمة
