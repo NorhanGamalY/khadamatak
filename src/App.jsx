@@ -57,6 +57,7 @@ import DetailsCraftMan from "./pages/craftsman/DetailsCraftMan";
 import AcceptCraftman from "./api/Acceptcraftman";
 import Cancelcraftman from "./api/Cancelcraftman";
 import Chat from "./pages/client/Chat";
+import Notifications from "./pages/public/Notifications";
 function GuestRoute({ children }) {
   if (isAuthenticated()) {
     return <Navigate to={getHomeByRole()} replace />;
@@ -124,6 +125,8 @@ function App() {
                   <Chat />
                 </ProtectedRoute>
               }/>
+
+              <Route path="/notifications" element={<Notifications />} />
             </Route>
 
           {/* ─── Admin Routes ─────────────────────────────────────── */}
