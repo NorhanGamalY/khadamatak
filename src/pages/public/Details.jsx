@@ -19,7 +19,10 @@ function Details() {
     <div className="min-h-screen my-10 flex flex-col mx-5">
       <h1 className="text-center my-12 text-2xl font-bold">أعمالنا السابقة</h1>
 
-      {details.slice(0, 3).map((work) => (
+  {  details
+  .filter((work) => work.rating >= 4)
+  .slice(0, 4)
+  .map((work) => (
         <div
           key={work.id}
           className="flex flex-col md:flex-row justify-between items-start gap-6 p-5 my-5 bg-white shadow-lg rounded-xl"
@@ -35,7 +38,7 @@ function Details() {
               className="h-64 w-full object-cover rounded-lg shadow-md"
             />
             <div className="flex flex-col gap-3">
-              {work.services.map((service, idx) => (
+              {work.services?.map((service, idx) => (
                 <div
                   key={idx}
                   className="flex justify-between items-center bg-gray-50 px-3 py-2 rounded shadow-sm"
@@ -53,7 +56,10 @@ function Details() {
                     <FaStar
                       key={num}
                       className={
-                        num <= work.rating ? "text-orange-500" : "text-gray-300"
+                        num <=
+                        (work?.rating)
+                          ? "text-orange-500"
+                          : "text-gray-300"
                       }
                     />
                   ))}
