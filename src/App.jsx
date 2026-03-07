@@ -114,22 +114,16 @@ function App() {
             <Route path="/contacts" element={<Contact />} />
             <Route path="/services/:id" element={<CraftmanDetails />} />
             <Route path="/craftman-results" element={<CraftmanResults />} />
-            <Route
-              path="/service-request"
-              element={
+            <Route path="/service-request" element={
                 <ProtectedRoute allowedRole="Client" redirectTo="/login">
                   <Service />
                 </ProtectedRoute>
-              }
-            ></Route>
-            <Route 
-              path="/chat" 
-              element={
+              }></Route>
+            <Route path="/chat/:id" element={
                 <ProtectedRoute allowedRole="Client" redirectTo="/login">
                   <Chat />
                 </ProtectedRoute>
-              }
-            />
+              }/>
             </Route>
 
           {/* ─── Admin Routes ─────────────────────────────────────── */}
