@@ -6,7 +6,6 @@ const dayNames = ["الأحد", "الإثنين", "الثلاثاء", "الأر�
 function AvalibaleTimes({ availabilities, prices }) {
             const priceInfo = prices ? {
             range: `${Math.min(...prices)} - ${Math.max(...prices)} جنية`,
-            note: "يتم تحديد السعر بعد المعاينة",
         } : null;
     const daysAvailability = dayNames.map((name, index) => {
         const Works = availabilities?.find(a => a.day === index);
@@ -31,11 +30,11 @@ function AvalibaleTimes({ availabilities, prices }) {
             </div>
             <div className="bg-white p-4 rounded-xl border border-gray-50 shadow-sm">
                 <h3 className="font-bold mb-2">السعر التقريبي:</h3>
-                <p className="text-[#D75B19] font-bold text-xl ps-5">{priceInfo.range}</p>
+                <p className="text-[#D75B19] font-bold text-xl ps-5">{priceInfo?.range}</p>
                 <p className="text-sm mt-2 flex items-center">
 
                     <span><GoDotFill className="text-2xl text-gray-400"
-                    /></span>{priceInfo.note}</p>
+                    /></span>يتم تحديد السعر بعد المعاينة</p>
             </div>
         </>
     );

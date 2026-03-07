@@ -4,10 +4,12 @@ import AvalibaleTimes from './AvalibaleTimes'
 import Rating from './Rating'
 import Craftmanimg from '../../../assets/craftman-details/Craftsman.png';
 import { FaStar } from "react-icons/fa";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import SplashLoader from '../../../components/common/SplashLoader';
 
 function CraftmanDetails() {
     const [craftman, setCraftman] = useState(null);
+    const navigate = useNavigate();
     const { id } = useParams();
     useEffect(() => {
         fetch(`https://herafie.runasp.net/api/Craftsmen/${id}/profile`)
@@ -17,7 +19,7 @@ function CraftmanDetails() {
     }, [id]);
     const prices = craftman?.services.map(service => service.price);
     if (!craftman) return <p className='min-h-screen py-10 px-4 mt-20 text-center font-bold text-3xl'>
-        <span className='text-red-500'>...</span> Loading </p>
+        <span className='flex min-h-screen  justify-center items-center gap-4'><SplashLoader /> </span></p>
     return (
         <>
             <div className="min-h-screen bg-gray-100 py-10 px-4 mt-20">
@@ -25,11 +27,11 @@ function CraftmanDetails() {
 
                     <div className="bg-secondary p-8 relative flex  items-center justify-between text-white ">
                         <div className="z-10 ">
-                            <h1 className="text-2xl font-bold ">{craftman.fullName}</h1>
-                            <p className="text-gray-300"> الخبره: {craftman.yearsOfExperience} <br />{craftman.bio}</p>
+                            <h1 className="text-2xl font-bold ">{craftman?.fullName}</h1>
+                            <p className="text-gray-300"> الخبره: {craftman.yearsOfExperience} </p>
                             <div className="flex items-center gap-1 mt-1 text-yellow-400">
-                                <span className='flex gap-2 items-center'> تقييم :{craftman.rating}
-                                    <FaStar />
+                                <span className='flex gap-2 items-center'> تقييم :{craftman?.rating ||"لا يوجد تقييم"} 
+                                    {craftman?.rating ? [...Array(Math.round(craftman.rating))].map((_, i) => <FaStar key={i} />) : null}
                                 </span>
                             </div>
                         </div>
@@ -42,29 +44,36 @@ function CraftmanDetails() {
                         <section className="bg-white p-4 rounded-xl border border-gray-50 shadow-sm">
                             <h2 className="text-lg font-bold mb-2">نبذة عن الحرفي</h2>
                             <p className="text-gray-800 text-sm ">
-                                {craftman.bio}
+                                {craftman?.bio|| "لا توجد بيانات تعريفية"}
                             </p>
                         </section>
 
                         <section className="bg-white p-4 rounded-xl border border-gray-50 shadow-sm">
-                            <OurServices services={craftman.services} />
+                            <OurServices services={craftman?.services} />
                         </section>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <AvalibaleTimes
-                                availabilities={craftman.availabilities} prices={prices} />
+                                availabilities={craftman?.availabilities} prices={prices} />
                         </div>
 
                         <section className='shadow-sm rounded-xl p-4'>
                             <h2 className="text-lg font-bold mb-2">التقييمات</h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <Rating reviews={craftman.reviews}/>
+                                <Rating reviews={craftman?.reviews}/>
                             </div>
                         </section>
 
                         <button
                             className="w-full bg-[#d35400] hover:bg-[#b34700] text-white
-                            font-bold py-3 rounded-xl transition-all shadow-lg mt-4">
+                            font-bold py-3 rounded-xl transition-all shadow-lg mt-4"
+                            onClick={() => navigate(`/chat/${craftman.id}`)}>
                             راسل الحرفي الآن
+                        </button>
+                        <button
+                            className="w-full bg-secondary hover:bg-blue-900 text-white
+                            font-bold py-3 rounded-xl transition-all shadow-lg"                         
+                            onClick={() => navigate(`/service-request` , { state: { craftsman: craftman } })}>
+                                انشاء طلب الخدمة 
                         </button>
                     </div>
                 </div>
