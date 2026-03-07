@@ -38,9 +38,9 @@ import Users from "./pages/admin/Users";
 import Logout from "./pages/admin/Logout";
 import Commission from "./pages/admin/Commission";
 import Orders from "./pages/admin/Orders";
-import NewRequest from './pages/craftsman/NewRequest'
-import EndidRequest from './pages/craftsman/EndidRequest'
-import ComingRequest from './pages/craftsman/ComingRequest'
+import NewRequest from "./pages/craftsman/NewRequest";
+import EndidRequest from "./pages/craftsman/EndidRequest";
+import ComingRequest from "./pages/craftsman/ComingRequest";
 import Craftsmen from "./pages/admin/Craftsmen";
 
 // Craftsman Pages
@@ -57,6 +57,8 @@ import DetailsCraftMan from "./pages/craftsman/DetailsCraftMan";
 import AcceptCraftman from "./api/Acceptcraftman";
 import Cancelcraftman from "./api/Cancelcraftman";
 import Chat from "./pages/client/Chat";
+import ClientOrdersPage from "./pages/public/ClientOrderPage";
+
 function GuestRoute({ children }) {
   if (isAuthenticated()) {
     return <Navigate to={getHomeByRole()} replace />;
@@ -67,6 +69,7 @@ function GuestRoute({ children }) {
 const queryClient = new QueryClient();
 
 function App() {
+  
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
@@ -114,17 +117,31 @@ function App() {
             <Route path="/contacts" element={<Contact />} />
             <Route path="/services/:id" element={<CraftmanDetails />} />
             <Route path="/craftman-results" element={<CraftmanResults />} />
-            <Route path="/service-request" element={
+            <Route
+              path="/service-request"
+              element={
                 <ProtectedRoute allowedRole="Client" redirectTo="/login">
                   <Service />
                 </ProtectedRoute>
-              }></Route>
-            <Route path="/chat/:id" element={
+              }
+            ></Route>
+            <Route
+              path="/chat/:id"
+              element={
                 <ProtectedRoute allowedRole="Client" redirectTo="/login">
                   <Chat />
                 </ProtectedRoute>
-              }/>
-            </Route>
+              }
+            />
+            <Route
+              path="/orders"
+              element={
+                <ProtectedRoute allowedRole="Client" redirectTo="/login">
+                  <ClientOrdersPage />
+                </ProtectedRoute>
+              }
+            />
+          </Route>
 
           {/* ─── Admin Routes ─────────────────────────────────────── */}
           <Route
@@ -175,7 +192,6 @@ function App() {
               <Route path="details/:id" element={<DetailsCraftMan />} />
               <Route path="accepted/:id" element={<AcceptCraftman />} />
               <Route path="cancelled/:id" element={<Cancelcraftman />} />
-
             </Route>
           </Route>
 
