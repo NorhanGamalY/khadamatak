@@ -100,8 +100,6 @@ function App() {
                   <Chat />
                 </ProtectedRoute>
               }/>
-            </Route>
-
           {/* ─── Admin Routes ─────────────────────────────────────── */}
           <Route
             path="/admin"
