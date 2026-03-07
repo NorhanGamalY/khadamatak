@@ -56,6 +56,7 @@ import Service from "./pages/public/Service";
 import DetailsCraftMan from "./pages/craftsman/DetailsCraftMan";
 import AcceptCraftman from "./api/Acceptcraftman";
 import Cancelcraftman from "./api/Cancelcraftman";
+import Chat from "./pages/client/Chat";
 function GuestRoute({ children }) {
   if (isAuthenticated()) {
     return <Navigate to={getHomeByRole()} replace />;
@@ -121,7 +122,15 @@ function App() {
                 </ProtectedRoute>
               }
             ></Route>
-          </Route>
+            <Route 
+              path="/chat" 
+              element={
+                <ProtectedRoute allowedRole="Client" redirectTo="/login">
+                  <Chat />
+                </ProtectedRoute>
+              }
+            />
+            </Route>
 
           {/* ─── Admin Routes ─────────────────────────────────────── */}
           <Route
@@ -170,9 +179,9 @@ function App() {
               <Route path="coming" element={<ComingRequest />} />
               <Route path="ended" element={<EndidRequest />} />
               <Route path="details/:id" element={<DetailsCraftMan />} />
-              <Route path="accepted/:id" element={<AcceptCraftman/>}/>
-              <Route path="cancelled/:id" element={<Cancelcraftman/>}/>
-              
+              <Route path="accepted/:id" element={<AcceptCraftman />} />
+              <Route path="cancelled/:id" element={<Cancelcraftman />} />
+
             </Route>
           </Route>
 
