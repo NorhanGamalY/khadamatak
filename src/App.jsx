@@ -141,8 +141,6 @@ function App() {
                 </ProtectedRoute>
               }
             />
-          </Route>
-              }/>
 
               <Route path="/notifications" element={<Notifications />} />
             </Route>
