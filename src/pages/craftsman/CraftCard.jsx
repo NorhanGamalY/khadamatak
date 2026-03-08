@@ -21,7 +21,8 @@ function CraftCard() {
   return (
 
     <div>
-      {orderStatus.filter((order) => order.status === 0).map((order)  => (
+      {orderStatus.filter((order) => order.status === 0).map((order) => (
+
         <div
           key={order.orderId}
           className="bg-white rounded-lg shadow p-4 

@@ -14,7 +14,6 @@ function Details() {
   return (
     <div className="min-h-screen my-10 flex flex-col mx-5">
       <h1 className="text-center my-12 text-2xl font-bold">أعمالنا السابقة</h1>
-
       <div
         key={details.id}
         className="flex flex-col md:flex-row justify-between items-start gap-6 p-5 my-5 bg-white shadow-lg rounded-xl"
