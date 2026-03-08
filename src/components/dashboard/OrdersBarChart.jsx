@@ -11,13 +11,22 @@ import { Bar } from "react-chartjs-2";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-export default function OrdersBarChart() {
+export default function OrdersBarChart({craftsmen}) {
+    const cityCounts ={};
+  craftsmen.forEach(craftman => {
+    const city = craftman.cityName || 'غير محدد';
+    cityCounts[city] = (cityCounts[city] || 0) + 1;
+  });
+
+  const labels = Object.keys(cityCounts);
+  const dataValues = Object.values(cityCounts);
+
   const data = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"],
+    labels: labels,
     datasets: [
       {
         label: "Orders",
-        data: [28, 19, 25, 36, 21, 16, 15, 20, 27],
+        data: dataValues,
         borderWidth: 0,
         borderRadius: 8,
         backgroundColor: [
@@ -47,7 +56,7 @@ export default function OrdersBarChart() {
     scales: {
       x: {
         grid: { display: false },
-        ticks: { maxRotation: 0, color: '#6b7280', display: false },
+        ticks: { maxRotation: 0, color: '#6b7280', display: true },
         stacked: false,
       },
       y: {
@@ -55,7 +64,7 @@ export default function OrdersBarChart() {
         min: 0,
         max: 50,
         grid: { color: "rgba(0,0,0,0.06)" },
-        ticks: { color: '#6b7280', stepSize: 10 },
+        ticks: { color: '#6b7280', stepSize: 5 },
       },
     },
   };

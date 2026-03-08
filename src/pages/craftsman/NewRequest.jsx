@@ -34,16 +34,23 @@ function NewRequest() {
   const handleCancel = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      await fetch(`https://herafie.runasp.net/api/Orders/${id}/cancel`, {
-        method: "PUT",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setOrders(orders.map((o) => (o.id === id ? { ...o, status: -1 } : o)));
+      const res = await fetch(
+        `https://herafie.runasp.net/api/Orders/${id}/cancel`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (!res.ok) throw new Error("فشل رفض الطلب");
+
       setMessage("تم رفض الطلب");
-    } catch (e) {
-      console.error(e);
+      setTimeout(() => setMessage(""), 2000);
+    } catch (error) {
+      console.error(error);
       setMessage("فشل رفض الطلب");
-    } finally {
       setTimeout(() => setMessage(""), 2000);
     }
   };
@@ -51,6 +58,7 @@ function NewRequest() {
   if (loading)
     return <p className="text-center mt-10">جاري تحميل الطلبات...</p>;
 
+  }
   return (
     <>
       {message && (
@@ -58,7 +66,8 @@ function NewRequest() {
           {message}
         </p>
       )}
-      {data.map((item) => {
+
+      {data.filter((item) => item.status === 0).map((item) => {
         const date = new Date(item.scheduledAt);
         return (
           <div
@@ -94,8 +103,9 @@ function NewRequest() {
 
             <div className="flex flex-col gap-3 w-full md:w-auto">
               <NavLink
-                to={`/requests/details/${item.id}`}
-                className="bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 font-medium text-sm px-4 py-2 rounded-md transition"
+
+              to={`/craftsman/requests/details/${item.id}`}
+                className="bg-white border border-gray-300 hover:bg-gray-100 transition text-gray-700 font-medium text-sm px-4 py-2 rounded-md"
               >
                 عرض التفاصيل
               </NavLink>

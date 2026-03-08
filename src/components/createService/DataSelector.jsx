@@ -12,8 +12,8 @@ export default function DateSelector({ days, selectedDay, setSelectedDay }) {
                 : "bg-white text-gray-700 border-gray-300"
             }`}
         >
-          <span className="text-xs">{day.name}</span>
-          <span className="text-sm font-semibold mt-1">{day.date}</span>
+          <span className="text-sm">{day.name}</span>
+          {/* <span className="text-sm font-semibold mt-1">{day.date}</span> */}
         </button>
       ))}
     </div>

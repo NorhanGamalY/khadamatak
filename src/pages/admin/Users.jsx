@@ -29,7 +29,7 @@ const handleEdit = (row) => {
     id: r.id,
     name: r.fullName,
     phone: r.phone ?? "-",
-    status: r.isVerified ? "active" : "review",
+    status: r.isVerified === false ? "review" : "active",
     city: r.address ?? "-",
   }));
 
