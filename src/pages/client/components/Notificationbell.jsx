@@ -1,7 +1,15 @@
 import { useState, useRef, useEffect } from "react";
 import { FiBell, FiMessageSquare, FiShoppingBag, FiAlertTriangle } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
+import { useMarkAsRead } from "../../../features/notifications/hooks";
 
 export default function NotificationBell({ notifications = [] }) {
+    const navigate = useNavigate();
+    const { mutate: markAsRead } = useMarkAsRead();
+
+  const notificationsPage = () => {
+    navigate("/notifications"); 
+  };
     const [open, setOpen] = useState(false);
     const ref = useRef(null);
     const unread = notifications.filter((n) => !n.read).length;
@@ -51,6 +59,13 @@ export default function NotificationBell({ notifications = [] }) {
                 notifications.map((n) => (
                 <div
                     key={n.id}
+                    onClick={() => {
+  if (!n.read) {
+    markAsRead(n.id);
+  }
+
+  navigate(`/notifications`);
+}}
                     className={`flex gap-3 items-start px-4 py-3 cursor-pointer hover:bg-gray-50 transition border-b border-gray-50 last:border-0 ${!n.read ? "bg-orange-50" : ""}`}
                 >
                     <div
@@ -65,7 +80,7 @@ export default function NotificationBell({ notifications = [] }) {
                     </div>
                     <div className="flex-1 min-w-0">
                     <p className="text-[13px] font-semibold text-gray-800 leading-snug">{n.title}</p>
-                    <p className="text-[12px] text-gray-500 mt-0.5 leading-snug">{n.body}</p>
+                    <p className="text-[12px] text-gray-500 mt-0.5 leading-snug">{n.body.slice(0, 30)}...</p>
                     <p className="text-[11px] text-gray-400 mt-1">{n.time}</p>
                     </div>
                     {!n.read && (
@@ -78,11 +93,15 @@ export default function NotificationBell({ notifications = [] }) {
 
             {notifications.length > 0 && (
             <div className="px-4 py-2 border-t border-gray-100">
-                <button className="w-full text-center text-[13px] text-[#1e1855] font-semibold hover:text-[#d75b19] transition py-1">
-                عرض كل الإشعارات
-                </button>
+                <button
+  className="w-full text-center text-[13px] text-[#1e1855] font-semibold hover:text-[#d75b19] transition py-1"
+  onClick={notificationsPage}
+>
+  عرض كل الإشعارات
+</button>
             </div>
             )}
+            
         </div>
         )}
     </div>

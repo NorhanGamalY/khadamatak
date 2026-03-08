@@ -3,8 +3,7 @@ import InputField from "./components/InputField";
 import { useNavigate } from "react-router-dom";
 import { useLogin } from "../../features/auth/mutations";
 import { validateLogin } from "../../features/auth/validation";
-import { saveToken, saveRole, getHomeByRole, saveId } from "../../features/auth/authHelpers";
-
+import { saveToken, saveRole, getHomeByRole, saveId, saveUserId } from "../../features/auth/authHelpers";
 export default function ClientLogin() {
   const navigate = useNavigate();
   const loginMutation = useLogin();
@@ -35,12 +34,14 @@ export default function ClientLogin() {
         onSuccess: (data) => {
           const token = data?.token;
           const role  = data?.role;
+          const userId = data?.userId;
 
           if (!token) { setServerError("حصل خطأ، حاول تاني"); return; }
           const id = data?.clientId ?? data?.craftsmanId ?? data?.id;
 
           saveToken(token, form.rememberMe);
-          saveRole(role, form.rememberMe);    
+          saveRole(role, form.rememberMe);
+          saveUserId(userId, form.rememberMe);
               
           if (id != null) saveId(id, form.rememberMe);
           navigate(getHomeByRole(), { replace: true }); 

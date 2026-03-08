@@ -58,7 +58,8 @@ import AcceptCraftman from "./api/Acceptcraftman";
 import Cancelcraftman from "./api/Cancelcraftman";
 import Chat from "./pages/client/Chat";
 import ClientOrdersPage from "./pages/public/ClientOrderPage";
-
+import Notifications from "./pages/public/Notifications";
+import ConflictsCraftsman from "./pages/craftsman/ConflictsCraftsman";
 function GuestRoute({ children }) {
   if (isAuthenticated()) {
     return <Navigate to={getHomeByRole()} replace />;
@@ -75,7 +76,6 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/select-role" element={<SelectRole />} />
-
           <Route
             path="/login"
             element={
@@ -142,6 +142,11 @@ function App() {
               }
             />
           </Route>
+              }/>
+
+              <Route path="/notifications" element={<Notifications />} />
+            </Route>
+
 
           {/* ─── Admin Routes ─────────────────────────────────────── */}
           <Route
@@ -183,6 +188,7 @@ function App() {
             <Route path="services" element={<CraftsmanServices />} />
             <Route path="appointments" element={<Appointments />} />
             <Route path="evaluate" element={<Evaluate />} />
+            <Route path="conflicts" element={<ConflictsCraftsman />} />
             <Route path="messages" element={<Messages />} />
             <Route path="requests" element={<Requests />}>
               <Route index element={<NewRequest />} />{" "}
