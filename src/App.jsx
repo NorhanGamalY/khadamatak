@@ -57,6 +57,7 @@ import DetailsCraftMan from "./pages/craftsman/DetailsCraftMan";
 import AcceptCraftman from "./api/Acceptcraftman";
 import Cancelcraftman from "./api/Cancelcraftman";
 import Chat from "./pages/client/Chat";
+import ClientOrdersPage from "./pages/public/ClientOrderPage";
 import Notifications from "./pages/public/Notifications";
 import ConflictsCraftsman from "./pages/craftsman/ConflictsCraftsman";
 function GuestRoute({ children }) {
@@ -69,6 +70,7 @@ function GuestRoute({ children }) {
 const queryClient = new QueryClient();
 
 function App() {
+  
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
@@ -115,15 +117,31 @@ function App() {
             <Route path="/contacts" element={<Contact />} />
             <Route path="/services/:id" element={<CraftmanDetails />} />
             <Route path="/craftman-results" element={<CraftmanResults />} />
-            <Route path="/service-request" element={
+            <Route
+              path="/service-request"
+              element={
                 <ProtectedRoute allowedRole="Client" redirectTo="/login">
                   <Service />
                 </ProtectedRoute>
-              }></Route>
-            <Route path="/chat/:id" element={
+              }
+            ></Route>
+            <Route
+              path="/chat/:id"
+              element={
                 <ProtectedRoute allowedRole="Client" redirectTo="/login">
                   <Chat />
                 </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/orders"
+              element={
+                <ProtectedRoute allowedRole="Client" redirectTo="/login">
+                  <ClientOrdersPage />
+                </ProtectedRoute>
+              }
+            />
+          </Route>
               }/>
 
               <Route path="/notifications" element={<Notifications />} />
