@@ -32,16 +32,6 @@ export default function CraftsmanServices() {
     name: "",
   });
 
-  async function GetAllCategories() {
-    try {
-      await axios
-        .get("https://herafie.runasp.net/api/ServiceCategory")
-        .then((res) => setServiceCategories(res.data));
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
   const handleGetCraftsman = async () => {
     try {
       const res = await axios.get(
