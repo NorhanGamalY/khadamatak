@@ -1,10 +1,11 @@
 import React from "react";
-import { useNotifications } from "../../features/notifications/hooks";
+import { useMarkAsRead, useNotifications } from "../../features/notifications/hooks";
 import { formatTime } from "../../utils/time";
 import { FaCheckCircle } from "react-icons/fa";
 
 export default function Notifications() {
   const { data: notifications = [] } = useNotifications();
+  const { mutate: markAsRead } = useMarkAsRead();
 
   return (
     <div className="w-[90%] xl:w-[80%] mx-auto m-20">
@@ -23,9 +24,12 @@ export default function Notifications() {
               <p className="text-sm text-gray-500 mt-1">{n.message}</p>
               <p className="text-xs text-gray-400 mt-1">{formatTime(n.createdAt)}</p>
             </div>
-           {!n.isRead && (
-    <FaCheckCircle className="text-green-500 text-2xl" />
-  )}
+          {!n.isRead && (
+      <FaCheckCircle
+        onClick={() => markAsRead(n.id)}
+        className="text-green-500 text-2xl cursor-pointer"
+      />
+    )}
 
           </div>
         ))
