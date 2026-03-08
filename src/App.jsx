@@ -38,9 +38,9 @@ import Users from "./pages/admin/Users";
 import Logout from "./pages/admin/Logout";
 import Commission from "./pages/admin/Commission";
 import Orders from "./pages/admin/Orders";
-import NewRequest from './pages/craftsman/NewRequest'
-import EndidRequest from './pages/craftsman/EndidRequest'
-import ComingRequest from './pages/craftsman/ComingRequest'
+import NewRequest from "./pages/craftsman/NewRequest";
+import EndidRequest from "./pages/craftsman/EndidRequest";
+import ComingRequest from "./pages/craftsman/ComingRequest";
 import Craftsmen from "./pages/admin/Craftsmen";
 
 // Craftsman Pages
@@ -58,6 +58,7 @@ import AcceptCraftman from "./api/Acceptcraftman";
 import Cancelcraftman from "./api/Cancelcraftman";
 import Chat from "./pages/client/Chat";
 import Notifications from "./pages/public/Notifications";
+import ConflictsCraftsman from "./pages/craftsman/ConflictsCraftsman";
 function GuestRoute({ children }) {
   if (isAuthenticated()) {
     return <Navigate to={getHomeByRole()} replace />;
@@ -73,7 +74,6 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/select-role" element={<SelectRole />} />
-
           <Route
             path="/login"
             element={
@@ -129,6 +129,7 @@ function App() {
               <Route path="/notifications" element={<Notifications />} />
             </Route>
 
+
           {/* ─── Admin Routes ─────────────────────────────────────── */}
           <Route
             path="/admin"
@@ -169,6 +170,7 @@ function App() {
             <Route path="services" element={<CraftsmanServices />} />
             <Route path="appointments" element={<Appointments />} />
             <Route path="evaluate" element={<Evaluate />} />
+            <Route path="conflicts" element={<ConflictsCraftsman />} />
             <Route path="messages" element={<Messages />} />
             <Route path="requests" element={<Requests />}>
               <Route index element={<NewRequest />} />{" "}
@@ -178,7 +180,6 @@ function App() {
               <Route path="details/:id" element={<DetailsCraftMan />} />
               <Route path="accepted/:id" element={<AcceptCraftman />} />
               <Route path="cancelled/:id" element={<Cancelcraftman />} />
-
             </Route>
           </Route>
 

@@ -1,32 +1,54 @@
-import React, { useEffect, useState } from "react";
-import getorder_craftman from "../../api/getorder_craftman";
+import React, { useState } from "react";
 import Avatar from "../../components/common/Avatar";
 import { NavLink } from "react-router-dom";
+import { useOutletContext } from "react-router-dom";
 
 function ComingRequest() {
+
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchRequest() {
-      try {
-        const res = await getorder_craftman();
-        setData(res);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchRequest();
-  }, []);
 
-  if (loading) {
+  const handleStart = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      await fetch(`https://herafie.runasp.net/api/Orders/${id}/start`, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setOrders(orders.map((o) => (o.id === id ? { ...o, status: 3 } : o)));
+      setMessage("تم بدء الطلب");
+    } catch (e) {
+      console.error(e);
+      setMessage("فشل بدء الطلب");
+    } finally {
+      setTimeout(() => setMessage(""), 2000);
+    }
+  };
+
+  const handleComplete = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      await fetch(`https://herafie.runasp.net/api/Orders/${id}/complete`, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setOrders(orders.map((o) => (o.id === id ? { ...o, status: 4 } : o)));
+      setMessage("تم إتمام الطلب");
+    } catch (e) {
+      console.error(e);
+      setMessage("فشل إتمام الطلب");
+    } finally {
+      setTimeout(() => setMessage(""), 2000);
+    }
+  };
+
+  if (loading)
     return <p className="text-center mt-10">جاري تحميل الطلبات...</p>;
-  }
 
   return (
     <>
+
       {data.filter((order) => order.status === 3).map((order) => (
         <div
           key={order.id}
@@ -41,15 +63,15 @@ function ComingRequest() {
             <h3 className="font-semibold text-gray-800">{order.clientName}</h3>
           </div>
 
-          <div className="flex flex-col justify-center text-center">
-            <h3 className="font-semibold">الخدمة</h3>
-            <p className="text-gray-400 text-sm">{order.serviceName}</p>
-          </div>
+            <div className="flex flex-col text-center">
+              <h3 className="font-semibold">الخدمة</h3>
+              <p className="text-gray-400 text-sm">{item.serviceName}</p>
+            </div>
 
-          <div className="flex flex-col justify-center text-center">
-            <h3 className="font-semibold">السعر</h3>
-            <p className="text-green-600 font-medium">{order.amount} جم</p>
-          </div>
+            <div className="flex flex-col text-center">
+              <h3 className="font-semibold">السعر</h3>
+              <p className="text-green-600 font-medium">{item.amount} جم</p>
+            </div>
 
           <div className="flex flex-col justify-center items-center text-center md:text-left">
             <h3 className="font-semibold text-sm">
@@ -74,18 +96,25 @@ function ComingRequest() {
               عرض التفاصيل
             </NavLink>
 
-            <button
-              className="bg-orange-600 text-white
-                         hover:bg-orange-700 transition
-                         px-4 py-2 rounded-md w-full md:w-auto"
-            >
-              تم التنفيذ
-            </button>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button
+                  onClick={() => handleStart(item.id)}
+                  className="bg-blue-500 text-white hover:bg-blue-400 px-4 py-2 rounded-md transition"
+                >
+                  بدء
+                </button>
+                <button
+                  onClick={() => handleComplete(item.id)}
+                  className="bg-green-600 text-white hover:bg-green-500 px-4 py-2 rounded-md transition"
+                >
+                  انتها
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
       ))}
     </>
-  );
+  ) ;
 }
 
 export default ComingRequest;
