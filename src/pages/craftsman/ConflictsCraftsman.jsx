@@ -19,7 +19,7 @@ const ConflictsCraftsman = () => {
     try {
       setIsLoading(true);
       const res = await axios.get(
-        `https://herafie.runasp.net/api/Orders/craftsman`,
+        `https://herafie.runasp.net/api/Complaints/my`,
         { headers: { Authorization: `Bearer ${token}` } },
       );
       setClientData(res.data);
@@ -65,7 +65,7 @@ const ConflictsCraftsman = () => {
                     <ConflictItem data={item} key={idx} />
                   ))
                 ) : (
-                  <p className=" font-bold text-center flex items-center justify-center text-secondary-orange">
+                  <p className=" font-extrabold text-xl text-center flex items-center justify-center min-h-[100px] text-secondary-orange">
                     لا توجد نزاعات
                   </p>
                 )}
