@@ -25,6 +25,7 @@ import ClientLogin from "./pages/public/ClientLogin";
 import CraftsmanRegister from "./pages/public/CraftsmanRegestier";
 import CraftsmanRegister2 from "./pages/public/Craftsmanregestier2";
 import CraftsmanLogin from "./pages/public/CraftsmanLogin";
+import PaymentPage from "./pages/public/PaymentPage";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/Dashboard";
@@ -69,7 +70,6 @@ function GuestRoute({ children }) {
 const queryClient = new QueryClient();
 
 function App() {
-  
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
@@ -138,6 +138,14 @@ function App() {
               element={
                 <ProtectedRoute allowedRole="Client" redirectTo="/login">
                   <ClientOrdersPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/payment"
+              element={
+                <ProtectedRoute allowedRole="Client" redirectTo="/login">
+                  <PaymentPage />
                 </ProtectedRoute>
               }
             />
