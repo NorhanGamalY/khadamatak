@@ -8,7 +8,6 @@ function ComingRequest() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const data = orders.filter((o) => o.status === 1 || o.status === 3);
 
   const handleStart = async (id) => {
     try {
@@ -113,10 +112,9 @@ function ComingRequest() {
               </div>
             </div>
           </div>
-        );
-      })}
+      ))}
     </>
-  );
+  ) ;
 }
 
 export default ComingRequest;
