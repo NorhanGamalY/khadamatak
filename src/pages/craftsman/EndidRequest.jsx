@@ -54,7 +54,7 @@ function EndidRequest() {
 
             <div className="flex flex-col gap-3 w-full md:w-auto">
               <NavLink
-                to={`/craftsman/requests/details/${item.id}`}
+                to={`/craftsman/requests/details/${order.id}`}
 
                 className="bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 font-medium text-sm px-4 py-2 rounded-md transition"
               >
