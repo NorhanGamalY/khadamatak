@@ -57,6 +57,7 @@ import DetailsCraftMan from "./pages/craftsman/DetailsCraftMan";
 import AcceptCraftman from "./api/Acceptcraftman";
 import Cancelcraftman from "./api/Cancelcraftman";
 import Chat from "./pages/client/Chat";
+import Notifications from "./pages/public/Notifications";
 import ConflictsCraftsman from "./pages/craftsman/ConflictsCraftsman";
 function GuestRoute({ children }) {
   if (isAuthenticated()) {
@@ -113,24 +114,22 @@ function App() {
             <Route path="/details" element={<Details />} />
             <Route path="/contacts" element={<Contact />} />
             <Route path="/services/:id" element={<CraftmanDetails />} />
-          </Route>
-          <Route path="/craftman-results" element={<CraftmanResults />} />
-          <Route
-            path="/service-request"
-            element={
-              <ProtectedRoute allowedRole="Client" redirectTo="/login">
-                <Service />
-              </ProtectedRoute>
-            }
-          ></Route>
-          <Route
-            path="/chat/:id"
-            element={
-              <ProtectedRoute allowedRole="Client" redirectTo="/login">
-                <Chat />
-              </ProtectedRoute>
-            }
-          />
+            <Route path="/craftman-results" element={<CraftmanResults />} />
+            <Route path="/service-request" element={
+                <ProtectedRoute allowedRole="Client" redirectTo="/login">
+                  <Service />
+                </ProtectedRoute>
+              }></Route>
+            <Route path="/chat/:id" element={
+                <ProtectedRoute allowedRole="Client" redirectTo="/login">
+                  <Chat />
+                </ProtectedRoute>
+              }/>
+
+              <Route path="/notifications" element={<Notifications />} />
+            </Route>
+
+
           {/* ─── Admin Routes ─────────────────────────────────────── */}
           <Route
             path="/admin"
