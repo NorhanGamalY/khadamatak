@@ -3,7 +3,6 @@ import axios from "axios";
 import { Search } from "lucide-react";
 import { FaEdit } from "react-icons/fa";
 
-
 export default function Conflicts() {
 
     // const defaultData = [
@@ -11,7 +10,7 @@ export default function Conflicts() {
     //     { id: "#045", user: "أحمد سامي", craftsman: "طارق الأحمد", reason: "متعلقة بالحرفي", status: "مغلق", color: "bg-orange-700" },
     //     { id: "#234", user: "منال ابراهيم", craftsman: "سارة قاسم", reason: "متعلقة بالدفع", status: "قيد المراجعة", color: "bg-amber-900/90" },
     //     { id: "#160", user: "ليلى حسون", craftsman: "مهند سمير", reason: "مشاكل فنية", status: "تم الحل", color: "bg-green-600" },
-    // ];q
+    // ];
 
     const [data, setData] = useState([]);
 
