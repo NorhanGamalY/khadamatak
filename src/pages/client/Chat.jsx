@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { BiDotsHorizontalRounded } from "react-icons/bi";
 import { IoSend } from "react-icons/io5";
-
+import { getUserId } from "../../features/auth/authHelpers";
+const userId = getUserId();
+console.log("Current User ID:", userId); // ✅
 const users = [
     {
     id: 1,
