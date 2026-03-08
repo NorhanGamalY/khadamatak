@@ -106,7 +106,7 @@ function ComingRequest() {
                   onClick={() => handleComplete(item.id)}
                   className="bg-green-600 text-white hover:bg-green-500 px-4 py-2 rounded-md transition"
                 >
-                  انتها
+                  انتهاء
                 </button>
               </div>
             </div>
