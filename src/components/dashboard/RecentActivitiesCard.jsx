@@ -27,9 +27,9 @@ export default function RecentActivitiesCard({ rows = [] }) {
     id: r.id,
 
     name: r.fullName,
-    phone: r.phone,
+    phone: r.phoneNumber,
     status: r.isVerified ? "active" : "stopped",
-    city: r.city ?? "-",
+    city: r.cityName ?? "-",
   }));
 
   return (

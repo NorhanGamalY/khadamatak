@@ -14,8 +14,8 @@ function Rating({ reviews }) {
 
     return (
         <>
-            {reviews.map((Rating ) => (
-                <div key={Rating.id} className='shadow-sm rounded-xl p-4 flex items-center'>
+            {reviews.map((Rating,xx) => (
+                <div key={Rating.id || xx} className='shadow-sm rounded-xl p-4 flex items-center'>
                     <div>
                         <img className='size-[70%]' src={RatingIMG.find(r => r.id === Rating.id)?.img ||rating2 } alt='ratingavatar' />
                     </div>

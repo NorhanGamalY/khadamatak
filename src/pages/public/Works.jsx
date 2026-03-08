@@ -29,14 +29,14 @@ function Works() {
       </div>
 
       <div className="grid grid-cols-2 grid-rows-2 sm:grid-cols-2 gap-6">
-        {data.slice(0, 4).map((work) => {
-          // صورة عشوائية لكل كارد
+        {data.filter((work) => work.rating>=4).slice(0, 4).map((work) => {
           const randomImage =
             workData[Math.floor(Math.random() * workData.length)].img;
 
           return (
             <Link
               to="/details"
+              state={{ details: work }}
               key={work.id}
               className="relative rounded-xl overflow-hidden shadow hover:scale-105 transition duration-300 block"
             >

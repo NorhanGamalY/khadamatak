@@ -10,7 +10,7 @@ function Ourservices({ services }) {
             <ul className="space-y-2">
                 {services.map((service, x) => (
                     <li key={x} className="flex items-center gap-2">
-                        <span className="font-bold">✓</span> {service.name}
+             <span className="font-bold">✓</span> {service.name}
                     </li>
                 ))}
             </ul>

@@ -4,12 +4,12 @@ import { getServiceCategories } from "../../api/servicesCategory";
 import { Link } from "react-router-dom";
 
 const imageByName = {
-  "سباكة": "/home-services/Frame 34.png",
-  "كهرباء": "/home-services/Frame 34 (1).png",
-  "نجارة": "/home-services/Frame 34 (2).png",
-  "صيانة": "/home-services/Frame 34 (3).png",
-  "دهانات": "/home-services/Frame 34 (4).png",
-  "تكييف": "/home-services/Frame 34 (5).png",
+  سباكة: "/home-services/Frame 34.png",
+  كهرباء: "/home-services/Frame 34 (1).png",
+  نجارة: "/home-services/Frame 34 (2).png",
+  صيانة: "/home-services/Frame 34 (3).png",
+  دهانات: "/home-services/Frame 34 (4).png",
+  تكييف: "/home-services/Frame 34 (5).png",
 };
 
 const FALLBACK_IMAGE = "/home-services/Frame 34.png";
@@ -20,7 +20,7 @@ export default function OurServicesSection() {
     queryFn: getServiceCategories,
   });
 
-    const dataCards = data?.slice(0, 6) || [];
+  const dataCards = data?.slice(0, 6) || [];
 
   return (
     <section dir="rtl" className="bg-white py-14">
@@ -74,7 +74,7 @@ function ServiceCard({ item }) {
         <div className="text-3xl font-extrabold text-[#1E1855]">{title}</div>
 
         <Link
-          to={`/services?categoryId=${item.id}`}
+          to={`/craftman-results?service=${encodeURIComponent(title)}`}
           className="inline-flex items-center justify-center rounded-lg bg-[#D75B19] px-4 py-3 lg:text-2xl text-lg font-extrabold text-white hover:bg-[#1E1855] transition"
         >
           اطلب الخدمة

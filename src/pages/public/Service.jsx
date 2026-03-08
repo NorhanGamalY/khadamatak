@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useMemo, useState } from "react";
 import ServiceCard from "../../components/createService/Card";
 import UploadBox from "../../components/createService/UploadImage";
 import TextAreaField from "../../components/createService/TextArea";
@@ -6,34 +6,133 @@ import OrderSummary from "../../components/createService/OrderSummary";
 import DateSelector from "../../components/createService/DataSelector";
 import TimeSelector from "../../components/createService/TimeSelector";
 import { MdKeyboardDoubleArrowLeft } from "react-icons/md";
-import { useLocation} from "react-router-dom";
-const service = {
-    category: "سباكة",
-    name: "يوسف النجار",
-    experience: 5,
-    description: "خدمة كاملة تشمل تأسيس وسباكة حمام كامل",
-    rating: 4.8,
-    subtitle: "سباك محترف",
-  };
+import { useLocation, useNavigate} from "react-router-dom";
+import ServiceDropdown from "../../components/createService/serviceDropdown";
+import { useCreateOrder } from "../../features/order/hooks";
+import toast, { Toaster } from "react-hot-toast";
   
 export default function Service() {
   const [description, setDescription] = useState("");
-  const [selectedDay, setSelectedDay] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
+  const [selectedService, setSelectedService] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
+
 
 const { state } = useLocation();
 const {craftsman }= state || {};
 console.log("here"  , craftsman);
-  const days = [
-    { name: "الأحد", date: 8 },
-    { name: "الاثنين", date: 9 },
-    { name: "الثلاثاء", date: 10 },
-  ];
+  const dayNames = [
+  "الأحد",
+  "الاثنين",
+  "الثلاثاء",
+  "الأربعاء",
+  "الخميس",
+  "الجمعة",
+  "السبت",
+];
 
-  const times = ["10:00 م", "2:30 م", "4:30 م", "6:00 م"];
+const days = craftsman?.availabilities?.map((a) => ({
+  name: dayNames[a.day],
+  date: a.day
+})) || [];
+
+const [selectedDay, setSelectedDay] = useState(() => days[0] || null);
+
+
+
+
+function formatTime(hour) {
+  const suffix = hour >= 12 ? "PM" : "AM";
+  const h = hour % 12 || 12;
+  return `${h}:00 ${suffix}`;
+}
+
+const times = useMemo(() => {
+  if (!selectedDay) return [];
+
+  const availability = craftsman.availabilities.find(
+    (a) => a.day === selectedDay.date
+  );
+
+  if (!availability) return [];
+
+  const start = parseInt(availability.from.split(":")[0]);
+  const end = parseInt(availability.to.split(":")[0]);
+
+  const result = [];
+
+  for (let i = start; i < end; i++) {
+    result.push(formatTime(i));
+  }
+
+  return result;
+}, [selectedDay, craftsman]);
+
+function buildScheduleDate() {
+  if (!selectedDay || !selectedTime) return null;
+
+  const today = new Date();
+  let dayOffset = selectedDay.date - today.getDay(); 
+  if (dayOffset < 0) dayOffset += 7;
+  const scheduledDate = new Date(today);
+  scheduledDate.setDate(today.getDate() + dayOffset);
+
+  let [hour] = selectedTime.split(/[: ]/);
+  hour = parseInt(hour);
+  if (selectedTime.includes("PM") && hour !== 12) hour += 12;
+  if (selectedTime.includes("AM") && hour === 12) hour = 0;
+
+  scheduledDate.setHours(hour, 0, 0, 0);
+
+  return scheduledDate.toISOString();
+}
+
+const { mutate: createOrder , isPending} = useCreateOrder();
+const navigat = useNavigate();
+
+function handleCreateOrder() {
+  const scheduledAt = buildScheduleDate();
+
+  const payload = {
+    craftsmanId: craftsman.id,
+    serviceId: selectedService.id,
+    description,
+    scheduledAt,
+  };
+  console.log("Payload before sending:", payload);
+
+  createOrder(payload, {
+    onSuccess: (data) => {
+toast.success("تم إنشاء الطلب بنجاح!", {
+  icon: "✅",
+  style: {
+    borderRadius: "12px",
+    background: "#f0fdf4",
+    color: "#166534",
+    border: "1px solid #bbf7d0",
+    fontWeight: "600",
+  },
+});     
+  setTimeout(() => {
+    navigat("/home", { state: { order: data } });
+  }, 1500);
+    },
+  onError: (err) => {
+  const errors = err?.response?.data?.errorsList;
+  if (errors && errors.length > 0) {
+    setErrorMessage(errors[0].message);
+  } else {
+    setErrorMessage(err?.response?.data?.message || "حدث خطأ، حاول مرة أخرى");
+  }
+}
+  });
+}
+
+
 
   return (
     <div className="min-h-screen m-25 flex flex-col gap-8 max-w-5xl mx-auto ">
+        <Toaster position="top-center" />
       <h2 className="text-2xl text-center font-bold ">
       انشاء طلب الخدمة
     </h2>
@@ -51,18 +150,16 @@ console.log("here"  , craftsman);
         />
       </div>
 
-      <div>
-        <h3 className="text-lg mb-3 font-medium ">
-    صور (اختياري)
-    </h3>
-        <UploadBox />
-      </div>
+      <ServiceDropdown
+  services={craftsman?.services || []}
+  selectedService={selectedService}
+  setSelectedService={setSelectedService}
+/>
 
       <div>
         <h3 className="text-lg mb-3 font-medium ">
     اختيار الموعد
     </h3>
-        {/* container with gray background, rounded corners */}
         <div className="bg-gray-200 rounded-xl p-4 flex flex-col items-center gap-2">
           <DateSelector
             days={days}
@@ -83,18 +180,29 @@ console.log("here"  , craftsman);
     ملخص الطلب
     </h3>
         <OrderSummary
-          serviceType={service.category}
-          time={selectedTime}
-          price={100}
-        />
+  serviceType={selectedService?.name}
+  day={selectedDay?.name}
+  time={selectedTime}
+  price={selectedService?.price}
+/>
       </div>
 
-      <div className="flex justify-center">
-        <button className="flex items-center justify-center gap-2 w-full max-w-md bg-blue-900 text-white py-2 rounded-xl text-lg font-semibold">
-          متابعة الدفع <MdKeyboardDoubleArrowLeft size={24} />
-
-        </button>
+<div className="flex flex-col items-center gap-2">
+        {errorMessage && (
+  <p className="text-red-500 text-center text-sm font-medium">
+    {errorMessage}
+  </p>
+)}
+        <button
+  onClick={handleCreateOrder}
+  disabled={isPending || !selectedService || !selectedDay || !selectedTime || !description.trim()}
+  className="flex items-center justify-center gap-2 w-full max-w-md bg-blue-900 text-white py-2 rounded-xl text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+>
+  متابعة الدفع <MdKeyboardDoubleArrowLeft size={24} />
+</button>
       </div>
     </div>
   );
 }
+
+

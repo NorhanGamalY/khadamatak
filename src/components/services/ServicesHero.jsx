@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 const DEFAULT_SERVICE_IMAGE = "/services/Frame 2147228587 (2).png";
 
@@ -21,6 +21,8 @@ function getServiceImage(name) {
 }
 
 export default function ServicesHero() {
+  const [showAll, setShowAll] = useState(false);
+
   const { data, isLoading, isError } = useQuery({
     queryKey: ["services"],
     queryFn: async () => {
@@ -33,7 +35,13 @@ export default function ServicesHero() {
   const list = Array.isArray(data) ? data : data?.data || [];
 
   const firstRow = list.slice(0, 4);
-  const secondRow = list.slice(5);
+  const secondRow = list.slice(4, 7);
+  const hiddenCards = list.slice(7);
+  const hasMore = hiddenCards.length > 0;
+
+  function toggleServices() {
+    setShowAll((prev) => !prev);
+  }
 
   if (isLoading) {
     return (
@@ -49,19 +57,6 @@ export default function ServicesHero() {
         <p className="text-lg text-red-600">حصل خطأ أثناء تحميل الخدمات</p>
       </div>
     );
-  }
-
-  function scrollDown() {
-    const next =
-      document.querySelector("[data-next-section]") ||
-      document.getElementById("next-section");
-
-    if (next) {
-      next.scrollIntoView({ behavior: "smooth", block: "start" });
-      return;
-    }
-
-    window.scrollBy({ top: window.innerHeight * 0.85, behavior: "smooth" });
   }
 
   return (
@@ -93,17 +88,31 @@ export default function ServicesHero() {
           ))}
         </div>
 
-        <div className="mt-10 flex justify-center">
-          <button
-            type="button"
-            onClick={scrollDown}
-            aria-label="انزل للأسفل"
-            title="انزل للأسفل"
-            className="group inline-flex h-12 w-12 items-center justify-center rounded-full border border-[#D9D9D9] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.10)] transition hover:border-[#d75b19] hover:shadow-[0_14px_40px_rgba(0,0,0,0.14)] active:scale-[0.98]"
-          >
-            <ChevronDown className="h-7 w-7 text-[#1E1855] animate-bounce group-hover:text-[#d75b19]" />
-          </button>
-        </div>
+        {showAll && hiddenCards.length > 0 && (
+          <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {hiddenCards.map((item) => (
+              <ServiceCard key={item.id ?? item.name} item={item} />
+            ))}
+          </div>
+        )}
+
+        {hasMore && (
+          <div className="mt-10 flex justify-center">
+            <button
+              type="button"
+              onClick={toggleServices}
+              aria-label={showAll ? "إخفاء باقي الخدمات" : "إظهار باقي الخدمات"}
+              title={showAll ? "إخفاء باقي الخدمات" : "إظهار باقي الخدمات"}
+              className="group inline-flex h-12 w-12 items-center justify-center rounded-full border border-[#D9D9D9] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.10)] transition hover:border-[#d75b19] hover:shadow-[0_14px_40px_rgba(0,0,0,0.14)] active:scale-[0.98]"
+            >
+              {showAll ? (
+                <ChevronUp className="h-7 w-7 text-[#1E1855] transition group-hover:text-[#d75b19]" />
+              ) : (
+                <ChevronDown className="h-7 w-7 text-[#1E1855] animate-bounce group-hover:text-[#d75b19]" />
+              )}
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );

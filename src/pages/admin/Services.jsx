@@ -4,6 +4,7 @@ import ActionsCell from "../../components/common/ActionCell";
 import TableCard from "../../components/common/TableCard";
 import { useServices, useAddService, useEditService, useDeleteService } from "../../features/services/hooks";
 import SplashLoader from "../../components/common/SplashLoader";
+import Toast from "../../components/common/Toast";
 
 const TABS = [
   { key: "active", label: "مفعلة" },
@@ -30,7 +31,7 @@ function StatusBadge({ status }) {
 export default function Services() {
   const { data: services, isLoading, error } = useServices();
   const addMutation = useAddService();
-  
+  const [showToast, setShowToast] = useState(false);
 
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({
@@ -38,8 +39,6 @@ export default function Services() {
     type: 'Home',
     description: '',
     status: 'active',
-    lastUpdate: '',
-    craftsmen: 0,
   });
   const [editingId, setEditingId] = useState(null);
   const [deleteRow, setDeleteRow] = useState(null);
@@ -73,8 +72,6 @@ export default function Services() {
           type: 'Home',
           description: '',
           status: 'active',
-          lastUpdate: '',
-          craftsmen: 0,
         });
       },
     }
@@ -89,13 +86,12 @@ export default function Services() {
   addMutation.mutate(payload, {
     onSuccess: () => {
       setShowForm(false);
+      setShowToast(true);
       setForm({
         name: '',
         type: 'Home',
         description: '',
         status: 'active',
-        lastUpdate: '',
-        craftsmen: 0,
       });
     },
   });
@@ -103,16 +99,14 @@ export default function Services() {
 
     
   };
+  
 
   const handleEdit = (row) => {
-    // populate form and open modal
     setForm({
       name: row.name || '',
       type: row.type || '',
       description: row.description || '',
       status: row.isActive || row.status === 'active' ? 'active' : 'stopped',
-      lastUpdate: row.lastUpdate || '',
-      craftsmen: row.craftsmen ?? 0,
     });
     setEditingId(row.id);
     setShowForm(true);
@@ -142,19 +136,19 @@ export default function Services() {
     : null;
 
   const fetchedRows = (services || []).map((s) => ({
-    id: s.id,
-    name: s.name,
-    type: s.type || s.serviceType || '',
-    description: s.description || '',
-isActive:
-  s.isActive !== undefined
-    ? s.isActive
-    : s.active !== undefined
-    ? s.active
-    : s.status === 'active',    status: (s.isActive ?? s.active ?? (s.status === 'active')) ? 'active' : 'stopped',
-    craftsmen: s.craftsmenCount ?? s.craftsmen ?? 0,
-    lastUpdate: s.updatedAt ?? s.lastUpdate ?? '',
-  }));
+  id: s.id,
+  name: s.name,
+  type: s.type || s.serviceType || '',
+  description: s.description || '',
+  status:
+    s.isActive !== undefined
+      ? (s.isActive ? 'active' : 'stopped')
+      : s.active !== undefined
+      ? (s.active ? 'active' : 'stopped')
+      : s.status || 'active',
+  craftsmen: s.craftsmenCount ?? s.craftsmen ?? 0,
+  lastUpdate: s.updatedAt ?? s.lastUpdate ?? '',
+}));
   const rows = fetchedRows;
   
 
@@ -211,25 +205,6 @@ isActive:
                   <option value="stopped">موقوفة</option>
                 </select>
               </div>
-              <div>
-                <label className="block text-sm font-medium">اخر تحديث</label>
-                <input
-                  type="text"
-                  value={form.lastUpdate}
-                  onChange={(e) => setForm((f) => ({ ...f, lastUpdate: e.target.value }))}
-                  className="mt-1 w-full rounded border-gray-300 shadow-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium">عدد الحرفي</label>
-                <input
-                  type="number"
-                  value={form.craftsmen}
-                  onChange={(e) => setForm((f) => ({ ...f, craftsmen: +e.target.value }))}
-                  className="mt-1 w-full rounded border-gray-300 shadow-sm"
-                  min={0}
-                />
-              </div>
               <div className="flex justify-end gap-2">
                 <button
                   type="button"
@@ -238,7 +213,7 @@ isActive:
                 >
                   إلغاء
                 </button>
-               <button
+              <button
   type="submit"
   disabled={addMutation.isLoading || editMutation.isLoading}
   className="bg-green-600 px-4 py-2 text-white rounded"
@@ -301,19 +276,33 @@ isActive:
     </button>
   }
           columns={[
-            { key: "actions", header: "الاجراءات", align: "center", mobileHidden: true, cell: (r) => (<ActionsCell showCheck={false} row={r} onEdit={handleEdit} onDelete={handleDelete} />) },
-            { key: "lastUpdate", header: "اخر تحديث", align: "center", cell: (r) => r.lastUpdate },
-            { key: "craftsmen", header: "عدد الحرفي", align: "center", cell: (r) => r.craftsmen },
-            { key: "status", header: "الحالة", align: "center", mobileHideHeader: true, cell: (r) => <StatusBadge status={r.status} /> },
-            { key: "name", header: "الخدمة", align: "right", cell: (r) => r.name },
             { key: "id", header: "", align: "right", cell: (r) => r.id },
+            { key: "name", header: "الخدمة", align: "right", cell: (r) => r.name },
+            { key: "status", header: "الحالة", align: "center", mobileHideHeader: true, cell: (r) => <StatusBadge status={r.status} /> },
+            { key: "type", header: "النوع", align: "center", cell: (r) => r.type },
+            { key: "description", header: "الوصف", align: "center", cell: (r) => {
+    const text = r.description;
+    const short = text.length > 40 ? text.slice(0, 40) + "..." : text;
+
+    return <span>{short}</span>;
+  }, },
+            { key: "actions", header: "الاجراءات", align: "center", mobileHidden: true, cell: (r) => (<ActionsCell showCheck={false} row={r} onEdit={handleEdit} onDelete={handleDelete} />) },
+            
           ]}
           selectable={false}
 
           />
+
+<Toast
+  isOpen={showToast}
+  type="success"
+  title="تم بنجاح"
+  message="تم اضافة الخدمة بنجاح"
+  actionLabel="تمام"
+  onClose={() => setShowToast(false)}
+/>
     </div>
 
-   
   );
 }
 
