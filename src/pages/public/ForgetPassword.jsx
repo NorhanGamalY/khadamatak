@@ -24,9 +24,10 @@ export default function ForgetPassword() {
   forgetPasswordMutation.mutate(
     { email: form.email },
     {
-      onSuccess: () => {
-        navigate("/verify-code");
-      },
+       onSuccess: () => {
+  localStorage.setItem("resetEmail", form.email);
+  navigate("/verify-code");
+},
       onError: () => {
         setErrors({ email: "حدث خطأ حاول مرة أخرى" });
       },

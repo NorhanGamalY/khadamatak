@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import { OTPInput } from "input-otp";
 import { useNavigate } from "react-router-dom";
-import { useVerifyCode } from "../../features/auth/password/hooks";
+import { useVerifyCode, useForgetPassword } from "../../features/auth/password/hooks";
 
-export default function CodeVerification() {
+export default function CodeVerification() { 
   const verifyCodeMutation = useVerifyCode();
+  const forgetPasswordMutation = useForgetPassword(); 
   const navigate = useNavigate();
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+  const email = localStorage.getItem("resetEmail");
 
   const onSubmit = () => {
     if (!code || code.length < 5) {
@@ -18,12 +21,18 @@ export default function CodeVerification() {
     verifyCodeMutation.mutate(
       { code },
       {
-        onSuccess: () => {
-          navigate("/reset-password");
-        },
-        onError: () => {
-          setError("الكود غير صحيح");
-        },
+        onSuccess: () => navigate("/reset-password"),
+        onError: () => setError("الكود غير صحيح"),
+      }
+    );
+  };
+
+  const handleResend = () => {
+    forgetPasswordMutation.mutate(
+      { email }, 
+      {
+        onSuccess: () => setMessage("تم إرسال الكود مرة أخرى بنجاح"),
+        onError: () => setError("حدث خطأ أثناء إرسال الكود"),
       }
     );
   };
@@ -32,7 +41,6 @@ export default function CodeVerification() {
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gray-50">
-
       <div className="w-[90%] md:w-[80%] lg:w-[50%] flex flex-wrap gap-2 bg-white p-6 rounded-xl shadow-xl">
 
         <div className="w-full order-2 lg:order-1 md:w-[48%] flex flex-col gap-4">
@@ -40,11 +48,7 @@ export default function CodeVerification() {
           <h1 className="text-3xl font-bold text-black">
             خد<span className="text-[#d75b19]">ما</span>تك
           </h1>
-
-          <h3 className="text-xl font-semibold">
-            تحقق من الكود
-          </h3>
-
+          <h3 className="text-xl font-semibold">تحقق من الكود</h3>
           <p className="text-xs text-gray-500">
             من فضلك ادخل الكود الذي أرسل علي بريدك الالكتروني
           </p>
@@ -58,6 +62,7 @@ export default function CodeVerification() {
                 onChange={(val) => {
                   setCode(val);
                   setError("");
+                  setMessage("");
                 }}
                 render={({ slots }) => (
                   <div className="flex justify-center gap-1" dir="ltr">
@@ -78,19 +83,18 @@ export default function CodeVerification() {
                   </div>
                 )}
               />
-              {error && (
-                <p className="text-xs text-red-500 text-center">{error}</p>
-              )}
+              {error && <p className="text-xs text-red-500 text-center">{error}</p>}
+              {message && <p className="text-xs text-green-600 text-center">{message}</p>}
             </div>
 
             <button
               onClick={onSubmit}
               disabled={isDisabled}
               className={`w-full py-2 rounded-lg text-white transition
-              ${isDisabled
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-[#1e1855] hover:opacity-90"
-              }`}
+                ${isDisabled
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-[#1e1855] hover:opacity-90"
+                }`}
             >
               {verifyCodeMutation.isPending ? "جاري التحقق..." : "تحقق"}
             </button>
@@ -98,7 +102,7 @@ export default function CodeVerification() {
             <p className="text-xs text-gray-500 text-center">
               الكود لم يرسل؟{" "}
               <button
-                onClick={() => navigate("/login")}
+                onClick={handleResend}
                 className="text-[#d75b19] hover:underline"
               >
                 اعاده ارسال الكود
@@ -109,14 +113,10 @@ export default function CodeVerification() {
         </div>
 
         <div className="relative w-full order-1 md:order-2 md:w-[48%]">
-          <img
-            src="/clientLogin.png"
-            className="rounded-lg min-h-[400px] object-cover"
-          />
+          <img src="/clientLogin.png" className="rounded-lg min-h-[400px] object-cover" />
         </div>
 
       </div>
-
     </main>
   );
 }
