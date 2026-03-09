@@ -6,33 +6,10 @@ import { IoLogOutOutline } from "react-icons/io5";
 import { FiMessageSquare, FiShoppingBag, FiAlertTriangle } from "react-icons/fi";
 import NotificationBell from "../../pages/client/components/Notificationbell";
 import ProfileDropdown from "../../pages/client/components/Profiledropdown";
+import { useNotifications } from '../../features/notifications/hooks';
+import { formatTime } from '../../utils/time';
 
-const sampleNotifications = [
-  {
-    id: 1,
-    title: "تم قبول طلبك",
-    body: "طلب تركيب تكييف تم قبوله من المزود",
-    time: "منذ 5 دقائق",
-    read: false,
-    icon: <FiShoppingBag size={16} />,
-  },
-  {
-    id: 2,
-    title: "رسالة جديدة",
-    body: "لديك رسالة من أحمد محمد",
-    time: "منذ ساعة",
-    read: false,
-    icon: <FiMessageSquare size={16} />,
-  },
-  {
-    id: 3,
-    title: "تحديث النزاع",
-    body: "تم تحديث حالة النزاع الخاص بك",
-    time: "أمس",
-    read: true,
-    icon: <FiAlertTriangle size={16} />,
-  },
-];
+
 
 const navItems = [
   { to: "/home", label: "الرئيسية" },
@@ -63,6 +40,17 @@ export default function Navbar() {
     navigate("/select-role");
   };
 
+  const {data:notifications=[]} = useNotifications();
+  const mappedNotifications = notifications.map((n) => ({
+  id: n.id,
+  title: n.title,
+  body: n.message,
+  time: formatTime(n.createdAt),
+  read: n.isRead,
+  icon: <FiAlertTriangle size={16} />,
+}));
+
+
   return (
     <div className="w-[90%] xl:w-[80%] mx-auto flex justify-between gap-3 items-center text-black">
       <NavLink to="/" end className="text-[40px] order-2 lg:order-1 leading-relaxed no-underline font-bold">
@@ -88,7 +76,7 @@ export default function Navbar() {
       <div className="hidden order-3 lg:flex items-center gap-2">
         {isLoggedIn && isClient ? (
           <>
-            <NotificationBell notifications={sampleNotifications} />
+            <NotificationBell notifications={mappedNotifications} />
             <ProfileDropdown onLogout={handleLogout} />
           </>
         ) : isLoggedIn ? (

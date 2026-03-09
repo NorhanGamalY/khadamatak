@@ -27,6 +27,7 @@ function CraftmanDetails() {
 
                     <div className="bg-secondary p-8 relative flex  items-center justify-between text-white ">
                         <div className="z-10 ">
+
                             <h1 className="text-2xl font-bold ">{craftman?.fullName}</h1>
                             <p className="text-gray-300"> الخبره: {craftman.yearsOfExperience} </p>
                             <div className="flex items-center gap-1 mt-1 text-yellow-400">
@@ -35,7 +36,7 @@ function CraftmanDetails() {
                                 </span>
                             </div>
                         </div>
-                        <div className="absolute top-0 left-0 w-40 h-50 overflow-hidden">
+                        <div className="absolute top-0 left-0 lg:w-40 lg:h-50 h-55 w-40 overflow-hidden">
                             <img src={Craftmanimg} alt="craftsman" className="w-full h-full object-cover" />
                         </div>
                     </div>
@@ -49,16 +50,19 @@ function CraftmanDetails() {
                         </section>
 
                         <section className="bg-white p-4 rounded-xl border border-gray-50 shadow-sm">
+
                             <OurServices services={craftman?.services} />
                         </section>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <AvalibaleTimes
+
                                 availabilities={craftman?.availabilities} prices={prices} />
                         </div>
 
                         <section className='shadow-sm rounded-xl p-4'>
                             <h2 className="text-lg font-bold mb-2">التقييمات</h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
                                 <Rating reviews={craftman?.reviews}/>
                             </div>
                         </section>

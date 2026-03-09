@@ -1,21 +1,46 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import Header from "../components/common/Header";
+import axios from "axios";
 
+import { getId, getToken } from "../features/auth/authHelpers";
 export default function CraftsmanLayout() {
+  const id = getId();
+  const token = getToken();
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeLabel, setActiveLabel] = useState("لوحة التحكم");
+  const [craftsmanData, setCraftsmanData] = useState({});
+
   const navItems = [
     { label: "لوحة المعلومات", to: "/craftsman" },
     { label: "ادارة الطلبات", to: "/craftsman/requests" },
     { label: "جدول المواعيد", to: "/craftsman/appointments" },
     { label: "قائمة الخدمات", to: "/craftsman/services" },
     { label: "تقيماتي", to: "/craftsman/evaluate" },
+    { label: "النزاعات", to: "/craftsman/conflicts" },
     { label: "المحفظة", to: "/craftsman/wallet" },
     { label: "الرسائل", to: "/craftsman/messages" },
     { label: "الاعدادات", to: "/craftsman/settings" },
     { label: "الملف الشخصي", to: "/craftsman/profile" },
   ];
+
+  const getCraftsmanName = async () => {
+    try {
+      const res = await axios.get(
+        "https://herafie.runasp.net/api/Craftsmen/me",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+      setCraftsmanData(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    if (id && token) getCraftsmanName();
+  }, [id, token]);
   return (
     <div className="flex flex-col lg:flex-row min-h-screen text-black">
       {sidebarOpen && (
@@ -59,8 +84,10 @@ export default function CraftsmanLayout() {
         <Header
           sidebarOpen={sidebarOpen}
           setSidebarOpen={setSidebarOpen}
-          name={"يوسف النجار"}
-          role={"سباك محترف"}
+          name={
+            craftsmanData.fullName ? craftsmanData.fullName : "اسم المستخدم"
+          }
+          role={craftsmanData.bio ? craftsmanData.bio : "عن المستخدم"}
           activeTitle={activeLabel}
           profilePath={"/craftsman/profile"}
         />
@@ -69,7 +96,7 @@ export default function CraftsmanLayout() {
     </div>
   );
 }
-const NavItem = ({ label, to, onClick, setActiveLabel }) => (
+const NavItem = ({ label, to, setActiveLabel }) => (
   <NavLink
     to={to}
     end={to === "/craftsman"}
