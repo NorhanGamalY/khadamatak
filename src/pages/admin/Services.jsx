@@ -296,7 +296,6 @@ export default function Services() {
   type="success"
   title="تم بنجاح"
   message="تم اضافة الخدمة بنجاح"
-  actionLabel="تمام"
   onClose={() => setShowToast(false)}
 />
     </div>

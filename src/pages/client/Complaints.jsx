@@ -92,7 +92,6 @@ const [toastType, setToastType] = useState("success");
   type={toastType}
   title={toastType === "success" ? "نجاح" : "خطأ"}
   message={toastMessage}
-  actionLabel="تمام"
   onClose={() => setShowToast(false)}
 />
     </div>
