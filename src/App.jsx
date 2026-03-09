@@ -26,6 +26,7 @@ import ClientLogin from "./pages/public/ClientLogin";
 import CraftsmanRegister from "./pages/public/CraftsmanRegestier";
 import CraftsmanRegister2 from "./pages/public/Craftsmanregestier2";
 import CraftsmanLogin from "./pages/public/CraftsmanLogin";
+import PaymentPage from "./pages/public/PaymentPage";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/Dashboard";
@@ -63,6 +64,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import Service from "./pages/public/Service";
 import Chat from "./pages/client/Chat";
+import ClientOrdersPage from "./pages/public/ClientOrderPage";
 import Notifications from "./pages/public/Notifications";
 import Complaints from "./pages/client/Complaints";
 
@@ -129,7 +131,6 @@ function App() {
 
             <Route path="/services/:id" element={<CraftmanDetails />} />
             <Route path="/craftman-results" element={<CraftmanResults />} />
-
             <Route
               path="/service-request"
               element={
@@ -148,8 +149,25 @@ function App() {
               }
             />
 
-            <Route path="/notifications" element={<Notifications />} />
             <Route path="/complaints" element={<Complaints />} />
+            <Route
+              path="/orders"
+              element={
+                <ProtectedRoute allowedRole="Client" redirectTo="/login">
+                  <ClientOrdersPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/payment"
+              element={
+                <ProtectedRoute allowedRole="Client" redirectTo="/login">
+                  <PaymentPage />
+                </ProtectedRoute>
+              }
+            />
+              <Route path="/notifications" element={<Notifications />} />
+            </Route>
 
           </Route>
 
