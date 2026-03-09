@@ -1,197 +1,132 @@
-import React from 'react'
+import React, { useState } from "react";
+import Avatar from "../../components/common/Avatar";
+import { NavLink } from "react-router-dom";
+import { useOutletContext } from "react-router-dom";
 
 function NewRequest() {
+  const { orders, setOrders, loading } = useOutletContext();
+  const [message, setMessage] = useState("");
 
+  const data = orders.filter((o) => o.status === 0);
 
+  const handleAccept = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(
+        `https://herafie.runasp.net/api/Orders/${id}/accept`,
+        {
+          method: "PUT",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (!res.ok) throw new Error();
+
+      setOrders(orders.map((o) => (o.id === id ? { ...o, status: 1 } : o)));
+      setMessage("تم قبول الطلب بنجاح!");
+    } catch (e) {
+      console.error(e);
+      setMessage("فشل قبول الطلب");
+    } finally {
+      setTimeout(() => setMessage(""), 2000);
+    }
+  };
+
+  const handleCancel = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(
+        `https://herafie.runasp.net/api/Orders/${id}/cancel`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (!res.ok) throw new Error("فشل رفض الطلب");
+
+      setMessage("تم رفض الطلب");
+      setTimeout(() => setMessage(""), 2000);
+    } catch (error) {
+      console.error(error);
+      setMessage("فشل رفض الطلب");
+      setTimeout(() => setMessage(""), 2000);
+    }
+  };
+
+  if (loading)
+    return <p className="text-center mt-10">جاري تحميل الطلبات...</p>;
 
   return (
     <>
-      <div
-        className="bg-white rounded-xl shadow-sm p-4 md:p-6
-                flex flex-col md:flex-row
-                gap-4 md:gap-2
-                md:items-center md:justify-between
-                mb-4 hover:shadow-md transition"
-      >
-        <img
-          src="/Ellipse 89.png"
-          alt="avatar"
-          className="w-16 h-16 object-cover rounded-full mx-auto md:mx-0"
-        />
+      {message && (
+        <p className="text-center text-green-600 mb-4 font-semibold">
+          {message}
+        </p>
+      )}
 
-        <div className="flex flex-col justify-center text-center md:text-right">
-          <h3 className="font-semibold text-gray-800">عمر سامي</h3>
-          <p className="text-gray-500 text-sm">طلخا والمنصورة</p>
-        </div>
-
-        <div className="flex flex-col justify-center text-center">
-          <h3 className="font-semibold">الخدمة</h3>
-          <p className="text-gray-400 text-sm">صيانة التكييف</p>
-        </div>
-
-        <div className="flex flex-col justify-center text-center">
-          <h3 className="font-semibold">السعر</h3>
-          <p className="text-green-600 font-medium">500.00 جم</p>
-        </div>
-
-        <div className="flex flex-col justify-center text-center">
-          <h3 className="text-sm font-medium">10/2/2026</h3>
-          <p className="text-gray-500 text-sm">02:00 م</p>
-        </div>
-
-        <div className="flex flex-col gap-3 w-full md:w-auto">
-          <button
-            className="bg-white border border-gray-300 
-                       hover:bg-gray-100 transition
-                       text-gray-700 font-medium text-sm 
-                       px-4 py-2 rounded-md w-full md:w-auto"
+      {data.filter((item) => item.status === 0).map((item) => {
+        const date = new Date(item.scheduledAt);
+        return (
+          <div
+            key={item.id}
+            className="bg-white rounded-xl shadow-sm p-4 md:p-6 flex flex-col md:flex-row gap-3 md:gap-2 md:items-center md:justify-between mb-4 hover:shadow-md transition"
           >
-            عرض التفاصيل
-          </button>
+            <div className="flex flex-col md:flex-row gap-4 items-center text-center md:text-right">
+              <Avatar />
+              <h3 className="font-semibold text-gray-800">{item.clientName}</h3>
+            </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 w-full">
-            <button
-              className="bg-red-100 text-red-600 
-                         hover:bg-red-200 transition
-                         px-4 py-2 rounded-md w-full sm:w-auto"
-            >
-              رفض
-            </button>
+            <div className="flex flex-col text-center">
+              <h3 className="font-semibold">الخدمة</h3>
+              <p className="text-gray-400 text-sm">{item.serviceName}</p>
+            </div>
 
-            <button
-              className="bg-blue-900 text-white 
-                         hover:bg-blue-800 transition
-                         px-4 py-2 rounded-md w-full sm:w-auto"
-            >
-              قبول
-            </button>
+            <div className="flex flex-col text-center">
+              <h3 className="font-semibold">السعر</h3>
+              <p className="text-green-600 font-medium">{item.amount} جم</p>
+            </div>
+
+            <div className="flex flex-col text-center">
+              <h3 className="text-sm font-medium">
+                {date.toLocaleDateString("ar-EG")}
+              </h3>
+              <p className="text-gray-500 text-sm">
+                {date.toLocaleTimeString("ar-EG", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-3 w-full md:w-auto">
+              <NavLink
+                to={`/craftsman/requests/details/${item.id}`}
+                className="bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 font-medium text-sm px-4 py-2 rounded-md transition"
+
+              >
+                عرض التفاصيل
+              </NavLink>
+
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button
+                  onClick={() => handleCancel(item.id)}
+                  className="bg-red-100 text-red-600 hover:bg-red-200 px-4 py-2 rounded-md transition"
+                >
+                  رفض
+                </button>
+                <button
+                  onClick={() => handleAccept(item.id)}
+                  className="bg-blue-900 text-white hover:bg-blue-800 px-4 py-2 rounded-md transition"
+                >
+                  قبول
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <div
-        className="bg-white rounded-xl shadow-sm p-4 md:p-6
-                flex flex-col md:flex-row
-                gap-4 md:gap-2
-                md:items-center md:justify-between
-                mb-4 hover:shadow-md transition"
-      >
-        <img
-          src="/Ellipse 88.png"
-          alt="avatar"
-          className="w-16 h-16 object-cover rounded-full mx-auto md:mx-0"
-        />
-
-        <div className="flex flex-col justify-center text-center md:text-right">
-          <h3 className="font-semibold text-gray-800">عمر سامي</h3>
-          <p className="text-gray-500 text-sm">طلخا والمنصورة</p>
-        </div>
-
-        <div className="flex flex-col justify-center text-center">
-          <h3 className="font-semibold">الخدمة</h3>
-          <p className="text-gray-400 text-sm">صيانة التكييف</p>
-        </div>
-
-        <div className="flex flex-col justify-center text-center">
-          <h3 className="font-semibold">السعر</h3>
-          <p className="text-green-600 font-medium">500.00 جم</p>
-        </div>
-
-        <div className="flex flex-col justify-center text-center">
-          <h3 className="text-sm font-medium">10/2/2026</h3>
-          <p className="text-gray-500 text-sm">02:00 م</p>
-        </div>
-
-        <div className="flex flex-col gap-3 w-full md:w-auto">
-          <button
-            className="bg-white border border-gray-300 
-                       hover:bg-gray-100 transition
-                       text-gray-700 font-medium text-sm 
-                       px-4 py-2 rounded-md w-full md:w-auto"
-          >
-            عرض التفاصيل
-          </button>
-
-          <div className="flex flex-col sm:flex-row gap-3 w-full">
-            <button
-              className="bg-red-100 text-red-600 
-                         hover:bg-red-200 transition
-                         px-4 py-2 rounded-md w-full sm:w-auto"
-            >
-              رفض
-            </button>
-
-            <button
-              className="bg-blue-900 text-white 
-                         hover:bg-blue-800 transition
-                         px-4 py-2 rounded-md w-full sm:w-auto"
-            >
-              قبول
-            </button>
-          </div>
-        </div>
-      </div>
-      <div
-        className="bg-white rounded-xl shadow-sm p-4 md:p-6
-                flex flex-col md:flex-row
-                gap-4 md:gap-2
-                md:items-center md:justify-between
-                mb-4 hover:shadow-md transition"
-      >
-        <img
-          src="/Ellipse 87.png"
-          alt="avatar"
-          className="w-16 h-16 object-cover rounded-full mx-auto md:mx-0"
-        />
-
-        <div className="flex flex-col justify-center text-center md:text-right">
-          <h3 className="font-semibold text-gray-800">عمر سامي</h3>
-          <p className="text-gray-500 text-sm">طلخا والمنصورة</p>
-        </div>
-
-        <div className="flex flex-col justify-center text-center">
-          <h3 className="font-semibold">الخدمة</h3>
-          <p className="text-gray-400 text-sm">صيانة التكييف</p>
-        </div>
-
-        <div className="flex flex-col justify-center text-center">
-          <h3 className="font-semibold">السعر</h3>
-          <p className="text-green-600 font-medium">500.00 جم</p>
-        </div>
-
-        <div className="flex flex-col justify-center text-center">
-          <h3 className="text-sm font-medium">10/2/2026</h3>
-          <p className="text-gray-500 text-sm">02:00 م</p>
-        </div>
-
-        <div className="flex flex-col gap-3 w-full md:w-auto">
-          <button
-            className="bg-white border border-gray-300 
-                       hover:bg-gray-100 transition
-                       text-gray-700 font-medium text-sm 
-                       px-4 py-2 rounded-md w-full md:w-auto"
-          >
-            عرض التفاصيل
-          </button>
-
-          <div className="flex flex-col sm:flex-row gap-3 w-full">
-            <button
-              className="bg-red-100 text-red-600 
-                         hover:bg-red-200 transition
-                         px-4 py-2 rounded-md w-full sm:w-auto"
-            >
-              رفض
-            </button>
-
-            <button
-              className="bg-blue-900 text-white 
-                         hover:bg-blue-800 transition
-                         px-4 py-2 rounded-md w-full sm:w-auto"
-            >
-              قبول
-            </button>
-          </div>
-        </div>
-      </div>
+        );
+      })}
     </>
   );
 }

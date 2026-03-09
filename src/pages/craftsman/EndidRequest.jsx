@@ -1,133 +1,71 @@
 import React from "react";
+import Avatar from "../../components/common/Avatar";
+import { NavLink } from "react-router-dom";
+import { useOutletContext } from "react-router-dom";
 
-export default function EndedRequest() {
+function EndidRequest() {
+  const { orders, loading } = useOutletContext();
+  const data = orders.filter((o) => o.status === 4);
 
+  if (loading)
+    return <p className="text-center mt-10">جاري تحميل الطلبات...</p>;
 
   return (
     <>
-      <div className="bg-white rounded-xl shadow-sm p-4 md:p-6
-                flex flex-col md:flex-row
-                gap-4 md:gap-2
-                md:items-center md:justify-between
-                mb-4 hover:shadow-md transition">
-        <img
-          src="/Ellipse 88.png"
-          className="w-16 h-16 object-cover rounded-full mx-auto md:mx-0"
-          alt="avatar"
-        />
+      {data.filter((order) => order.status === 4).map((order) => (
+        <div
+          key={order.id}
+          className="bg-white rounded-xl shadow-sm p-4 md:p-6
+                    flex flex-col md:flex-row gap-4 md:gap-2
+                    md:items-center md:justify-between
+                    mb-4 hover:shadow-md transition"
+        >
+          <Avatar />
 
-        <div className="flex flex-col justify-center items-center text-center md:text-left">
-          <h3 className="font-semibold text-lg">عمر سامي</h3>
-          <p className="text-gray-500 text-sm">طلخا والمنصورة</p>
+          <div className="flex flex-col justify-center items-center text-center md:text-left">
+            <h3 className="font-semibold text-lg">{order.clientName}</h3>
+            <p className="text-gray-500 text-sm">
+              {order.address || "غير محدد"}
+            </p>
+          </div>
+
+          <div className="flex flex-col justify-center items-center text-center md:text-left">
+            <h3 className="font-semibold text-sm">الخدمة</h3>
+            <p className="text-gray-400 text-sm">{order.serviceName}</p>
+          </div>
+
+          <div className="flex flex-col text-center">
+            <h3 className="font-semibold">الخدمة</h3>
+            <p className="text-gray-400 text-sm">{order.serviceName}</p>
+          </div>
+
+          <div className="flex flex-col text-center">
+            <h3 className="font-semibold">السعر</h3>
+            <p className="text-green-600 font-medium">{order.amount} جم</p>
+          </div>
+
+          <div className="flex flex-col justify-center items-center gap-2">
+            <NavLink
+              to={`/craftsman/requests/details/${order.id}`}
+              className="bg-white border border-gray-300 hover:bg-gray-100 transition text-blue-400 font-medium text-sm px-4 py-2 rounded-md w-full md:w-auto"
+            >
+              عرض التفاصيل
+            </NavLink>
+
+            <div className="flex flex-col gap-3 w-full md:w-auto">
+              <NavLink
+                to={`/craftsman/requests/details/${order.id}`}
+
+                className="bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 font-medium text-sm px-4 py-2 rounded-md transition"
+              >
+                عرض التفاصيل
+              </NavLink>
+            </div>
+          </div>
         </div>
-
-        <div className="flex flex-col justify-center items-center text-center md:text-left">
-          <h3 className="font-semibold text-sm">الخدمة</h3>
-          <p className="text-gray-400 text-sm">صيانة التكييف</p>
-        </div>
-
-        <div className="flex flex-col justify-center items-center text-center md:text-left">
-          <h3 className="font-semibold text-sm">السعر</h3>
-          <p className="text-sm">500.00 جم</p>
-        </div>
-
-        <div className="flex flex-col justify-center items-center text-center md:text-left">
-          <h3 className="font-semibold text-sm">10/2/2026</h3>
-          <p className="text-sm">02:00 م</p>
-        </div>
-
-        <div className="flex flex-col justify-center items-center gap-2">
-          <button className="bg-white border border-gray-300 hover:bg-gray-100 transition text-blue-400 font-medium text-sm px-4 py-2 rounded-md w-full md:w-auto">
-            عرض التفاصيل
-          </button>
-
-          <button className="bg-blue-900 text-white px-4 py-2 rounded-md w-full md:w-auto">
-            مكتمل
-          </button>
-        </div>
-      </div>
-      <div className=" bg-white rounded-xl shadow-sm p-4 md:p-6
-                flex flex-col md:flex-row
-                gap-4 md:gap-2
-                md:items-center md:justify-between
-                mb-4 hover:shadow-md transition">
-        <img
-          src="/Ellipse 87.png"
-          className="w-16 h-16 object-cover rounded-full mx-auto md:mx-0"
-          alt="avatar"
-        />
-
-        <div className="flex flex-col justify-center items-center text-center md:text-left">
-          <h3 className="font-semibold text-lg">عمر سامي</h3>
-          <p className="text-gray-500 text-sm">طلخا والمنصورة</p>
-        </div>
-
-        <div className="flex flex-col justify-center items-center text-center md:text-left">
-          <h3 className="font-semibold text-sm">الخدمة</h3>
-          <p className="text-gray-400 text-sm">صيانة التكييف</p>
-        </div>
-
-        <div className="flex flex-col justify-center items-center text-center md:text-left">
-          <h3 className="font-semibold text-sm">السعر</h3>
-          <p className="text-sm">500.00 جم</p>
-        </div>
-
-        <div className="flex flex-col justify-center items-center text-center md:text-left">
-          <h3 className="font-semibold text-sm">10/2/2026</h3>
-          <p className="text-sm">02:00 م</p>
-        </div>
-
-        <div className="flex flex-col justify-center items-center gap-2">
-          <button className="bg-white border border-gray-300 hover:bg-gray-100 transition text-blue-400 font-medium text-sm px-4 py-2 rounded-md w-full md:w-auto">
-            عرض التفاصيل
-          </button>
-
-          <button className="bg-blue-900 text-white px-4 py-2 rounded-md w-full md:w-auto">
-            مكتمل
-          </button>
-        </div>
-      </div>
-      <div className=" bg-white rounded-xl shadow-sm p-4 md:p-6
-                flex flex-col md:flex-row
-                gap-4 md:gap-2
-                md:items-center md:justify-between
-                mb-4 hover:shadow-md transition">
-        <img
-          src="/Ellipse 87.png"
-          className="w-16 h-16 object-cover rounded-full mx-auto md:mx-0"
-          alt="avatar"
-        />
-
-        <div className="flex flex-col justify-center items-center text-center md:text-left">
-          <h3 className="font-semibold text-lg">عمر سامي</h3>
-          <p className="text-gray-500 text-sm">طلخا والمنصورة</p>
-        </div>
-
-        <div className="flex flex-col justify-center items-center text-center md:text-left">
-          <h3 className="font-semibold text-sm">الخدمة</h3>
-          <p className="text-gray-400 text-sm">صيانة التكييف</p>
-        </div>
-
-        <div className="flex flex-col justify-center items-center text-center md:text-left">
-          <h3 className="font-semibold text-sm">السعر</h3>
-          <p className="text-sm">500.00 جم</p>
-        </div>
-
-        <div className="flex flex-col justify-center items-center text-center md:text-left">
-          <h3 className="font-semibold text-sm">10/2/2026</h3>
-          <p className="text-sm">02:00 م</p>
-        </div>
-
-        <div className="flex flex-col justify-center items-center gap-2">
-          <button className="bg-white border border-gray-300 hover:bg-gray-100 transition text-blue-400 font-medium text-sm px-4 py-2 rounded-md w-full md:w-auto">
-            عرض التفاصيل
-          </button>
-
-          <button className="bg-blue-900 text-white px-4 py-2 rounded-md w-full md:w-auto">
-            مكتمل
-          </button>
-        </div>
-      </div>
+      ))}
     </>
   );
 }
+
+export default EndidRequest;

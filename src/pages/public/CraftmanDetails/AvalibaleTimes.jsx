@@ -3,11 +3,11 @@ import { GoDotFill } from "react-icons/go";
 
 const dayNames = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
 
-const priceInfo = {
-    note: "يتم تحديد السعر بعد المعاينة",
-};
 
-function AvalibaleTimes({ availabilities, services }) {
+function AvalibaleTimes({ availabilities, prices }) {
+            const priceInfo = prices ? {
+            range: `${Math.min(...prices)} - ${Math.max(...prices)} جنية`,
+        } : null;
     const daysAvailability = dayNames.map((name, index) => {
         const Works = availabilities?.find(a => a.day === index);
         return {
@@ -43,14 +43,12 @@ function AvalibaleTimes({ availabilities, services }) {
             </div>
             <div className="bg-white p-4 rounded-xl border border-gray-50 shadow-sm">
                 <h3 className="font-bold mb-2">السعر التقريبي:</h3>
-                <p className="text-[#D75B19] font-bold text-xl ps-5">{minPrice !== null
-                    ? minPrice === maxPrice
-                        ? `${minPrice} ج.م`
-                        : `${minPrice} - ${maxPrice}`
-                    : "غير متوفر"}</p>
+
+                <p className="text-[#D75B19] font-bold text-xl ps-5">{priceInfo?.range}</p>
                 <p className="text-sm mt-2 flex items-center">
 
-                    <span><GoDotFill className="text-2xl text-gray-400" /></span>{priceInfo.note}</p>
+                    <span><GoDotFill className="text-2xl text-gray-400"
+                    /></span>يتم تحديد السعر بعد المعاينة</p>
             </div>
         </>
     );

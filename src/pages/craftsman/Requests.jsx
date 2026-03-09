@@ -1,16 +1,28 @@
 
-
-
-
 import { NavLink, Outlet } from "react-router-dom";
-
+import { useEffect, useState } from "react";
+import getorder_craftman from "../../api/getorder_craftman";
 export default function Requests() {
   const activeStyle = "text-orange-600 border-b-2 border-orange-600";
+const [orders, setOrders] = useState([]);
+const [loading, setLoading] = useState(true);
+useEffect(() => {
+  async function fetchOrders() {
+    try {
+      const res = await getorder_craftman();
+      setOrders(res);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  }
 
+  fetchOrders();
+}, []);
   return (
     <div className="bg-gray-100 w-full min-h-screen p-5">
       <div className="bg-white p-6 rounded-md">
-        {/* tabs */}
         <div className="flex justify-between">
           <div className="flex gap-4">
             <NavLink
@@ -59,9 +71,8 @@ export default function Requests() {
         </div>
       </div>
 
-      {/* المحتوى بيتعرض هنا */}
       <div className="mt-6">
-        <Outlet />
+        <Outlet context={{ orders, setOrders, loading }} />
       </div>
     </div>
   );

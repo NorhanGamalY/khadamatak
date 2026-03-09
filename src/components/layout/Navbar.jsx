@@ -1,8 +1,23 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { IoClose, IoPerson } from "react-icons/io5";
 import { HiMenuAlt3 } from 'react-icons/hi';
 import { IoLogOutOutline } from "react-icons/io5";
+import { FiMessageSquare, FiShoppingBag, FiAlertTriangle } from "react-icons/fi";
+import NotificationBell from "../../pages/client/components/Notificationbell";
+import ProfileDropdown from "../../pages/client/components/Profiledropdown";
+import { useNotifications } from '../../features/notifications/hooks';
+import { formatTime } from '../../utils/time';
+
+
+
+const navItems = [
+  { to: "/home", label: "الرئيسية" },
+  { to: "/services", label: "الخدمات" },
+  { to: "/works", label: "أعمالنا" },
+  { to: "/about", label: "من نحن" },
+  { to: "/contacts", label: "تواصل معنا" },
+];
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -10,48 +25,31 @@ export default function Navbar() {
 
   const token = localStorage.getItem("token") || sessionStorage.getItem("token");
   const isLoggedIn = !!token;
-
-  const navItems = [
-    { to: "/home", label: "الرئيسية" },
-    { to: "/services", label: "الخدمات" },
-    { to: "/works", label: "أعمالنا" },
-    { to: "/about", label: "من نحن" },
-    { to: "/contacts", label: "تواصل معنا" },
-  ]
+  const role = localStorage.getItem("role") || sessionStorage.getItem("role");
+  const isClient = role === "Client";
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    sessionStorage.removeItem("token");
+    ["token", "role", "userName", "userAvatar"].forEach((key) => {
+      localStorage.removeItem(key);
+      sessionStorage.removeItem(key);
+    });
     closeMenu();
     navigate("/select-role");
   };
 
-  const AuthButton = ({ mobile = false }) =>
-    isLoggedIn ? (
-      <button
-        onClick={handleLogout}
-        className={`flex items-center gap-2 rounded-4xl text-[14px] transition bg-[#1e1855] text-white hover:bg-[#d75b19]
-          ${mobile ? "py-3 px-4 justify-center rounded-lg text-[16px] mt-4 w-full" : "py-1 px-3"}
-        `}
-      >
-        <IoLogOutOutline />
-        تسجيل الخروج
-      </button>
-    ) : (
-      <NavLink
-        to="/select-role"
-        onClick={mobile ? closeMenu : undefined}
-        className={`flex items-center gap-2 rounded-4xl text-[14px] transition bg-[#d75b19] text-white hover:bg-[#1e1855]
-          ${mobile ? "py-3 px-4 justify-center rounded-lg text-[16px] mt-4" : "py-1 px-3"}
-        `}
-      >
-        <IoPerson />
-        تسجيل الدخول
-      </NavLink>
-    );
+  const {data:notifications=[]} = useNotifications();
+  const mappedNotifications = notifications.map((n) => ({
+  id: n.id,
+  title: n.title,
+  body: n.message,
+  time: formatTime(n.createdAt),
+  read: n.isRead,
+  icon: <FiAlertTriangle size={16} />,
+}));
+
 
   return (
     <div className="w-[90%] xl:w-[80%] mx-auto flex justify-between gap-3 items-center text-black">
@@ -65,9 +63,8 @@ export default function Navbar() {
             key={item.to}
             to={item.to}
             className={({ isActive }) =>
-              `inline-block no-underline text-[18px] transition ${isActive
-                ? "text-[#d75b19] font-semibold"
-                : "hover:text-[#d75b19]"
+              `inline-block no-underline text-[18px] transition ${
+                isActive ? "text-[#d75b19] font-semibold" : "hover:text-[#d75b19]"
               }`
             }
           >
@@ -76,8 +73,29 @@ export default function Navbar() {
         ))}
       </div>
 
-      <div className="hidden order-3 lg:flex">
-        <AuthButton />
+      <div className="hidden order-3 lg:flex items-center gap-2">
+        {isLoggedIn && isClient ? (
+          <>
+            <NotificationBell notifications={mappedNotifications} />
+            <ProfileDropdown onLogout={handleLogout} />
+          </>
+        ) : isLoggedIn ? (
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 rounded-4xl text-[14px] transition bg-[#1e1855] text-white hover:bg-[#d75b19] py-1 px-3"
+          >
+            <IoLogOutOutline />
+            تسجيل الخروج
+          </button>
+        ) : (
+          <NavLink
+            to="/select-role"
+            className="flex items-center gap-2 rounded-4xl text-[14px] transition bg-[#d75b19] text-white hover:bg-[#1e1855] py-1 px-3"
+          >
+            <IoPerson />
+            تسجيل الدخول
+          </NavLink>
+        )}
       </div>
 
       <button
@@ -90,7 +108,7 @@ export default function Navbar() {
 
       <div
         className={`fixed top-0 right-0 h-screen w-[75%] bg-white shadow-2xl transform transition-transform duration-300 ease-in-out z-40 lg:hidden ${
-          isMenuOpen ? 'translate-x-0' : 'translate-x-full'
+          isMenuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         <div className="flex flex-col gap-6 p-8 mt-20">
@@ -101,9 +119,7 @@ export default function Navbar() {
               onClick={closeMenu}
               className={({ isActive }) =>
                 `block no-underline text-[20px] transition py-2 border-b border-gray-200 ${
-                  isActive
-                    ? "text-[#d75b19] font-semibold"
-                    : "text-black hover:text-[#d75b19]"
+                  isActive ? "text-[#d75b19] font-semibold" : "text-black hover:text-[#d75b19]"
                 }`
               }
             >
@@ -111,7 +127,44 @@ export default function Navbar() {
             </NavLink>
           ))}
 
-          <AuthButton mobile />
+          {isLoggedIn && isClient && (
+            <div className="flex flex-col gap-1">
+              {[
+                { to: "/messages", label: "الرسائل", icon: <FiMessageSquare /> },
+                { to: "/orders", label: "الطلبات", icon: <FiShoppingBag /> },
+                { to: "/disputes", label: "النزاعات", icon: <FiAlertTriangle /> },
+              ].map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  onClick={closeMenu}
+                  className="flex items-center gap-3 text-[17px] py-2 text-gray-700 hover:text-[#d75b19] transition"
+                >
+                  {item.icon}
+                  {item.label}
+                </NavLink>
+              ))}
+            </div>
+          )}
+
+          {isLoggedIn ? (
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 py-3 px-4 justify-center rounded-lg text-[16px] mt-4 w-full bg-red-500 text-white hover:bg-red-600 transition"
+            >
+              <IoLogOutOutline />
+              تسجيل الخروج
+            </button>
+          ) : (
+            <NavLink
+              to="/select-role"
+              onClick={closeMenu}
+              className="flex items-center gap-2 py-3 px-4 justify-center rounded-lg text-[16px] mt-4 bg-[#d75b19] text-white hover:bg-[#1e1855] transition"
+            >
+              <IoPerson />
+              تسجيل الدخول
+            </NavLink>
+          )}
         </div>
       </div>
 
@@ -122,5 +175,5 @@ export default function Navbar() {
         />
       )}
     </div>
-  )
+  );
 }

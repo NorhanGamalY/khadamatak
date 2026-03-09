@@ -4,11 +4,12 @@ import AvalibaleTimes from './AvalibaleTimes'
 import Rating from './Rating'
 import Craftmanimg from '../../../assets/craftman-details/Craftsman.png';
 import { FaStar } from "react-icons/fa";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import SplashLoader from '../../../components/common/SplashLoader';
 
 function CraftmanDetails() {
-    // Craftsmen Data
     const [craftman, setCraftman] = useState(null);
+    const navigate = useNavigate();
     const { id } = useParams();
     useEffect(() => {
         fetch(`https://herafie.runasp.net/api/Craftsmen/${id}/profile`)
@@ -16,59 +17,22 @@ function CraftmanDetails() {
             .then(data => setCraftman(data))
             .catch(err => console.log(err));
     }, [id]);
-    // OrderBtn
-    const handleOrder = async () => {
-        if (!craftman) return;
-
-        try {
-            const token = localStorage.getItem("token");
-            if (!token) {
-                alert("يجب تسجيل الدخول أولاً");
-                return;
-            }
-
-            const response = await fetch("https://herafie.runasp.net/api/Orders", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    craftsmanId: craftman.id,
-                    serviceId: 0,
-                    description: "أرغب في الحجز",
-                    scheduledAt: new Date().toISOString()
-                })
-            });
-
-            if (!response.ok) throw new Error("فشل إرسال الطلب");
-
-            const data = await response.json();
-            console.log(data);
-            alert("تم إرسال الطلب بنجاح ");
-
-        } catch (error) {
-            console.error(error);
-            alert("حدث خطأ أثناء إرسال الطلب");
-        }
-    };
+    const prices = craftman?.services.map(service => service.price);
     if (!craftman) return <p className='min-h-screen py-10 px-4 mt-20 text-center font-bold text-3xl'>
-        <span className='text-red-500'>...</span> Loading </p>
+        <span className='flex min-h-screen  justify-center items-center gap-4'><SplashLoader /> </span></p>
     return (
         <>
             <div className="min-h-screen bg-gray-100 py-10 px-4 mt-20">
                 <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
 
-                    {/* Header Section */}
                     <div className="bg-secondary p-8 relative flex  items-center justify-between text-white ">
                         <div className="z-10 ">
-                            <h1 className="lg:text-2xl text-xl font-bold ">{craftman.fullName}</h1>
-                            <p className="text-gray-300"> الخبره: {craftman.yearsOfExperience} <br />{craftman.bio}</p>
-                            <div className=" mt-1 text-yellow-400">
-                                <span className='flex lg:gap-2 gap-1 items-center'> تقييم :
-                                    {[...Array(Math.min(5, Math.round(craftman.rating || 0)))].map((_, index) => (
-                                        <FaStar key={index} />
-                                    ))}
+
+                            <h1 className="text-2xl font-bold ">{craftman?.fullName}</h1>
+                            <p className="text-gray-300"> الخبره: {craftman.yearsOfExperience} </p>
+                            <div className="flex items-center gap-1 mt-1 text-yellow-400">
+                                <span className='flex gap-2 items-center'> تقييم :{craftman?.rating ||"لا يوجد تقييم"} 
+                                    {craftman?.rating ? [...Array(Math.round(craftman.rating))].map((_, i) => <FaStar key={i} />) : null}
                                 </span>
                             </div>
                         </div>
@@ -81,34 +45,39 @@ function CraftmanDetails() {
                         <section className="bg-white p-4 rounded-xl border border-gray-50 shadow-sm">
                             <h2 className="text-lg font-bold mb-2">نبذة عن الحرفي</h2>
                             <p className="text-gray-800 text-sm ">
-                                {craftman.bio}
+                                {craftman?.bio|| "لا توجد بيانات تعريفية"}
                             </p>
                         </section>
 
-                        {/* الخدمات المقدمة */}
                         <section className="bg-white p-4 rounded-xl border border-gray-50 shadow-sm">
-                            <OurServices services={craftman.services}/>
+
+                            <OurServices services={craftman?.services} />
                         </section>
-                        {/* السعر التقريبي */} {/* المواعيد المتاحة */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <AvalibaleTimes
-                                availabilities={craftman.availabilities}
-                                services={craftman.services}
-                            />
+
+                                availabilities={craftman?.availabilities} prices={prices} />
                         </div>
 
                         <section className='shadow-sm rounded-xl p-4'>
                             <h2 className="text-lg font-bold mb-2">التقييمات</h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <Rating reviews={craftman.reviews} />
+
+                                <Rating reviews={craftman?.reviews}/>
                             </div>
                         </section>
 
                         <button
-                            onClick={handleOrder}
                             className="w-full bg-[#d35400] hover:bg-[#b34700] text-white
-                         font-bold py-3 rounded-xl transition-all shadow-lg mt-4">
+                            font-bold py-3 rounded-xl transition-all shadow-lg mt-4"
+                            onClick={() => navigate(`/chat/${craftman.id}`)}>
                             راسل الحرفي الآن
+                        </button>
+                        <button
+                            className="w-full bg-secondary hover:bg-blue-900 text-white
+                            font-bold py-3 rounded-xl transition-all shadow-lg"                         
+                            onClick={() => navigate(`/service-request` , { state: { craftsman: craftman } })}>
+                                انشاء طلب الخدمة 
                         </button>
                     </div>
                 </div>

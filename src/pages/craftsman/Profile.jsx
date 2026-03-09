@@ -1,50 +1,71 @@
 import React, { useEffect, useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { motion, AnimatePresence } from "framer-motion";
-import { Phone, MapPin, Edit3, Menu, Search } from "lucide-react";
+import { Phone, MapPin, Edit3 } from "lucide-react";
 import Avatar from "../../components/common/Avatar";
+import axios from "axios";
 
 export default function Profile() {
   const token = localStorage.getItem("token");
   const [isEditing, setIsEditing] = useState(false);
-  const [profile, setProfile] = useState({});
-  const [tempData, setTempData] = useState(profile);
-
-  const handleSave = () => {
-    const cleanServices = tempData.services.filter(
-      (ser) => ser.name && ser.name.trim() !== "",
-    );
-    const finalData = { ...tempData, services: cleanServices };
-    setProfile(finalData);
-    setTempData(finalData);
-    setIsEditing(false);
-    toast.success("تم حفظ التعديلات بنجاح", {
-      position: "bottom-center",
-    });
-  };
+  const [profile, setProfile] = useState({ services: [] });
+  const [tempData, setTempData] = useState({ services: [{ name: "" }] });
 
   const handleCancel = () => {
     setTempData(profile);
     setIsEditing(false);
   };
 
-  const handleData = async () => {
-    const res = await fetch(`https://herafie.runasp.net/api/Craftsmen/me`, {
-      method: "GET",
+  const handleGetData = async () => {
+    const res = await axios.get(`https://herafie.runasp.net/api/Craftsmen/me`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    const data = await res.json();
 
-    setProfile(data);
-    setTempData(data);
-
-    console.log(data);
+    setProfile(res.data);
+    setTempData(res.data);
   };
+  const handleEdit = async () => {
+    try {
+      const cleanServices = tempData?.services.map((ser) => {
+        const obj = {
+          name: ser.name,
+          description: ser.description,
+          price: ser.price,
+        };
 
+        if (ser.id && ser.id !== 0) {
+          obj.id = ser.id;
+        }
+
+        return obj;
+      });
+
+      const payload = {
+        fullName: tempData.fullName,
+        phoneNumber: tempData.phoneNumber,
+        bio: tempData.bio,
+        yearsOfExperience: Number(tempData.yearsOfExperience) || 0,
+        services: cleanServices,
+      };
+
+      const res = await axios.put(
+        "https://herafie.runasp.net/api/Craftsmen/me",
+        payload,
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+
+      if (res.status === 200 || res.status === 204) {
+        await handleGetData();
+        setIsEditing(false);
+      }
+    } catch (error) {
+      console.error("تفاصيل الخطأ:", error.response?.data);
+    }
+  };
   useEffect(() => {
-    handleData();
-  }, []);
+    if (token) handleGetData();
+  }, [token]);
 
   return (
     <div dir="rtl" className="min-h-screen bg-gray-100">
@@ -57,8 +78,9 @@ export default function Profile() {
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <div className="p-0">
             <div className="bg-[#f7f7f7] p-8 flex flex-col md:flex-row items-center gap-6 text-center md:text-right">
+
               <Avatar
-                src={tempData.image ? tempData.image : ""}
+                src={profile.image ? profile.image : ""}
                 name={profile.fullName}
                 size={80}
               />
@@ -72,7 +94,7 @@ export default function Profile() {
                 </div>
                 <div className="flex items-center justify-center md:justify-start gap-2 text-indigo-900">
                   <MapPin size={18} />
-                  <span>المنصورة</span>
+                  <span>{profile.bio}</span>
                 </div>
               </div>
             </div>
@@ -80,6 +102,7 @@ export default function Profile() {
               الخدمات
             </div>
             <div className="p-8 space-y-4 text-indigo-900 text-lg">
+              
               {profile?.services?.length > 0 &&
                 profile?.services?.map((service, i) => {
                   if (service.name.length > 0) {
@@ -134,27 +157,28 @@ export default function Profile() {
 
               <input
                 className="w-full border rounded-xl p-2"
+
                 placeholder="اسم الحرفي"
-                value={tempData.fullName}
+                value={tempData.fullName || ""}
                 onChange={(e) =>
-                  setTempData({ ...tempData, name: e.target.value })
+                  setTempData({ ...tempData, fullName: e.target.value })
                 }
               />
               <input
                 className="w-full border rounded-xl p-2"
                 value={tempData.phoneNumber}
                 onChange={(e) =>
-                  setTempData({ ...tempData, phone: e.target.value })
+                  setTempData({ ...tempData, phoneNumber: e.target.value })
                 }
                 placeholder="01012345678"
               />
               <input
                 className="w-full border rounded-xl p-2"
-                value={tempData.city}
+                value={tempData.bio}
                 onChange={(e) =>
-                  setTempData({ ...tempData, city: e.target.value })
+                  setTempData({ ...tempData, bio: e.target.value })
                 }
-                placeholder="المنصورة"
+                placeholder="كهربائي"
               />
 
               <input
@@ -172,6 +196,7 @@ export default function Profile() {
                   }
                 }}
               />
+
 
               <div className="space-y-2 overflow-y-auto lg:h-38 h-40 overflow-message">
                 {tempData?.services?.map((service, index) => (
@@ -204,10 +229,9 @@ export default function Profile() {
               >
                 + اضافة خدمة
               </button>
-
               <div className="flex gap-3">
                 <button
-                  onClick={handleSave}
+                  onClick={handleEdit}
                   className="bg-orange-600 hover:bg-orange-500 text-white rounded-xl w-full"
                 >
                   حفظ التعديل
