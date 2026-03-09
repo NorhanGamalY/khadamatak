@@ -64,12 +64,12 @@ export const useClientOrders = () => {
     }
 
     if (activeTab === "inProgress") {
-      return enrichedOrders.filter((order) => order.status === 2);
+      return enrichedOrders.filter((order) => order.status === 3);
     }
 
     if (activeTab === "completed") {
       return enrichedOrders.filter(
-        (order) => order.status === 3 || order.status === 4
+        (order) => order.status === 4 || order.status === 5
       );
     }
 

@@ -1,11 +1,12 @@
 import { getOrderStatusMeta } from "../../utils/orderStatus";
 
 const statusStyles = {
-  0: "bg-[#FFF1E8] text-[#F07C2B]",
+  0: "bg-[#FFF1E8] text-[#3B82F6]",
   1: "bg-[#EEF4FF] text-[#3B82F6]",
-  2: "bg-[#EAF8EE] text-[#4E9F62]",
-  3: "bg-[#EAF8EE] text-[#4E9F62]",
-  4: "bg-[#FDECEC] text-[#E15B64]",
+  2: "bg-[#EAF8EE] text-[#E15B64]",
+  3: "bg-[#EAF8EE] text-[#F07C2B]",
+  4: "bg-[#EAF8EE] text-[#4E9F62]",
+  5: "bg-[#FDECEC] text-[#E15B64]",
 };
 
 const OrderStatusBadge = ({ status }) => {
