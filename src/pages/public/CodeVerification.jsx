@@ -1,40 +1,34 @@
 import React, { useState } from "react";
-import InputField from "./components/InputField";
+import { OTPInput } from "input-otp";
 import { useNavigate } from "react-router-dom";
 import { useVerifyCode } from "../../features/auth/password/hooks";
 
 export default function CodeVerification() {
   const verifyCodeMutation = useVerifyCode();
   const navigate = useNavigate();
-  const [form, setForm] = useState({code: ""});
-
-  const [errors, setErrors] = useState({});
-
-  const handleChange = (key, value) => {
-    setForm((prev) => ({ ...prev, [key]: value }));
-    setErrors((prev) => ({ ...prev, [key]: undefined }));
-  };
+  const [code, setCode] = useState("");
+  const [error, setError] = useState("");
 
   const onSubmit = () => {
-  if (!form.code) {
-    setErrors({ code: "ادخل الكود" });
-    return;
-  }
-
-  verifyCodeMutation.mutate(
-    { code: form.code },
-    {
-      onSuccess: () => {
-        navigate("/reset-password");
-      },
-      onError: () => {
-        setErrors({ code: "الكود غير صحيح" });
-      },
+    if (!code || code.length < 5) {
+      setError("ادخل الكود كاملاً");
+      return;
     }
-  );
-};
 
-  const isDisabled = !form.code || verifyCodeMutation.isPending;
+    verifyCodeMutation.mutate(
+      { code },
+      {
+        onSuccess: () => {
+          navigate("/reset-password");
+        },
+        onError: () => {
+          setError("الكود غير صحيح");
+        },
+      }
+    );
+  };
+
+  const isDisabled = code.length < 5 || verifyCodeMutation.isPending;
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -48,24 +42,46 @@ export default function CodeVerification() {
           </h1>
 
           <h3 className="text-xl font-semibold">
-           تحقق من الكود
+            تحقق من الكود
           </h3>
 
           <p className="text-xs text-gray-500">
-           من فضلك ادخل الكود الذي أرسل علي بريدك الالكتروني
+            من فضلك ادخل الكود الذي أرسل علي بريدك الالكتروني
           </p>
 
           <div className="flex flex-col gap-4">
 
-            <InputField
-  inputType="text"
-  title="الكود"
-  id="code"
-  fieldPlaceholder="ادخل الكود..."
-  value={form.code}
-  onChange={(e) => handleChange("code", e.target.value)}
-  error={errors.code}
-/>
+            <div className="flex flex-col gap-2">
+              <OTPInput
+                maxLength={5}
+                value={code}
+                onChange={(val) => {
+                  setCode(val);
+                  setError("");
+                }}
+                render={({ slots }) => (
+                  <div className="flex justify-center gap-1" dir="ltr">
+                    {slots.map((slot, idx) => (
+                      <div
+                        key={idx}
+                        className={`w-10 h-12 flex items-center justify-center border-2 rounded-lg text-lg font-semibold transition
+                          ${slot.isActive
+                            ? "border-gray-500 "
+                            : error
+                            ? "border-red-400"
+                            : "border-gray-300"
+                          }`}
+                      >
+                        {slot.char ?? <span className="text-gray-300">-</span>}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              />
+              {error && (
+                <p className="text-xs text-red-500 text-center">{error}</p>
+              )}
+            </div>
 
             <button
               onClick={onSubmit}
@@ -76,11 +92,11 @@ export default function CodeVerification() {
                 : "bg-[#1e1855] hover:opacity-90"
               }`}
             >
-                {verifyCodeMutation.isPending ? "جاري التحقق..." : "تحقق"}
+              {verifyCodeMutation.isPending ? "جاري التحقق..." : "تحقق"}
             </button>
 
             <p className="text-xs text-gray-500 text-center">
-             الكود لم يرسل؟{" "}
+              الكود لم يرسل؟{" "}
               <button
                 onClick={() => navigate("/login")}
                 className="text-[#d75b19] hover:underline"
@@ -93,12 +109,10 @@ export default function CodeVerification() {
         </div>
 
         <div className="relative w-full order-1 md:order-2 md:w-[48%]">
-
           <img
             src="/clientLogin.png"
             className="rounded-lg min-h-[400px] object-cover"
           />
-
         </div>
 
       </div>
