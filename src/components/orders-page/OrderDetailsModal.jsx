@@ -5,7 +5,6 @@ import OrderStatusBadge from "./OrderStatusBadge";
 
 const OrderDetailsModal = ({ order, onClose, onOpenComplaint }) => {
   const navigate = useNavigate();
-
   if (!order) return null;
 
   const { date, time } = formatDateTime(order.scheduledAt);
@@ -16,13 +15,15 @@ const OrderDetailsModal = ({ order, onClose, onOpenComplaint }) => {
   };
 
   const handleOpenComplaint = () => {
-    if (onOpenComplaint) {
-      onOpenComplaint(order);
-      return;
-    }
-
-    console.log("Open complaint for order:", order);
-  };
+navigate('/complaints', {
+  state: {
+    orderService: order.serviceName,
+    craftsmanName: order.craftsmanName,
+    orderId: order.id
+  }
+});
+onClose?.();
+    };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
@@ -105,6 +106,7 @@ const OrderDetailsModal = ({ order, onClose, onOpenComplaint }) => {
           {order.status === 4 && (
             <button
               onClick={handleOpenComplaint}
+            
               className="inline-flex items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 px-5 py-3 text-sm font-semibold text-red-600 transition hover:bg-red-100"
             >
               <TriangleAlert size={18} />

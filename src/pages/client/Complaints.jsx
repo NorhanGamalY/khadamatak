@@ -2,14 +2,16 @@ import { useState } from "react";
 import { FaCamera } from "react-icons/fa6";
 import { useCreateComplaint } from "../../features/complaints/hooks";
 import toast from "react-hot-toast";
+import { useLocation } from "react-router-dom";
 
 export default function Complaints() {
-
-  const order = {
-    id: 12,
-    service: "كهرباء",
-    craftsman: "محمد أحمابرار مثنى راكع الراوي iraq",
-  };
+const location = useLocation();
+const { orderService, craftsmanName, orderId } = location.state || {};
+  // const order = {
+  //   id: 12,
+  //   service: "كهرباء",
+  //   craftsman: "محمد أحمابرار مثنى راكع الراوي iraq",
+  // };
 
   const [description, setDescription] = useState("");
   const { mutate, isPending } = useCreateComplaint();
@@ -17,7 +19,7 @@ export default function Complaints() {
  const handleSubmit = () => {
   mutate(
     {
-      orderId: order.id,
+      orderId: orderId,
       description: description,
       evidenceAttachmentUrl: "",
     },
@@ -45,9 +47,9 @@ export default function Complaints() {
       <div className="space-y-6">
         {/* order details */}
       <div className="flex gap-6 text-lg  ">
-        <p>رقم الطلب: <span className="font-semibold text-red-500">{order.id}</span></p>
-        <p>الخدمة:  <span className="font-semibold text-red-500">{order.service}</span></p>
-        <p>الحرفي: <span className="font-semibold text-red-500">{order.craftsman}</span></p>
+        <p>رقم الطلب: <span className="font-semibold text-red-500">{orderId}</span></p>
+        <p>الخدمة:  <span className="font-semibold text-red-500">{orderService}</span></p>
+        <p>الحرفي: <span className="font-semibold text-red-500">{craftsmanName}</span></p>
       </div>
 
         {/* description */}
