@@ -1,14 +1,35 @@
+import { useNavigate } from "react-router-dom";
+import { MessageCircleMore, TriangleAlert } from "lucide-react";
 import { formatCurrency, formatDateTime } from "../../utils/formatters";
 import OrderStatusBadge from "./OrderStatusBadge";
 
-const OrderDetailsModal = ({ order, onClose }) => {
+const OrderDetailsModal = ({ order, onClose, onOpenComplaint }) => {
+  const navigate = useNavigate();
+
   if (!order) return null;
 
   const { date, time } = formatDateTime(order.scheduledAt);
 
+  const handleMessageCraftsman = () => {
+    navigate(`/chat/${order.craftsmanId}`);
+    onClose?.();
+  };
+
+  const handleOpenComplaint = () => {
+    if (onOpenComplaint) {
+      onOpenComplaint(order);
+      return;
+    }
+
+    console.log("Open complaint for order:", order);
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-      <div className="w-full max-w-2xl rounded-2xl bg-white p-6 shadow-xl">
+      <div
+        className="w-full max-w-2xl rounded-2xl bg-white p-6 shadow-xl"
+        dir="rtl"
+      >
         <div className="mb-5 flex items-center justify-between">
           <h2 className="text-xl font-bold text-gray-800">تفاصيل الطلب</h2>
           <button
@@ -68,8 +89,28 @@ const OrderDetailsModal = ({ order, onClose }) => {
         <div className="mt-5">
           <p className="text-sm text-gray-500">الوصف</p>
           <p className="mt-1 rounded-xl bg-gray-50 p-3 text-gray-800">
-            {order.description}
+            {order.description || "لا يوجد وصف"}
           </p>
+        </div>
+
+        <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-start">
+          <button
+            onClick={handleMessageCraftsman}
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#2E236C] px-5 py-3 text-sm font-semibold text-white transition hover:opacity-90"
+          >
+            <MessageCircleMore size={18} />
+            مراسلة الحرفي
+          </button>
+
+          {order.status === 4 && (
+            <button
+              onClick={handleOpenComplaint}
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 px-5 py-3 text-sm font-semibold text-red-600 transition hover:bg-red-100"
+            >
+              <TriangleAlert size={18} />
+              تقديم شكوى
+            </button>
+          )}
         </div>
       </div>
     </div>
