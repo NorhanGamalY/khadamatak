@@ -1,5 +1,6 @@
 import "./App.css";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 
 import MainLayout from "./layouts/MainLayout";
 import AdminLayout from "./layouts/AdminLayout";
@@ -39,9 +40,6 @@ import Users from "./pages/admin/Users";
 import Logout from "./pages/admin/Logout";
 import Commission from "./pages/admin/Commission";
 import Orders from "./pages/admin/Orders";
-import NewRequest from "./pages/craftsman/NewRequest";
-import EndidRequest from "./pages/craftsman/EndidRequest";
-import ComingRequest from "./pages/craftsman/ComingRequest";
 import Craftsmen from "./pages/admin/Craftsmen";
 
 // Craftsman Pages
@@ -52,15 +50,24 @@ import CraftsmanServices from "./pages/craftsman/Services";
 import Appointments from "./pages/craftsman/Appointments";
 import Evaluate from "./pages/craftsman/Evaluate";
 import Messages from "./pages/craftsman/Messages";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import Service from "./pages/public/Service";
+import ConflictsCraftsman from "./pages/craftsman/ConflictsCraftsman";
+
+import NewRequest from "./pages/craftsman/NewRequest";
+import EndidRequest from "./pages/craftsman/EndidRequest";
+import ComingRequest from "./pages/craftsman/ComingRequest";
 import DetailsCraftMan from "./pages/craftsman/DetailsCraftMan";
+
 import AcceptCraftman from "./api/Acceptcraftman";
 import Cancelcraftman from "./api/Cancelcraftman";
+
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+import Service from "./pages/public/Service";
 import Chat from "./pages/client/Chat";
 import ClientOrdersPage from "./pages/public/ClientOrderPage";
 import Notifications from "./pages/public/Notifications";
-import ConflictsCraftsman from "./pages/craftsman/ConflictsCraftsman";
+import Complaints from "./pages/client/Complaints";
+
 function GuestRoute({ children }) {
   if (isAuthenticated()) {
     return <Navigate to={getHomeByRole()} replace />;
@@ -74,8 +81,13 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
+
+        <Toaster position="top-right" reverseOrder={false} />
+
         <Routes>
+
           <Route path="/select-role" element={<SelectRole />} />
+
           <Route
             path="/login"
             element={
@@ -84,6 +96,7 @@ function App() {
               </GuestRoute>
             }
           />
+
           <Route
             path="/client-register"
             element={
@@ -92,6 +105,7 @@ function App() {
               </GuestRoute>
             }
           />
+
           <Route
             path="/craftsman-login"
             element={
@@ -100,14 +114,13 @@ function App() {
               </GuestRoute>
             }
           />
-          <Route path="/craftsman-register" element={<CraftsmanRegister />} />
-          <Route
-            path="/craftsman-register-2"
-            element={<CraftsmanRegister2 />}
-          />
 
-          {/* ─── Main Layout — Public ────────────────────────────────── */}
+          <Route path="/craftsman-register" element={<CraftsmanRegister />} />
+          <Route path="/craftsman-register-2" element={<CraftsmanRegister2 />} />
+
+          {/* Public Layout */}
           <Route element={<MainLayout />}>
+
             <Route path="/" element={<Landing />} />
             <Route path="/home" element={<Home />} />
             <Route path="/about" element={<About />} />
@@ -115,6 +128,7 @@ function App() {
             <Route path="/works" element={<Works />} />
             <Route path="/details" element={<Details />} />
             <Route path="/contacts" element={<Contact />} />
+
             <Route path="/services/:id" element={<CraftmanDetails />} />
             <Route path="/craftman-results" element={<CraftmanResults />} />
             <Route
@@ -124,7 +138,8 @@ function App() {
                   <Service />
                 </ProtectedRoute>
               }
-            ></Route>
+            />
+
             <Route
               path="/chat/:id"
               element={
@@ -133,6 +148,8 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
+            <Route path="/complaints" element={<Complaints />} />
             <Route
               path="/orders"
               element={
@@ -152,8 +169,9 @@ function App() {
               <Route path="/notifications" element={<Notifications />} />
             </Route>
 
+          </Route>
 
-          {/* ─── Admin Routes ─────────────────────────────────────── */}
+          {/* Admin Routes */}
           <Route
             path="/admin"
             element={
@@ -162,6 +180,7 @@ function App() {
               </ProtectedRoute>
             }
           >
+
             <Route index element={<AdminDashboard />} />
             <Route path="users" element={<Users />} />
             <Route path="craftsmen" element={<Craftsmen />} />
@@ -169,14 +188,17 @@ function App() {
             <Route path="reports" element={<Reports />} />
             <Route path="services" element={<Services />} />
             <Route path="conflicts" element={<Conflicts />} />
+
             <Route path="settings/*" element={<Settings />}>
               <Route index element={<GenreralSettings />} />
               <Route path="payment" element={<PaymentSettings />} />
               <Route path="commission" element={<Commission />} />
               <Route path="logout" element={<Logout />} />
             </Route>
+
           </Route>
-          {/* ─── Craftsman Routes ───────────────────────────── */}
+
+          {/* Craftsman Routes */}
           <Route
             path="/craftsman"
             element={
@@ -188,6 +210,7 @@ function App() {
               </ProtectedRoute>
             }
           >
+
             <Route index element={<Dashboard />} />
             <Route path="profile" element={<Profile />} />
             <Route path="services" element={<CraftsmanServices />} />
@@ -195,8 +218,9 @@ function App() {
             <Route path="evaluate" element={<Evaluate />} />
             <Route path="conflicts" element={<ConflictsCraftsman />} />
             <Route path="messages" element={<Messages />} />
+
             <Route path="requests" element={<Requests />}>
-              <Route index element={<NewRequest />} />{" "}
+              <Route index element={<NewRequest />} />
               <Route path="new" element={<NewRequest />} />
               <Route path="coming" element={<ComingRequest />} />
               <Route path="ended" element={<EndidRequest />} />
@@ -204,10 +228,13 @@ function App() {
               <Route path="accepted/:id" element={<AcceptCraftman />} />
               <Route path="cancelled/:id" element={<Cancelcraftman />} />
             </Route>
+
           </Route>
 
           <Route path="*" element={<Navigate to="/" replace />} />
+
         </Routes>
+
       </BrowserRouter>
     </QueryClientProvider>
   );

@@ -64,7 +64,7 @@ export default function NotificationBell({ notifications = [] }) {
     markAsRead(n.id);
   }
 
-  navigate(`/notifications`);
+  navigate("/notifications");
 }}
                     className={`flex gap-3 items-start px-4 py-3 cursor-pointer hover:bg-gray-50 transition border-b border-gray-50 last:border-0 ${!n.read ? "bg-orange-50" : ""}`}
                 >
