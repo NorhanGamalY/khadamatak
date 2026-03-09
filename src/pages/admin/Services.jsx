@@ -241,14 +241,12 @@ export default function Services() {
         </button>
 
         <button
-          onClick={() => {
-            deleteMutation.mutate(deleteRow.id);
-            setDeleteRow(null);
-          }}
-          className="bg-red-600 px-4 py-2 text-white rounded"
-        >
-          حذف
-        </button>
+  onClick={() => deleteMutation.mutate(deleteRow.id, { onSuccess: () => setDeleteRow(null) })}
+  className="bg-red-600 px-4 py-2 text-white rounded"
+  disabled={deleteMutation.isLoading}
+>
+  {deleteMutation.isLoading ? "جاري الحذف..." : "حذف"}
+</button>
       </div>
     </div>
   </div>
