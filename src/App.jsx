@@ -52,6 +52,7 @@ import Appointments from "./pages/craftsman/Appointments";
 import Evaluate from "./pages/craftsman/Evaluate";
 import Messages from "./pages/craftsman/Messages";
 import ConflictsCraftsman from "./pages/craftsman/ConflictsCraftsman";
+import SignOut from "./pages/craftsman/SignOut";
 
 import NewRequest from "./pages/craftsman/NewRequest";
 import EndidRequest from "./pages/craftsman/EndidRequest";
@@ -68,6 +69,7 @@ import Chat from "./pages/client/Chat";
 import ClientOrdersPage from "./pages/public/ClientOrderPage";
 import Notifications from "./pages/public/Notifications";
 import Complaints from "./pages/client/Complaints";
+
 
 function GuestRoute({ children }) {
   if (isAuthenticated()) {
@@ -227,6 +229,7 @@ function App() {
               <Route path="accepted/:id" element={<AcceptCraftman />} />
               <Route path="cancelled/:id" element={<Cancelcraftman />} />
             </Route>
+            <Route path="signout" element={<SignOut />} />
 
           </Route>
 
