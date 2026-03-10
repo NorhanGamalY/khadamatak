@@ -37,7 +37,6 @@ import PaymentSettings from "./pages/admin/PaymentSettings";
 import GenreralSettings from "./pages/admin/GeneralSettings";
 import Conflicts from "./pages/admin/Conflicts";
 import Users from "./pages/admin/Users";
-import Wallet from "./pages/admin/Wallet"
 import Logout from "./pages/admin/Logout";
 import Commission from "./pages/admin/Commission";
 import Orders from "./pages/admin/Orders";
@@ -52,7 +51,7 @@ import Appointments from "./pages/craftsman/Appointments";
 import Evaluate from "./pages/craftsman/Evaluate";
 import Messages from "./pages/craftsman/Messages";
 import ConflictsCraftsman from "./pages/craftsman/ConflictsCraftsman";
-
+import Wallet from "./pages/craftsman/Wallet"
 import NewRequest from "./pages/craftsman/NewRequest";
 import EndidRequest from "./pages/craftsman/EndidRequest";
 import ComingRequest from "./pages/craftsman/ComingRequest";
@@ -217,7 +216,7 @@ function App() {
             <Route path="evaluate" element={<Evaluate />} />
             <Route path="conflicts" element={<ConflictsCraftsman />} />
             <Route path="messages" element={<Messages />} />
-
+            <Route path="wallet" element={<Wallet />} />
             <Route path="requests" element={<Requests />}>
               <Route index element={<NewRequest />} />
               <Route path="new" element={<NewRequest />} />
