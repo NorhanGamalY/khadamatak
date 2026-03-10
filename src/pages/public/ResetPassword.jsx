@@ -44,9 +44,23 @@ export default function ResetPassword() {
             navigate("/login");
           }, 1500);
         },
-        onError: () => {
-          setServerError("حدث خطأ حاول مرة أخرى");
-        }
+        onError: (error) => {
+  const data = error?.response?.data;
+
+  let message = "حدث خطأ حاول مرة أخرى";
+
+  if (typeof data === "string") {
+    message = data;
+  } 
+  else if (Array.isArray(data?.errors)) {
+    message = data.errors.join(", ");
+  } 
+  else if (data?.message) {
+    message = data.message;
+  }
+
+  setServerError(message);
+}
       }
     );
   };
