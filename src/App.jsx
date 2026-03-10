@@ -51,7 +51,7 @@ import Appointments from "./pages/craftsman/Appointments";
 import Evaluate from "./pages/craftsman/Evaluate";
 import Messages from "./pages/craftsman/Messages";
 import ConflictsCraftsman from "./pages/craftsman/ConflictsCraftsman";
-
+import Wallet from "./pages/craftsman/Wallet"
 import NewRequest from "./pages/craftsman/NewRequest";
 import EndidRequest from "./pages/craftsman/EndidRequest";
 import ComingRequest from "./pages/craftsman/ComingRequest";
@@ -194,8 +194,8 @@ function App() {
                 </ProtectedRoute>
               }
             />
-              <Route path="/notifications" element={<Notifications />} />
-            </Route>
+            <Route path="/notifications" element={<Notifications />} />
+          </Route>
           {/* Admin Routes */}
           <Route
             path="/admin"
@@ -212,6 +212,7 @@ function App() {
             <Route path="request01s" element={<Orders />} />
             <Route path="reports" element={<Reports />} />
             <Route path="services" element={<Services />} />
+            <Route path="Wallet" element={<Wallet />} />
             <Route path="conflicts" element={<Conflicts />} />
 
             <Route path="settings/*" element={<Settings />}>
@@ -243,7 +244,7 @@ function App() {
             <Route path="evaluate" element={<Evaluate />} />
             <Route path="conflicts" element={<ConflictsCraftsman />} />
             <Route path="messages" element={<Messages />} />
-
+            <Route path="wallet" element={<Wallet />} />
             <Route path="requests" element={<Requests />}>
               <Route index element={<NewRequest />} />
               <Route path="new" element={<NewRequest />} />
