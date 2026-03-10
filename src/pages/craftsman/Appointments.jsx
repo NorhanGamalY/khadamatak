@@ -4,111 +4,199 @@ import { FaCalendar } from "react-icons/fa";
 import { MdAccessTimeFilled } from "react-icons/md";
 import { TiArrowSortedDown } from "react-icons/ti";
 import { getId, getToken } from "../../features/auth/authHelpers";
-import { toast } from "react-toastify";
+import Toast from "../../components/common/Toast"; 
+
+const availableTimeOptions = {
+  start: ["08:00 ص", "10:00 ص", "12:00 م", "02:00 م", "04:00 م"],
+  end: ["09:00 ص", "11:00 ص", "07:00 م", "08:00 م", "10:00 م"],
+};
+
+const initialDays = [
+  { id: 0, title: "الاحد" },
+  { id: 1, title: "الاثنين" },
+  { id: 2, title: "الثلاثاء" },
+  { id: 3, title: "الاربعاء" },
+  { id: 4, title: "الخميس" },
+  { id: 5, title: "الجمعة" },
+  { id: 6, title: "السبت" },
+];
 
 const Appointments = () => {
   const token = getToken();
-  const id = getId();
-  const [existingSchedule, setExistingSchedule] = useState([]);
-  const [selectedTimeIsStart, setSelectedTimeIsStart] = useState("08:00 ص");
-  const [selectedTimeIsEnd, setSelectedTimeIsEnd] = useState("02:00 م");
+  const craftsmanId = getId();
 
-  const [days, setDays] = useState([
-    { id: 0, title: "الاحد", isActive: false },
-    { id: 1, title: "الاثنين", isActive: false },
-    { id: 2, title: "الثلاثاء", isActive: false },
-    { id: 3, title: "الاربعاء", isActive: false },
-    { id: 4, title: "الخميس", isActive: false },
-    { id: 5, title: "الجمعة", isActive: false },
-    { id: 6, title: "السبت", isActive: false },
-  ]);
+  const [schedule, setSchedule] = useState(
+    initialDays.map((day) => ({
+      ...day,
+      isActive: false,
+      startTime: "08:00 ص",
+      endTime: "09:00 ص",
+      existsInDB: false,
+    }))
+  );
 
-  const availableTime = {
-    start: ["08:00 ص", "10:00 ص", "12:00 م", "02:00 م", "04:00 م"],
-    end: ["09:00 ص", "11:00 ص", "07:00 م", "08:00 م", "10:00 م"],
-  };
-  const toggleDay = (id) => {
-    setDays((prevDays) =>
-      prevDays.map((day) =>
-        day.id === id ? { ...day, isActive: !day.isActive } : day,
-      ),
-    );
-  };
+  const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState({
+    isOpen: false,
+    type: "success",
+    title: "",
+    message: "",
+  });
+
   const formatTimeForAPI = (timeStr) => {
-    let [time, period] = timeStr.split(" ");
-    let [hours, minutes] = time.split(":");
-    let hoursInt = parseInt(hours, 10);
-    if (period === "م" && hoursInt < 12) hoursInt += 12;
-    if (period === "ص" && hoursInt === 12) hoursInt = 0;
-    return `${String(hoursInt).padStart(2, "0")}:${minutes}:00`;
+    const [time, period] = timeStr.split(" ");
+    let [hours, minutes] = time.split(":").map(Number);
+    if (period === "م" && hours < 12) hours += 12;
+    if (period === "ص" && hours === 12) hours = 0;
+    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:00`;
   };
+
+  const convertAPITimeToDisplay = (timeStr) => {
+    if (!timeStr) return "08:00 ص";
+    const [hoursStr, minutes] = timeStr.split(":");
+    let hours = parseInt(hoursStr, 10);
+    const period = hours >= 12 ? "م" : "ص";
+    if (hours > 12) hours -= 12;
+    if (hours === 0) hours = 12;
+    return `${String(hours).padStart(2, "0")}:${minutes} ${period}`;
+  };
+
   const GetAvailableDays = async () => {
     try {
       const res = await axios.get(
-        `https://herafie.runasp.net/api/CraftsmanAvailability/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+        `https://herafie.runasp.net/api/CraftsmanAvailability/${craftsmanId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       const savedData = res.data;
-      setExistingSchedule(res.data);
-      if (savedData && savedData.length > 0) {
-        setDays((prev) =>
-          prev.map((day) => {
-            const match = savedData.find((item) => item.id === id.id);
-            return { ...day, isActive: match ? match.isAvailable : false };
-          }),
-        );
-      }
+      setSchedule((prev) =>
+        prev.map((day) => {
+          const match = savedData.find((item) => item.day === day.id);
+          if (match) {
+            return {
+              ...day,
+              isActive: match.isAvailable,
+              startTime: convertAPITimeToDisplay(match.startTime),
+              endTime: convertAPITimeToDisplay(match.endTime),
+              existsInDB: true,
+            };
+          }
+          return { ...day, existsInDB: false };
+        })
+      );
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching schedule:", error);
     }
+  };
+
+  const toggleDay = (id) => {
+    setSchedule((prev) =>
+      prev.map((day) =>
+        day.id === id ? { ...day, isActive: !day.isActive } : day
+      )
+    );
+  };
+
+  const updateDayTime = (id, field, value) => {
+    setSchedule((prev) =>
+      prev.map((day) => (day.id === id ? { ...day, [field]: value } : day))
+    );
   };
 
   const handleSave = async () => {
+    setLoading(true);
     try {
-      const requests = days.map((dayState) => {
-        const alreadyInDB = existingSchedule.find((s) => s.day === dayState.id);
+      const toPost = schedule.filter((d) => !d.existsInDB && d.isActive);
+      const toPut = schedule.filter((d) => d.existsInDB);
+      const requests = [];
 
-        const payload = {
-          day: dayState.id,
-          startTime: formatTimeForAPI(selectedTimeIsStart),
-          endTime: formatTimeForAPI(selectedTimeIsEnd),
-          isAvailable: dayState.isActive,
-        };
-
-        if (alreadyInDB) {
-          return axios.put(
+      // PUT → أيام موجودة في الـ DB
+      if (toPut.length > 0) {
+        const putPayload = toPut.map((day) => ({
+          craftsmanId: Number(craftsmanId),
+          day: day.id,
+          startTime: formatTimeForAPI(day.startTime),
+          endTime: formatTimeForAPI(day.endTime),
+          isAvailable: day.isActive,
+        }));
+        requests.push(
+          axios.put(
             `https://herafie.runasp.net/api/CraftsmanAvailability`,
-            payload,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            },
-          );
-        } else if (dayState.isActive) {
-          return axios.post(
-            `https://herafie.runasp.net/api/CraftsmanAvailability`,
-            payload,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            },
-          );
-        }
-      });
+            putPayload,
+            { headers: { Authorization: `Bearer ${token}` } }
+          )
+        );
+      }
 
       await Promise.all(requests);
-      GetAvailableDays();
+
+      for (const day of toPost) {
+        try {
+          await axios.post(
+            `https://herafie.runasp.net/api/CraftsmanAvailability`,
+            {
+              day: day.id,
+              startTime: formatTimeForAPI(day.startTime),
+              endTime: formatTimeForAPI(day.endTime),
+              isAvailable: day.isActive,
+            },
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+        } catch (postError) {
+          if (postError.response?.status === 400) {
+            await axios.put(
+              `https://herafie.runasp.net/api/CraftsmanAvailability`,
+              [
+                {
+                  craftsmanId: Number(craftsmanId),
+                  day: day.id,
+                  startTime: formatTimeForAPI(day.startTime),
+                  endTime: formatTimeForAPI(day.endTime),
+                  isAvailable: day.isActive,
+                },
+              ],
+              { headers: { Authorization: `Bearer ${token}` } }
+            );
+          } else {
+            throw postError;
+          }
+        }
+      }
+
+      await GetAvailableDays();
+      setToast({
+        isOpen: true,
+        type: "success",
+        title: "تم الحفظ!",
+        message: "تم حفظ جدول المواعيد بنجاح",
+      });
     } catch (error) {
-      console.error(error);
+      console.error("Save error:", error);
+      setToast({
+        isOpen: true,
+        type: "error",
+        title: "حدث خطأ!",
+        message: "فشل حفظ الجدول، حاول مرة أخرى",
+      });
+    } finally {
+      setLoading(false);
     }
   };
+
   useEffect(() => {
-    if (token) GetAvailableDays();
-  }, [token, id]);
+    if (token && craftsmanId) GetAvailableDays();
+  }, [token, craftsmanId]);
+
   return (
     <div dir="rtl" className="min-h-screen bg-main text-primary">
+      <Toast
+        isOpen={toast.isOpen}
+        type={toast.type}
+        title={toast.title}
+        message={toast.message}
+        onClose={() => setToast((prev) => ({ ...prev, isOpen: false }))}
+        actionLabel="حسناً"
+      />
+
       <main className="mx-auto max-w-7xl lg:px-8 px-4 py-6 lg:py-8">
         <div className="grid lg:gap-8 gap-5">
           <div className="flex flex-col items-start">
@@ -121,16 +209,20 @@ const Appointments = () => {
           </div>
 
           <div className="rounded bg-white p-4 grid lg:gap-10 gap-8">
+            {/* أيام الأسبوع */}
             <div className="grid lg:gap-6 gap-4">
               <Title icon={<FaCalendar />} text="ايام العمل الاسبوعية" />
-
               <div className="grid gap-3">
                 <div className="flex lg:gap-4 gap-2 flex-wrap">
-                  {days.map((day, idx) => (
+                  {schedule.map((day) => (
                     <button
-                      key={idx}
+                      key={day.id}
                       onClick={() => toggleDay(day.id)}
-                      className={` rounded px-4 py-2 ${day.isActive ? "bg-secondary-orange text-white " : "bg-gray-300 text-black"}`}
+                      className={`rounded px-4 py-2 ${
+                        day.isActive
+                          ? "bg-secondary-orange text-white"
+                          : "bg-gray-300 text-black"
+                      }`}
                     >
                       {day.title}
                     </button>
@@ -147,33 +239,53 @@ const Appointments = () => {
                 icon={<MdAccessTimeFilled className="text-lg" />}
                 text="ساعات العمل اليومية"
               />
-              <form
-                action=""
-                onSubmit={(e) => e.preventDefault()}
-                className="lg:flex grid w-full gap-4"
-              >
-                <TimePicker
-                  title="من الساعة"
-                  selectedTime={selectedTimeIsStart}
-                  setSelectedTime={setSelectedTimeIsStart}
-                  timeOptions={availableTime.start}
-                  isStart
-                />
-                <TimePicker
-                  title="الى الساعة"
-                  selectedTime={selectedTimeIsEnd}
-                  setSelectedTime={setSelectedTimeIsEnd}
-                  timeOptions={availableTime.end}
-                />
-              </form>
+              {schedule.filter((d) => d.isActive).length === 0 ? (
+                <p className="text-gray-400 text-sm">
+                  اختر يوم أولاً لتحديد مواعيده
+                </p>
+              ) : (
+                <div className="grid gap-4">
+                  {schedule
+                    .filter((d) => d.isActive)
+                    .map((day) => (
+                      <div
+                        key={day.id}
+                        className="border rounded p-3 grid gap-3"
+                      >
+                        <h3 className="font-semibold text-secondary-orange">
+                          {day.title}
+                        </h3>
+                        <div className="lg:flex grid w-full gap-4">
+                          <TimePicker
+                            title="من الساعة"
+                            selectedTime={day.startTime}
+                            setSelectedTime={(val) =>
+                              updateDayTime(day.id, "startTime", val)
+                            }
+                            timeOptions={availableTimeOptions.start}
+                          />
+                          <TimePicker
+                            title="الى الساعة"
+                            selectedTime={day.endTime}
+                            setSelectedTime={(val) =>
+                              updateDayTime(day.id, "endTime", val)
+                            }
+                            timeOptions={availableTimeOptions.end}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              )}
             </div>
           </div>
 
           <button
             onClick={handleSave}
-            className="w-full py-2 text-center text-lg bg-secondary text-white rounded"
+            disabled={loading}
+            className="w-full py-2 text-center text-lg bg-secondary text-white rounded disabled:opacity-60"
           >
-            حفظ التغيرات
+            {loading ? "جاري الحفظ..." : "حفظ التغيرات"}
           </button>
         </div>
       </main>
@@ -183,46 +295,39 @@ const Appointments = () => {
 
 export default Appointments;
 
-const Title = ({ icon, text }) => {
-  return (
-    <div className="flex gap-3 items-center">
-      <span className="text-secondary">{icon}</span>
-      <h2 className="font-semibold text-xl">{text}</h2>
-    </div>
-  );
-};
+const Title = ({ icon, text }) => (
+  <div className="flex gap-3 items-center">
+    <span className="text-secondary">{icon}</span>
+    <h2 className="font-semibold text-xl">{text}</h2>
+  </div>
+);
 
-const TimePicker = ({ selectedTime, setSelectedTime, timeOptions, title }) => {
-  return (
-    <div className="flex flex-col items-start gap-2 w-full" dir="rtl">
-      <label className="text-primary font-semibold lg:text-lg">{title}</label>
-
-      <div className="flex relative items-center justify-between w-full p-2 py-2 border border-gray-300 rounded bg-white transition-all cursor-pointer shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="text-secondary">
-            <MdAccessTimeFilled />
-          </div>
-          <span className="lg:text-lg whitespace-nowrap font-medium text-gray-900 tracking-wide">
-            {selectedTime}
-          </span>
-          <div className="text-secondary absolute left-3 text-lg">
-            <TiArrowSortedDown />
-          </div>
+const TimePicker = ({ selectedTime, setSelectedTime, timeOptions, title }) => (
+  <div className="flex flex-col items-start gap-2 w-full" dir="rtl">
+    <label className="text-primary font-semibold lg:text-lg">{title}</label>
+    <div className="flex relative items-center justify-between w-full p-2 py-2 border border-gray-300 rounded bg-white transition-all cursor-pointer shadow-sm">
+      <div className="flex items-center gap-3">
+        <div className="text-secondary">
+          <MdAccessTimeFilled />
         </div>
-        <select
-          value={selectedTime}
-          onChange={(e) => {
-            setSelectedTime(e.target.value);
-          }}
-          className="lg:absolute lg:inset-0 w-full h-full opacity-0 cursor-pointer appearance-none border border-slate-50"
-        >
-          {timeOptions.map((time) => (
-            <option key={time} value={time}>
-              {time}
-            </option>
-          ))}
-        </select>
+        <span className="lg:text-lg whitespace-nowrap font-medium text-gray-900 tracking-wide">
+          {selectedTime}
+        </span>
+        <div className="text-secondary absolute left-3 text-lg">
+          <TiArrowSortedDown />
+        </div>
       </div>
+      <select
+        value={selectedTime}
+        onChange={(e) => setSelectedTime(e.target.value)}
+        className="lg:absolute lg:inset-0 w-full h-full opacity-0 cursor-pointer appearance-none"
+      >
+        {timeOptions.map((time) => (
+          <option key={time} value={time}>
+            {time}
+          </option>
+        ))}
+      </select>
     </div>
-  );
-};
+  </div>
+);

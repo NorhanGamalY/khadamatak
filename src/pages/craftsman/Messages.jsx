@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { BiDotsHorizontalRounded } from "react-icons/bi";
 import { IoSend } from "react-icons/io5";
+import { useOutletContext } from "react-router-dom";
 
 const users = [
   {
@@ -62,12 +63,19 @@ const Messages = () => {
     text: "",
   });
   const [currentUser, setCurrentUser] = useState(users[0]);
+  const { setSearch, setPlaceholder } = useOutletContext();
+
   const handleMessageSubmit = (e) => {
     e.preventDefault();
     setUserMessage([...userMessage, message]);
     setCurrentUser(users[0]);
     setMessage({ id: 0, text: "" });
   };
+  useEffect(() => {
+    setPlaceholder("تواصل معنا  ...");
+    setSearch("");
+  }, []);
+
   return (
     <div dir="ltr" className="max-h-screen bg-white text-primary">
       <main className="mx-auto max-w-7xl lg:px-8 px-4 py-6 lg:py-8">

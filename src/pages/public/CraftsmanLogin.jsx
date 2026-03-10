@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useLogin } from "../../features/auth/mutations";
 import { validateLogin } from "../../features/auth/validation";
-import { saveToken, saveRole,saveId, getHomeByRole } from "../../features/auth/authHelpers";
-import InputField from "./components/InputField";
+import { saveToken, saveRole, getHomeByRole, saveId, saveUserId } from "../../features/auth/authHelpers";import InputField from "./components/InputField";
 
 export default function CraftsmanLogin() {
   const navigate = useNavigate();
@@ -40,11 +39,13 @@ export default function CraftsmanLogin() {
         onSuccess: (data) => {
           const token = data?.token;
           const role  = data?.role;
+          const userId = data?.userId;
 
           if (!token) { setServerError("حصل خطأ، حاول تاني"); return; }
           const id = data?.craftsmanId ?? data?.clientId ?? data?.id;
           saveToken(token, form.rememberMe);
-          saveRole(role, form.rememberMe);    
+          saveRole(role, form.rememberMe);
+          saveUserId(userId, form.rememberMe);
           if (id != null) saveId(id, form.rememberMe);         
           navigate(getHomeByRole(), { replace: true });    
         },
@@ -87,13 +88,20 @@ export default function CraftsmanLogin() {
               onChange={(e) => handleChange("password", e.target.value)}
               error={errors.password} disabled={loginMutation.isPending} />
 
-            <div className="flex items-center justify-start w-full gap-2">
-              <input type="checkbox" className="w-5 h-5 accent-indigo-600"
+            <div className="flex items-center justify-between w-full gap-2">
+              <div className="flex items-center gap-2">
+                <input type="checkbox" className="w-5 h-5 accent-indigo-600"
                 checked={form.rememberMe}
                 onChange={(e) => handleChange("rememberMe", e.target.checked)}
                 disabled={loginMutation.isPending} />
               <span className="text-xs text-gray-500">تذكرني دائما</span>
+              </div>
+              <button 
+              className="text-xs text-[#d75b19] hover:underline"
+              onClick={() => navigate(`/forget-password?role=craftsman`)}> نسيت كلمة السر؟ </button>
+              
             </div>
+            
 
             {serverError && <p className="text-red-600 text-xs w-full">{serverError}</p>}
 

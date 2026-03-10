@@ -9,8 +9,10 @@ export function saveToken(token, rememberMe) {
 export function clearToken() {
   localStorage.removeItem("token");
   localStorage.removeItem("role");
+  localStorage.removeItem("userId");
   sessionStorage.removeItem("token");
   sessionStorage.removeItem("role");
+  sessionStorage.removeItem("userId");
 }
 export function saveRole(role, rememberMe) {
   const storage = rememberMe ? localStorage : sessionStorage;
@@ -28,6 +30,17 @@ export function saveId(id, rememberMe) {
   other.removeItem("id");
 }
 
+export function saveUserId(userId, rememberMe) {
+  const storage = rememberMe ? localStorage : sessionStorage;
+  const other = rememberMe ? sessionStorage : localStorage;
+
+  storage.setItem("userId", userId);
+  other.removeItem("userId");
+}
+
+export function getUserId() {
+  return localStorage.getItem("userId") || sessionStorage.getItem("userId") || null;
+}
 
 export function getToken() {
   return localStorage.getItem("token") || sessionStorage.getItem("token");
@@ -47,10 +60,12 @@ export function clearAuth() {
   localStorage.removeItem("token");
   localStorage.removeItem("role");
   localStorage.removeItem("id");
+  localStorage.removeItem("userId");
 
   sessionStorage.removeItem("token");
   sessionStorage.removeItem("role");
   sessionStorage.removeItem("id");
+  sessionStorage.removeItem("userId");
 }
 
 function decodeToken(token) {
