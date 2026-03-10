@@ -5,8 +5,11 @@ import PaymentMethods from "../../components/payment/PaymentMethods";
 import PaymentSummaryCard from "../../components/payment/PaymentSummaryCard";
 import PaymentForm from "../../components/payment/PaymentForm";
 import PayNowButton from "../../components/payment/PayNowButton";
+import { useSendNotification } from "../../features/notifications/hooks";
 
 export default function PaymentPage() {
+  const { mutateAsync: sendNotificationMutation } = useSendNotification();
+
   const navigate = useNavigate();
   const { state } = useLocation();
 
@@ -32,6 +35,9 @@ export default function PaymentPage() {
 
   const fees = 20;
   const total = Number(servicePrice) + Number(fees);
+
+  console.log("order stringified:", JSON.stringify(order, null, 2));
+  console.log("craftsman stringified:", JSON.stringify(craftsman, null, 2));
 
   function validateForm() {
     const newErrors = {};
@@ -79,12 +85,25 @@ export default function PaymentPage() {
       expMonth: Number(expMonth),
       expYear: Number(`20${expYear}`),
       orderId: order?.id || order?.orderId,
+      paymentMethod: selectedMethod,
       stripeToken: "tok_visa",
     };
   }
 
+  async function sendPaymentSuccessNotifications() {
+    const orderId = order?.id || order?.orderId;
+    const serviceName = selectedService?.name || order?.serviceName || "الخدمة";
+
+    const clientUserId = "35803856-163e-4312-b74c-c06d0fdbbcef";
+
+    await sendNotificationMutation({
+      userId: clientUserId,
+      title: "تم الدفع بنجاح",
+      message: `تم دفع الطلب رقم ${orderId} الخاص بخدمة ${serviceName} بنجاح.`,
+    });
+  }
+
   async function handlePayNow() {
-    
     if (!order?.id && !order?.orderId) {
       toast.error("لا يوجد طلب صالح للدفع");
       return;
@@ -115,6 +134,12 @@ export default function PaymentPage() {
         throw new Error(data?.message || "فشل الدفع");
       }
 
+      try {
+        await sendPaymentSuccessNotifications();
+      } catch (notificationError) {
+        console.error("Notification error:", notificationError);
+      }
+
       toast.success(data?.paymentMessage || "تم الدفع بنجاح");
 
       setTimeout(() => {
@@ -131,48 +156,18 @@ export default function PaymentPage() {
     } finally {
       setLoading(false);
     }
-  }
-  async function sendCraftsmanNotification() {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      throw new Error("لا يوجد توكن");
+    try {
+      await sendPaymentSuccessNotifications();
+    } catch (notificationError) {
+      console.error("Notification error:", notificationError);
     }
-
-    const notificationPayload = {
-      userId: craftsman?.userId || craftsman?.id,
-      title: "تم دفع الطلب",
-      message: "تم دفع الطلب الخاص بك من قبل العميل",
-    };
-
-    const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/api/Notification/send`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(notificationPayload),
-      },
-    );
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      const backendMessage =
-        data?.errorsList?.[0]?.message || data?.message || "فشل إرسال الإشعار";
-      throw new Error(backendMessage);
-    }
-
-    return data;
   }
 
   if (!order) {
     return (
       <div className="flex min-h-screen items-center justify-center px-4">
         <div className="rounded-2xl border border-red-200 bg-red-50 px-6 py-5 text-center">
-          <p className="mb-4 text-red-600 font-semibold">
+          <p className="mb-4 font-semibold text-red-600">
             لا توجد بيانات طلب للدفع
           </p>
           <button
@@ -187,7 +182,7 @@ export default function PaymentPage() {
   }
 
   return (
-    <div className="min-h-screen mt-25 px-4 py-10">
+    <div className="mt-25 min-h-screen px-4 py-10">
       <Toaster position="top-center" />
 
       <div className="mx-auto max-w-5xl rounded-2xl bg-white p-6 shadow-md md:p-8">
@@ -215,20 +210,15 @@ export default function PaymentPage() {
               <p>
                 الخدمة: {selectedService?.name || order?.serviceName || "-"}
               </p>
+              <p>طريقة الدفع: {selectedMethod}</p>
               <p>الإجمالي: {total.toFixed(2)} جنيه</p>
             </div>
 
             <PayNowButton
               onClick={handlePayNow}
               loading={loading}
-              disabled={selectedMethod !== "visa"}
+              disabled={loading}
             />
-
-            {selectedMethod !== "visa" && (
-              <p className="text-center text-sm text-amber-600">
-                حاليًا الربط الفعلي متاح فقط لطريقة Visa
-              </p>
-            )}
           </div>
 
           <div>
