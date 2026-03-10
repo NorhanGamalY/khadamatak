@@ -88,13 +88,20 @@ export default function CraftsmanLogin() {
               onChange={(e) => handleChange("password", e.target.value)}
               error={errors.password} disabled={loginMutation.isPending} />
 
-            <div className="flex items-center justify-start w-full gap-2">
-              <input type="checkbox" className="w-5 h-5 accent-indigo-600"
+            <div className="flex items-center justify-between w-full gap-2">
+              <div className="flex items-center gap-2">
+                <input type="checkbox" className="w-5 h-5 accent-indigo-600"
                 checked={form.rememberMe}
                 onChange={(e) => handleChange("rememberMe", e.target.checked)}
                 disabled={loginMutation.isPending} />
               <span className="text-xs text-gray-500">تذكرني دائما</span>
+              </div>
+              <button 
+              className="text-xs text-[#d75b19] hover:underline"
+              onClick={() => navigate(`/forget-password?role=craftsman`)}> نسيت كلمة السر؟ </button>
+              
             </div>
+            
 
             {serverError && <p className="text-red-600 text-xs w-full">{serverError}</p>}
 

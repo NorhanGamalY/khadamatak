@@ -43,15 +43,20 @@ export default function Navbar() {
     navigate("/select-role");
   };
 
-  const { data: notifications = [] } = useNotifications();
-  const mappedNotifications = notifications.map((n) => ({
-    id: n.id,
-    title: n.title,
-    body: n.message,
-    time: formatTime(n.createdAt),
-    read: n.isRead,
-    icon: <FiAlertTriangle size={16} />,
-  }));
+
+const { data: notifications = [] } = useNotifications({
+  enabled: isLoggedIn && isClient
+});
+
+const mappedNotifications = notifications?.map((n) => ({
+  id: n.id,
+  title: n.title,
+  body: n.message,
+  time: formatTime(n.createdAt),
+  read: n.isRead,
+  icon: <FiAlertTriangle size={16} />,
+}));
+
 
   return (
     <div className="w-[90%] xl:w-[80%] mx-auto flex justify-between gap-3 items-center text-black">
