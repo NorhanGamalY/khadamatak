@@ -28,9 +28,14 @@ export default function ForgetPassword() {
   localStorage.setItem("resetEmail", form.email);
   navigate("/verify-code");
 },
-      onError: () => {
-        setErrors({ email: "حدث خطأ حاول مرة أخرى" });
-      },
+      onError: (error) => {
+  const message =
+    error?.response?.data?.message ||
+    error?.response?.data?.error ||
+    "حدث خطأ حاول مرة أخرى";
+
+  setErrors({ email: message });
+}
     }
   );
 };
