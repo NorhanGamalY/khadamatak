@@ -67,6 +67,9 @@ import Chat from "./pages/client/Chat";
 import ClientOrdersPage from "./pages/public/ClientOrderPage";
 import Notifications from "./pages/public/Notifications";
 import Complaints from "./pages/client/Complaints";
+import ForgetPassword from "./pages/public/ForgetPassword";
+import CodeVerification from "./pages/public/CodeVerification";
+import ResetPassword from "./pages/public/ResetPassword";
 
 function GuestRoute({ children }) {
   if (isAuthenticated()) {
@@ -81,9 +84,6 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-
-        <Toaster position="top-right" reverseOrder={false} />
-
         <Routes>
 
           <Route path="/select-role" element={<SelectRole />} />
@@ -117,6 +117,32 @@ function App() {
 
           <Route path="/craftsman-register" element={<CraftsmanRegister />} />
           <Route path="/craftsman-register-2" element={<CraftsmanRegister2 />} />
+          <Route
+  path="/forget-password"
+  element={
+    <GuestRoute>
+      <ForgetPassword /> 
+    </GuestRoute>
+  }
+/>
+
+<Route
+  path="/verify-code"
+  element={
+    <GuestRoute>
+      <CodeVerification />
+    </GuestRoute>
+  }
+/>
+
+<Route
+  path="/reset-password"
+  element={
+    <GuestRoute>
+      <ResetPassword /> 
+    </GuestRoute>
+  }
+/>
 
           {/* Public Layout */}
           <Route element={<MainLayout />}>
