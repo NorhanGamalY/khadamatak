@@ -89,24 +89,20 @@ function App() {
 
           <Route path="/select-role" element={<SelectRole />} />
 
-          <Route
-            path="/login"
-            element={
-              <GuestRoute>
+          <Route path="/login"
+            element={<GuestRoute>
                 <ClientLogin />
-              </GuestRoute>
-            }
+              </GuestRoute>}
           />
 
-          <Route
-            path="/client-register"
+          <Route path="/client-register"
             element={
               <GuestRoute>
                 <ClientRegestier />
               </GuestRoute>
             }
           />
-                    <Route
+          <Route
             path="/client-register2"
             element={
               <GuestRoute>
@@ -126,32 +122,29 @@ function App() {
 
           <Route path="/craftsman-register" element={<CraftsmanRegister />} />
           <Route path="/craftsman-register-2" element={<CraftsmanRegister2 />} />
-          <Route
-  path="/forget-password"
-  element={
-    <GuestRoute>
-      <ForgetPassword /> 
-    </GuestRoute>
-  }
-/>
+          <Route path="/forget-password"
+          element={ 
+          <GuestRoute>
+            <ForgetPassword /> 
+          </GuestRoute>
+            }
+          />
 
-<Route
-  path="/verify-code"
-  element={
-    <GuestRoute>
-      <CodeVerification />
-    </GuestRoute>
-  }
-/>
+        <Route path="/verify-code"
+        element={
+        <GuestRoute>
+            <CodeVerification />
+        </GuestRoute>
+        }
+        />
 
-<Route
-  path="/reset-password"
-  element={
-    <GuestRoute>
-      <ResetPassword /> 
-    </GuestRoute>
-  }
-/>
+        <Route path="/reset-password"
+        element={
+        <GuestRoute>
+            <ResetPassword /> 
+        </GuestRoute>
+        }
+        />
 
           {/* Public Layout */}
           <Route element={<MainLayout />}>

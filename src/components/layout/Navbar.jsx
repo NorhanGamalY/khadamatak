@@ -40,8 +40,11 @@ export default function Navbar() {
     navigate("/select-role");
   };
 
-  const {data:notifications=[]} = useNotifications();
-  const mappedNotifications = notifications.map((n) => ({
+const { data: notifications = [] } = useNotifications({
+  enabled: isLoggedIn && isClient
+});
+
+const mappedNotifications = notifications?.map((n) => ({
   id: n.id,
   title: n.title,
   body: n.message,
