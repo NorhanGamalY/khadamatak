@@ -7,7 +7,7 @@ const statusMap = {
     0: "جديد ",
     1: "قيد المراجعة",
     2: "تم الحل",
-    3: "مغلق",  
+    3: "مغلق",
 };
 
 const statusConfig = {
@@ -30,7 +30,7 @@ export default function Conflicts() {
                 headers: { Authorization: `Bearer ${token}` },
             })
             .then((res) => {
-                setConflicts(res.data.data); 
+                setConflicts(res.data.data);
             })
             .catch((err) => console.log(err));
     }, []);
@@ -80,13 +80,13 @@ export default function Conflicts() {
                     <div className="overflow-x-auto">
                         <table className="w-full text-right border-collapse" dir="ltr">
                             <thead>
-            <tr className="bg-gray-50 text-gray-800 text-right">
-                <th className="p-4 border-b border-gray-300">الإجراء</th>
-                <th className="p-4 border-b border-gray-300">الحالة</th>
-                <th className="p-4 border-b border-gray-300">اسم الحرفي</th>
-                <th className="p-4 border-b border-gray-300">سبب الشكوى</th>
-                <th className="p-4 border-b border-gray-300">رقم الشكوى</th>
-                <th className="p-4 border-b border-gray-300">المستخدم</th>
+                                <tr className="bg-gray-50 text-gray-800 text-right">
+                                    <th className="p-4 border-b border-gray-300">الإجراء</th>
+                                    <th className="p-4 border-b border-gray-300">الحالة</th>
+                                    <th className="p-4 border-b border-gray-300">اسم الحرفي</th>
+                                    <th className="p-4 border-b border-gray-300">سبب الشكوى</th>
+                                    <th className="p-4 border-b border-gray-300">رقم الشكوى</th>
+                                    <th className="p-4 border-b border-gray-300">المستخدم</th>
                                 </tr>
                             </thead>
 
@@ -102,39 +102,39 @@ export default function Conflicts() {
                                         const statusLabel = statusMap[item.status] ?? "غير معروف";
                                         const currentStatus = statusConfig[statusLabel] || { class: "bg-gray-100", icon: null };
 
-    return (
-        <tr key={item.id} className="border-b border-gray-300 last:border-0 hover:bg-gray-50 transition-colors text-right">
-            <td className="p-4">
-                    {item.status === 0 && (
-                        <button className="px-3 py-1 rounded bg-blue-600 text-white text-xs font-bold hover:bg-blue-700 transition-colors">
-                            بدأ المراجعة
-                        </button>
-                    )}
-                    {item.status === 1 && (
-                        <button className="px-3 py-1 rounded bg-green-600 text-white text-xs font-bold hover:bg-green-700 transition-colors">
-                            حل النزاع 
-                        </button>
-                    )}
-                    {(item.status !== 0 && item.status !== 1) && (
-                        <button className="px-3 py-1 rounded bg-gray-500 text-white text-xs font-bold hover:bg-gray-700 transition-colors">
-                            عرض التفاصيل
-                        </button>
-                    )}
-                    </td>
-            <td className="p-4">
-                <span className={`text-xs rounded px-2 py-1 inline-flex items-center gap-1 ${currentStatus.class}`}>
-                    {statusLabel}
-                    {currentStatus.icon && <span>{currentStatus.icon}</span>}
-                </span>
-            </td>
-            <td className="p-4 text-sm font-bold">{item.order?.craftsmanName}</td>
-                <td className="p-4">
-                    <span className="px-3 py-1">
-                        {item.description}
-                    </span>
-            </td>
-            <td className="p-4 text-sm  font-bold">{item.id}</td>
-            <td className="p-4 text-sm font-bold">{item.order?.clientName}</td>
+                                        return (
+                                            <tr key={item.id} className="border-b border-gray-300 last:border-0 hover:bg-gray-50 transition-colors text-right">
+                                                <td className="p-4">
+                                                    {item.status === 0 && (
+                                                        <button className="px-3 py-1 rounded bg-blue-600 text-white text-xs font-bold hover:bg-blue-700 transition-colors">
+                                                            بدأ المراجعة
+                                                        </button>
+                                                    )}
+                                                    {item.status === 1 && (
+                                                        <button className="px-3 py-1 rounded bg-green-600 text-white text-xs font-bold hover:bg-green-700 transition-colors">
+                                                            حل النزاع
+                                                        </button>
+                                                    )}
+                                                    {(item.status !== 0 && item.status !== 1) && (
+                                                        <button className="px-3 py-1 rounded bg-gray-500 text-white text-xs font-bold hover:bg-gray-700 transition-colors">
+                                                            عرض التفاصيل
+                                                        </button>
+                                                    )}
+                                                </td>
+                                                <td className="p-4">
+                                                    <span className={`text-xs rounded px-2 py-1 inline-flex items-center gap-1 ${currentStatus.class}`}>
+                                                        {statusLabel}
+                                                        {currentStatus.icon && <span>{currentStatus.icon}</span>}
+                                                    </span>
+                                                </td>
+                                                <td className="p-4 text-sm font-bold">{item.order?.craftsmanName}</td>
+                                                <td className="p-4">
+                                                    <span className="px-3 py-1">
+                                                        {item.description}
+                                                    </span>
+                                                </td>
+                                                <td className="p-4 text-sm  font-bold">{item.id}</td>
+                                                <td className="p-4 text-sm font-bold">{item.order?.clientName}</td>
                                             </tr>
                                         );
                                     })

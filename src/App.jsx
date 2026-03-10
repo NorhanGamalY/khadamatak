@@ -37,6 +37,7 @@ import PaymentSettings from "./pages/admin/PaymentSettings";
 import GenreralSettings from "./pages/admin/GeneralSettings";
 import Conflicts from "./pages/admin/Conflicts";
 import Users from "./pages/admin/Users";
+import Wallet from "./pages/admin/Wallet"
 import Logout from "./pages/admin/Logout";
 import Commission from "./pages/admin/Commission";
 import Orders from "./pages/admin/Orders";
@@ -166,8 +167,8 @@ function App() {
                 </ProtectedRoute>
               }
             />
-              <Route path="/notifications" element={<Notifications />} />
-            </Route>
+            <Route path="/notifications" element={<Notifications />} />
+          </Route>
           {/* Admin Routes */}
           <Route
             path="/admin"
@@ -184,6 +185,7 @@ function App() {
             <Route path="request01s" element={<Orders />} />
             <Route path="reports" element={<Reports />} />
             <Route path="services" element={<Services />} />
+            <Route path="Wallet" element={<Wallet />} />
             <Route path="conflicts" element={<Conflicts />} />
 
             <Route path="settings/*" element={<Settings />}>

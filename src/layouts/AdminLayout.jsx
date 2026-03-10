@@ -14,6 +14,7 @@ export default function AdminLayout() {
     { label: "الحرفيين", to: "/admin/craftsmen" },
     { label: "قائمة الخدمات", to: "/admin/services" },
     { label: "الطلبات", to: "/admin/request01s" },
+    {label: "المحفظه" ,to: "/admin/wallet"},
     { label: "التقارير", to: "/admin/reports" },
     { label: "النزاعات", to: "/admin/conflicts" },
     { label: "الاعدادات", to: "/admin/settings" },
