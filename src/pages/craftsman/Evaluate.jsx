@@ -3,16 +3,20 @@ import React, { useEffect, useState } from "react";
 import { IoStarHalfOutline, IoStar } from "react-icons/io5";
 import Avatar from "../../components/common/Avatar";
 import { getId, getToken } from "../../features/auth/authHelpers";
+import { useOutletContext } from "react-router-dom";
 
 const Evaluate = () => {
   const id = getId();
   const token = getToken();
   const [reviews, setReviews] = useState({ items: [] });
   const [reviewsLength, setReviewsLength] = useState(0);
+  const { setSearch, setPlaceholder, search } = useOutletContext();
+  const [filteredReviews, setFilteredReview] = useState([]);
   const [pagination, setPagination] = useState({
     pageNumber: 1,
     totalCount: 0,
   });
+
   const avg =
     reviewsLength > 0
       ? reviews.items.reduce((sum, r) => sum + r.rating, 0) /
@@ -30,6 +34,7 @@ const Evaluate = () => {
         },
       );
       setReviews({ items: res.data.items });
+      setFilteredReview(res.data.items);
       setReviewsLength(res.data.totalCount || 0);
       setPagination({
         ...pagination,
@@ -47,6 +52,24 @@ const Evaluate = () => {
     }
   }, [id, pagination.pageNumber]);
 
+  useEffect(() => {
+    setPlaceholder("تقيماتي ...");
+    setSearch("");
+  }, []);
+
+  useEffect(() => {
+    if (!search || search.trim() === "") {
+      setFilteredReview(reviews.items);
+      return;
+    }
+    const filtered = reviews?.items.filter((review) =>
+      (review.clientName + " " + review.comment)
+        .toLowerCase()
+        .includes(search.toLowerCase()),
+    );
+    setFilteredReview(filtered);
+  }, [search, reviews]);
+
   const renderRating = (rating) => {
     return [1, 2, 3, 4, 5].map((star) => {
       if (star <= Math.floor(rating)) {
@@ -62,21 +85,21 @@ const Evaluate = () => {
     <div dir="rtl" className="min-h-screen bg-main relative text-primary">
       <main className="mx-auto max-w-7xl grid lg:gap-8 gap-6 lg:px-8 px-4 py-6 lg:py-8">
         <div className="bg-white grid items-center shadow-[0_6px_16px_rgba(17,24,39,0.08)] lg:gap-4 gap-2 text-center p-4 rounded">
-          <h2 className="lg:text-3xl text-2xl font-extrabold border-b border-slate-300 lg:pb-3 pb-1">
-            قائمة الخدمات
+          <h2 className="lg:text-[26px] text-2xl font-extrabold border-b border-slate-300 lg:pb-3 pb-1">
+            متوسط االتقييم العام{" "}
           </h2>
           <div className="flex m-auto items-center gap-2 lg:text-[16px] text-sm">
             <span className="font-bold text-secondary order-1"> ( {avg} )</span>
             <span className="flex gap-0.5">{renderRating(avg)}</span>
           </div>
-          <p className="text-secondary font-bold lg:text-[16px] text-sm">
+          <p className="text-secondary font-bold lg:text-[15px] text-sm">
             عدد التقيمات <span className="pr-0.5">( {reviewsLength} )</span>
           </p>
         </div>
 
         <div className="grid lg:gap-6 gap-3 lg:grid-cols-1">
-          {reviews.items.length > 0 ? (
-            reviews.items.map((c, idx) => (
+          {filteredReviews?.length > 0 ? (
+            filteredReviews?.map((c, idx) => (
               <div
                 key={idx}
                 className="bg-white text-secondary shadow-[0_6px_16px_rgba(17,24,39,0.08)] gap-4 p-4 py-6 rounded"

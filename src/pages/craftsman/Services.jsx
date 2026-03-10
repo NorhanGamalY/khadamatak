@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useSearch } from "../../context/searchContext";
 import { FaTrashAlt } from "react-icons/fa";
 import { MdOutlineMiscellaneousServices } from "react-icons/md";
 import { BiSolidEditAlt } from "react-icons/bi";
@@ -8,12 +7,15 @@ import AddService from "../../components/craftsman/AddService";
 import EditService from "../../components/craftsman/EditService";
 import { getId, getToken } from "../../features/auth/authHelpers";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import SplashLoader from "../../components/common/SplashLoader";
+import { useOutletContext } from "react-router-dom";
 
 export default function CraftsmanServices() {
-  const { search } = useSearch();
   const token = getToken();
   const id = getId();
+  const { setPlaceholder, search, setSearch, setData } = useOutletContext();
+
   const [isOpen, setIsOpen] = useState(false);
   const [isAddServiceModelOpen, setIsAddServiceModelOpen] = useState(false);
   const [isEditModelOpen, setIsEditModelOpen] = useState(false);
@@ -31,9 +33,10 @@ export default function CraftsmanServices() {
     id: null,
     name: "",
   });
-
+  const [loading, setLoading] = useState(false);
   const handleGetCraftsman = async () => {
     try {
+      setLoading(true);
       const res = await axios.get(
         `https://herafie.runasp.net/api/Services/craftsman/${id}?pageNumber=${pagination.current}&pageSize=10`,
         {
@@ -44,9 +47,10 @@ export default function CraftsmanServices() {
       );
 
       const itemsList = res.data.items;
-      setCraftsmanService(itemsList);
+      setCraftsmanService(res.data);
+      setData(itemsList);
 
-      setFilteredData(itemsList);
+      setFilteredData(itemsList || []);
       setPagination((prev) => ({
         ...prev,
         total: res.data.totalCount,
@@ -55,6 +59,8 @@ export default function CraftsmanServices() {
       }));
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -70,10 +76,11 @@ export default function CraftsmanServices() {
       await axios.post("https://herafie.runasp.net/api/Services", payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      toast.success("تمت الاضافة بنجاح");
+      setIsAddServiceModelOpen(false);
       handleGetCraftsman();
       setServiceData({});
       setSelectedCategory({ id: null, name: "" });
-      toast.success("تمت الاضافة بنجاح");
     } catch (error) {
       console.log(error);
     }
@@ -97,6 +104,8 @@ export default function CraftsmanServices() {
           headers: { Authorization: `Bearer ${token}` },
         },
       );
+      toast.warning("تم تعديل الخدمة");
+
       setSelectedCategory({ id: null, name: "" });
       setIsEditModelOpen(false);
       handleGetCraftsman();
@@ -110,6 +119,7 @@ export default function CraftsmanServices() {
       await axios.delete(`https://herafie.runasp.net/api/Services/${idx}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      toast.error("تم حذف الخدمة");
       handleGetCraftsman();
     } catch (error) {
       console.log(error);
@@ -130,15 +140,17 @@ export default function CraftsmanServices() {
   }, []);
 
   useEffect(() => {
-    if (craftsmanService?.items) {
-      const filtered = craftsmanService?.items.filter((s) =>
-        (s.name + " " + s.description)
-          .toLowerCase()
-          .includes(search.toLowerCase()),
-      );
-      setFilteredData(filtered);
+    if (!search || search.trim() === "") {
+      setFilteredData(craftsmanService.items) || [];
+      return;
     }
-  }, [search, craftsmanService]);
+    const filtered = craftsmanService.items.filter((s) =>
+      (s.name + " " + s.description)
+        .toLowerCase()
+        .includes(search.toLowerCase()),
+    );
+    setFilteredData(filtered);
+  }, [search, craftsmanService.items]);
 
   useEffect(() => {
     if (id && token) {
@@ -146,12 +158,18 @@ export default function CraftsmanServices() {
     }
   }, [id, token, pagination.current]);
 
+  useEffect(() => {
+    setPlaceholder("خدماتك ...");
+    setSearch("");
+  }, []);
+
   return (
     <div dir="rtl" className="min-h-screen bg-main text-primary relative">
+      <ToastContainer className={"lg:mr-4 mr-2"} icon />
       <main className="mx-auto max-w-7xl lg:px-8 px-4 py-6 lg:py-8">
         <div className="flex items-start justify-between gap-4 lg:mb-8 mb-4 bg-white py-4 rounded px-2">
           <div className="text-right">
-            <h2 className="lg:text-3xl text-2xl font-extrabold ">
+            <h2 className="lg:text-[26px] text-2xl font-extrabold ">
               قائمة الخدمات
             </h2>
             <p className="lg:text-lg text-[#6b7280] mt-1 text-sm">
@@ -160,67 +178,75 @@ export default function CraftsmanServices() {
           </div>
           <button
             onClick={() => setIsAddServiceModelOpen(!isAddServiceModelOpen)}
-            className="lg:h-10 px-4 rounded-lg bg-[#0B0F2A] text-white font-bold text-[13px] inline-flex items-center gap-2 shadow-sm cursor-pointer"
+            className="h-10 px-4 rounded-lg bg-[#0B0F2A] text-white font-bold text-[13px] inline-flex items-center gap-2 shadow-sm cursor-pointer ml-2 lg:ml-0"
           >
-            <span className="lg:text-[18px] leading-none">+</span>
-            إضافة خدمة جديدة
+            <span className="text-[18px] leading-none">+</span>
+            <span className="hidden lg:flex">إضافة خدمة جديدة</span>
           </button>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredData.map((s, idx) => (
-            <div
-              key={idx}
-              className="bg-white rounded-xl shadow-[0_6px_16px_rgba(17,24,39,0.08)] px-4 border border-lightGray py-4"
-            >
-              <div className="flex justify-between items-start">
-                <div className="text-right">
-                  <div className="flex items-center gap-4">
-                    <div className="bg-[#E9E8EE] text-secondary w-8 h-8 flex items-center justify-center rounded text-2xl">
-                      <MdOutlineMiscellaneousServices className="-rotate-90" />
-                    </div>
-
-                    <div className="text-[14px] font-extrabold text-primary">
-                      {s.name}
-                    </div>
-                  </div>
-                  <div className="text-[12px] text-[#6b7280] mt-1 leading-relaxed">
-                    {s.description}
-                  </div>
-                </div>
-                <div className="flex items-center gap-1 text-secondary">
-                  <button
-                    className="p-1 cursor-pointer"
-                    aria-label="edit"
-                    name="تعديل"
-                    onClick={() => {
-                      setEditServiceData({
-                        ...s,
-                        serviceCategoryId: s.serviceCategoryId,
-                      });
-                      setIsEditModelOpen(!isEditModelOpen);
-                    }}
-                  >
-                    <BiSolidEditAlt className="text-xl" />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(s.id)}
-                    className="p-1 cursor-pointer"
-                    aria-label="delete"
-                    name="حذف"
-                  >
-                    <FaTrashAlt />
-                  </button>
-                </div>
-              </div>
-              <div className="mt-6 flex items-center justify-between">
-                <div className="text-[12px] font-extrabold text-[#D75B19]">
-                  {s.price}
-                </div>
-                <div className="text-[11px] text-[#6b7280]">سعر الخدمة</div>
-              </div>
+          {loading ? (
+            <div className="flex items-center justify-center col-span-3">
+              <SplashLoader />
             </div>
-          ))}
+          ) : filteredData.length > 0 ? (
+            filteredData.map((s, idx) => (
+              <div
+                key={idx}
+                className="bg-white rounded-xl shadow-[0_6px_16px_rgba(17,24,39,0.08)] px-4 border border-lightGray py-4"
+              >
+                <div className="flex justify-between items-start">
+                  <div className="text-right">
+                    <div className="flex items-center gap-4">
+                      <div className="bg-[#E9E8EE] text-secondary w-8 h-8 flex items-center justify-center rounded text-2xl">
+                        <MdOutlineMiscellaneousServices className="-rotate-90" />
+                      </div>
+
+                      <div className="text-[14px] font-extrabold text-primary">
+                        {s.name}
+                      </div>
+                    </div>
+                    <div className="text-[12px] text-[#6b7280] mt-1 leading-relaxed">
+                      {s.description}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1 text-secondary">
+                    <button
+                      className="p-1 cursor-pointer"
+                      aria-label="edit"
+                      name="تعديل"
+                      onClick={() => {
+                        setEditServiceData({
+                          ...s,
+                          serviceCategoryId: s.serviceCategoryId,
+                        });
+                        setIsEditModelOpen(!isEditModelOpen);
+                      }}
+                    >
+                      <BiSolidEditAlt className="text-xl" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(s.id)}
+                      className="p-1 cursor-pointer"
+                      aria-label="delete"
+                      name="حذف"
+                    >
+                      <FaTrashAlt />
+                    </button>
+                  </div>
+                </div>
+                <div className="mt-6 flex items-center justify-between">
+                  <div className="text-[12px] font-extrabold text-[#D75B19]">
+                    {s.price}
+                  </div>
+                  <div className="text-[11px] text-[#6b7280]">سعر الخدمة</div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p>ابدأ بإضافة خدماتك ... </p>
+          )}
         </div>
 
         {filteredData.length === 0 && (
@@ -228,13 +254,17 @@ export default function CraftsmanServices() {
             لا توجد نتائج مطابقة.
           </div>
         )}
-        <div>
-          <Pagination
-            current={pagination.current}
-            onChange={(page) => setPagination((p) => ({ ...p, current: page }))}
-            total={pagination.total}
-          />
-        </div>
+        {filteredData.length > 10 && (
+          <div>
+            <Pagination
+              current={pagination.current}
+              onChange={(page) =>
+                setPagination((p) => ({ ...p, current: page }))
+              }
+              total={pagination.total}
+            />
+          </div>
+        )}
       </main>
       <AnimatePresence initial={false}>
         {isEditModelOpen && (

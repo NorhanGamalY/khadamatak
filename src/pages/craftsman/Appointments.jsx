@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaCalendar } from "react-icons/fa";
 import { MdAccessTimeFilled } from "react-icons/md";
 import { TiArrowSortedDown } from "react-icons/ti";
+import { useOutletContext } from "react-router-dom";
 
 const Appointments = () => {
   const [selectedTime, setSelectedTime] = useState("10:00 ص");
+  const { setSearch, setPlaceholder } = useOutletContext();
 
   const timeOptions = [
     "08:00 ص",
@@ -17,19 +19,24 @@ const Appointments = () => {
   ];
   const days = [
     { id: 2, title: "الاحد", isActive: true },
-    { id: 3, title: "الاثنين", isActive: true },
-    { id: 4, title: "الثلاثاء", isActive: true },
-    { id: 5, title: "الاربعاء", isActive: true },
-    { id: 6, title: "الخميس", isActive: true },
+    { id: 3, title: "الاثنين", isActive: false },
+    { id: 4, title: "الثلاثاء", isActive: false },
+    { id: 5, title: "الاربعاء", isActive: false },
+    { id: 6, title: "الخميس", isActive: false },
     { id: 7, title: "الجمعة", isActive: false },
     { id: 1, title: "السبت", isActive: false },
   ];
+  useEffect(() => {
+    setPlaceholder("جدول المواعيد ...");
+    setSearch("");
+  }, []);
+
   return (
     <div dir="rtl" className="min-h-screen bg-main text-primary">
       <main className="mx-auto max-w-7xl lg:px-8 px-4 py-6 lg:py-8">
         <div className="grid lg:gap-8 gap-5">
           <div className="flex flex-col items-start">
-            <h2 className="lg:text-3xl text-2xl font-extrabold">
+            <h2 className="lg:text-[26px] text-2xl font-extrabold">
               إدارة جدول العمل
             </h2>
             <p className="lg:text-lg text-[#6b7280] mt-1 text-sm">

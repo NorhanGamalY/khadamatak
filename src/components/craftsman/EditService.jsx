@@ -66,7 +66,7 @@ const EditService = ({
             <div className="flex items-center gap-2 border border-[#BABABA] py-2 px-2 rounded mt-1 bg-white placeholder:text-[#A3A3A3]">
               <PiMoneyWavyLight className="text-lg text-[#A3A3A3]" />
               <input
-                type="text"
+                type="number"
                 placeholder="500ج.م"
                 value={editServiceData.price || ""}
                 onChange={(e) =>
