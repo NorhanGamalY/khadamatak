@@ -1,15 +1,17 @@
-import { useState } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import { IoClose, IoPerson } from "react-icons/io5";
-import { HiMenuAlt3 } from 'react-icons/hi';
+import { HiMenuAlt3 } from "react-icons/hi";
 import { IoLogOutOutline } from "react-icons/io5";
-import { FiMessageSquare, FiShoppingBag, FiAlertTriangle } from "react-icons/fi";
+import {
+  FiMessageSquare,
+  FiShoppingBag,
+  FiAlertTriangle,
+} from "react-icons/fi";
 import NotificationBell from "../../pages/client/components/Notificationbell";
 import ProfileDropdown from "../../pages/client/components/Profiledropdown";
-import { useNotifications } from '../../features/notifications/hooks';
-import { formatTime } from '../../utils/time';
-
-
+import { useNotifications } from "../../features/notifications/hooks";
+import { formatTime } from "../../utils/time";
 
 const navItems = [
   { to: "/home", label: "الرئيسية" },
@@ -23,7 +25,8 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
 
-  const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+  const token =
+    localStorage.getItem("token") || sessionStorage.getItem("token");
   const isLoggedIn = !!token;
   const role = localStorage.getItem("role") || sessionStorage.getItem("role");
   const isClient = role === "Client";
@@ -40,21 +43,24 @@ export default function Navbar() {
     navigate("/select-role");
   };
 
-  const {data:notifications=[]} = useNotifications();
+  const { data: notifications = [] } = useNotifications();
   const mappedNotifications = notifications.map((n) => ({
-  id: n.id,
-  title: n.title,
-  body: n.message,
-  time: formatTime(n.createdAt),
-  read: n.isRead,
-  icon: <FiAlertTriangle size={16} />,
-}));
-
+    id: n.id,
+    title: n.title,
+    body: n.message,
+    time: formatTime(n.createdAt),
+    read: n.isRead,
+    icon: <FiAlertTriangle size={16} />,
+  }));
 
   return (
     <div className="w-[90%] xl:w-[80%] mx-auto flex justify-between gap-3 items-center text-black">
-      <NavLink to="/" end className="text-[40px] order-2 lg:order-1 leading-relaxed no-underline font-bold">
-        خد<span className="text-[#d75b19]">ما</span>تك
+      <NavLink
+        to="/"
+        end
+        className="text-[40px] order-2 lg:order-1 leading-relaxed no-underline font-bold"
+      >
+        خد<span className="text-secondary-orange">ما</span>تك
       </NavLink>
 
       <div className="bg-transparent order-2 hidden lg:flex lg:w-[40%] justify-between gap-3">
@@ -64,7 +70,9 @@ export default function Navbar() {
             to={item.to}
             className={({ isActive }) =>
               `inline-block no-underline text-[18px] transition ${
-                isActive ? "text-[#d75b19] font-semibold" : "hover:text-[#d75b19]"
+                isActive
+                  ? "text-secondary-orange font-semibold"
+                  : "hover:text-secondary-orange"
               }`
             }
           >
@@ -82,7 +90,7 @@ export default function Navbar() {
         ) : isLoggedIn ? (
           <button
             onClick={handleLogout}
-            className="flex items-center gap-2 rounded-4xl text-[14px] transition bg-[#1e1855] text-white hover:bg-[#d75b19] py-1 px-3"
+            className="flex items-center gap-2 rounded-4xl text-[14px] transition bg-secondary text-white hover:bg-secondary-orange py-1 px-3"
           >
             <IoLogOutOutline />
             تسجيل الخروج
@@ -90,7 +98,7 @@ export default function Navbar() {
         ) : (
           <NavLink
             to="/select-role"
-            className="flex items-center gap-2 rounded-4xl text-[14px] transition bg-[#d75b19] text-white hover:bg-[#1e1855] py-1 px-3"
+            className="flex items-center gap-2 rounded-4xl text-[14px] transition bg-secondary-orange text-white hover:bg-secondary py-1 px-3"
           >
             <IoPerson />
             تسجيل الدخول
@@ -100,7 +108,7 @@ export default function Navbar() {
 
       <button
         onClick={toggleMenu}
-        className="lg:hidden order-1 text-[30px] z-50 text-black transition hover:text-[#d75b19]"
+        className="lg:hidden order-1 text-[30px] z-50 text-black transition hover:text-secondary-bg-secondary-orange"
         aria-label="Toggle menu"
       >
         {isMenuOpen ? <IoClose /> : <HiMenuAlt3 />}
@@ -119,7 +127,9 @@ export default function Navbar() {
               onClick={closeMenu}
               className={({ isActive }) =>
                 `block no-underline text-[20px] transition py-2 border-b border-gray-200 ${
-                  isActive ? "text-[#d75b19] font-semibold" : "text-black hover:text-[#d75b19]"
+                  isActive
+                    ? "text-secondary-bg-secondary-orange font-semibold"
+                    : "text-black hover:text-secondary-bg-secondary-orange"
                 }`
               }
             >
@@ -130,15 +140,23 @@ export default function Navbar() {
           {isLoggedIn && isClient && (
             <div className="flex flex-col gap-1">
               {[
-                { to: "/messages", label: "الرسائل", icon: <FiMessageSquare /> },
+                {
+                  to: "/messages",
+                  label: "الرسائل",
+                  icon: <FiMessageSquare />,
+                },
                 { to: "/orders", label: "الطلبات", icon: <FiShoppingBag /> },
-                { to: "/disputes", label: "النزاعات", icon: <FiAlertTriangle /> },
+                {
+                  to: "/disputes",
+                  label: "النزاعات",
+                  icon: <FiAlertTriangle />,
+                },
               ].map((item) => (
                 <NavLink
                   key={item.to}
                   to={item.to}
                   onClick={closeMenu}
-                  className="flex items-center gap-3 text-[17px] py-2 text-gray-700 hover:text-[#d75b19] transition"
+                  className="flex items-center gap-3 text-[17px] py-2 text-gray-700 hover:text-secondary-bg-secondary-orange transition"
                 >
                   {item.icon}
                   {item.label}
@@ -159,7 +177,7 @@ export default function Navbar() {
             <NavLink
               to="/select-role"
               onClick={closeMenu}
-              className="flex items-center gap-2 py-3 px-4 justify-center rounded-lg text-[16px] mt-4 bg-[#d75b19] text-white hover:bg-[#1e1855] transition"
+              className="flex items-center gap-2 py-3 px-4 justify-center rounded-lg text-[16px] mt-4 bg-secondary-orange text-white hover:bg-secondary transition"
             >
               <IoPerson />
               تسجيل الدخول

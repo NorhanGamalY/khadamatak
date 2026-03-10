@@ -4,8 +4,11 @@ import { GiStoneCrafting } from "react-icons/gi";
 import axios from "axios";
 import { getId, getToken } from "../../features/auth/authHelpers";
 import SplashLoader from "../../components/common/SplashLoader";
+import { useOutletContext } from "react-router-dom";
 
 const ConflictsCraftsman = () => {
+  const { setSearch, setPlaceholder } = useOutletContext();
+
   const token = getToken();
   const id = getId();
   const [clientData, setClientData] = useState([]);
@@ -34,6 +37,11 @@ const ConflictsCraftsman = () => {
   useEffect(() => {
     if (id && token && isActive.open) getAllOrders();
   }, [isActive.open]);
+
+  useEffect(() => {
+    setPlaceholder("النزاعات  ...");
+    setSearch("");
+  }, []);
 
   return (
     <div dir="rtl" className="min-h-screen bg-main text-primary">

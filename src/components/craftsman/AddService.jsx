@@ -33,7 +33,9 @@ const AddService = ({
       >
         <button
           className="absolute lg:left-5 left-3 lg:top-7 top-5 cursor-pointer"
-          onClick={() => setIsAddServiceModelOpen(false)}
+          onClick={() => {
+            setIsAddServiceModelOpen(false);
+          }}
         >
           <CgClose />
         </button>
@@ -43,7 +45,6 @@ const AddService = ({
           onSubmit={(e) => {
             e.preventDefault();
             handleAddService(serviceData);
-            setIsAddServiceModelOpen(false);
           }}
         >
           <h1 className="lg:text-3xl text-2xl text-secondary font-semibold">
@@ -62,7 +63,6 @@ const AddService = ({
                   setServiceData({ ...serviceData, name: e.target.value })
                 }
                 className="w-full focus:outline-none"
-                required
               />
             </div>
           </div>
@@ -79,7 +79,6 @@ const AddService = ({
                   setServiceData({ ...serviceData, price: e.target.value })
                 }
                 className="w-full focus:outline-none"
-                required
               />
             </div>
           </div>
@@ -142,7 +141,6 @@ const AddService = ({
                     description: e.target.value,
                   })
                 }
-                required
               />
             </div>
           </div>
@@ -150,7 +148,7 @@ const AddService = ({
           <div>
             <button
               type="submit"
-              className="bg-secondary w-full text-white px-4 py-2 rounded cursor-pointer"
+              className={`${!serviceData.name || !serviceData.description || !serviceData.price ? "cursor-not-allowed! bg-gray-300 text-black" : " text-white bg-secondary cursor-pointer"}  w-full px-4 py-2 rounded `}
             >
               حفظ الخدمة
             </button>

@@ -1,11 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import { RxHamburgerMenu } from "react-icons/rx";
 import Navbar from "../../components/layout/Navbar";
 import Avatar from "../../components/common/Avatar";
-import { useNavigate } from "react-router-dom";
-import { useSearch } from "../../context/searchContext";
 
 export default function Header({
   sidebarOpen,
@@ -14,24 +12,28 @@ export default function Header({
   role,
   activeTitle,
   profilePath,
+  search,
+  setSearch,
+  placeholder,
+  data,
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(true);
-  const navigate = useNavigate();
-  const { search, setSearch } = useSearch();
-
+  useEffect(() => data, []);
   return (
     <div className="bg-[#ECECF2]">
       <nav
-        className={`fixed bg-white top-0 left-0 flex justify-between min-h-[80px] items-center mx-auto ${sidebarOpen ? "w-100 z-0 lg:w-[83%]" : "w-full z-20  "}`}
+        className={`fixed bg-white top-0 left-0 flex justify-between min-h-20 items-center mx-auto ${sidebarOpen ? "w-100 z-0 lg:w-[90%]" : "w-full z-20  "}`}
       >
         <Navbar />
       </nav>
       <div className="bg-[#ECECF2] min-h-5 top-20 left-0 right-0"></div>
       <header
-        className={`bg-white border-b border-[#e7e7ef] mt-25 left-0 ${sidebarOpen ? "lg:ps-0 right-40" : "lg:ps-0 right-0"}`}
+        className={`bg-white border-b border-[#e7e7ef] mt-25 left-0 ${sidebarOpen ? "right-40" : "lg:ps-0 right-0"}`}
       >
         <div dir="ltr" className="px-6 lg:pl-6 lg:px-0">
-          <div className="bg-white rounded-xl shadow-[0_1px_0_rgba(0,0,0,0.03)] py-2 lg:items-center gap-3 lg:grid flex justify-between lg:grid-cols-5 lg:w-[83%] lg:m-auto">
+          <div
+            className={`bg-white rounded-xl shadow-[0_1px_0_rgba(0,0,0,0.03)] py-2 lg:items-center gap-3 lg:grid flex justify-between lg:grid-cols-5 ${sidebarOpen ? "lg:w-full lg:pl-26 lg:pr-2" : "lg:w-[83%]"} w-full lg:m-auto`}
+          >
             <div className="flex items-center gap-2 lg:col-span-1 order-1 lg:order-1">
               <div
                 onClick={() => navigate(profilePath)}
@@ -47,7 +49,7 @@ export default function Header({
             <div className="lg:col-span-3 lg:order-3 order-2" dir="rtl">
               <div className="relative lg:max-w-130 mx-auto">
                 <input
-                  placeholder="بحث..."
+                  placeholder={placeholder}
                   className="w-full h-9 rounded-xl bg-[#f3f3f7] border border-[#e8e8f0] pr-4 pl-10 text-[13px] outline-none focus:ring-2 focus:ring-[#ffd9c2]"
                   onChange={(e) => setSearch(e.target.value)}
                   value={search}
