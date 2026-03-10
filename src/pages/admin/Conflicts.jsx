@@ -3,17 +3,25 @@ import axios from "axios";
 import { Search } from "lucide-react";
 import { FaEdit } from "react-icons/fa";
 
+const statusMap = {
+    0: "جديد ",
+    1: "قيد المراجعة",
+    2: "تم الحل",
+    3: "مغلق",  
+};
+
+const statusConfig = {
+    "تم الحل": { class: "bg-gray-200 text-gray-700 font-bold", icon: null },
+    "مغلق": { class: "bg-orange-700/50 text-orange-700 font-bold", icon: null },
+    "قيد المراجعة": {
+        class: "bg-amber-900/40 text-amber-900/60 font-bold",
+    },
+};
 
 export default function Conflicts() {
-
-    // const defaultData = [
-    //     { id: "#060", user: "سارة كريم", craftsman: "جنى الأشرف", reason: "متعلقة بالخدمة", status: "تم الحل", color: "bg-gray-400" },
-    //     { id: "#045", user: "أحمد سامي", craftsman: "طارق الأحمد", reason: "متعلقة بالحرفي", status: "مغلق", color: "bg-orange-700" },
-    //     { id: "#234", user: "منال ابراهيم", craftsman: "سارة قاسم", reason: "متعلقة بالدفع", status: "قيد المراجعة", color: "bg-amber-900/90" },
-    //     { id: "#160", user: "ليلى حسون", craftsman: "مهند سمير", reason: "مشاكل فنية", status: "تم الحل", color: "bg-green-600" },
-    // ];q
-
-    const [data, setData] = useState([]);
+    const [conflicts, setConflicts] = useState([]);
+    const [search, setSearch] = useState("");
+    const [filter, setFilter] = useState("الكل");
 
     useEffect(() => {
         const token = localStorage.getItem("token");
