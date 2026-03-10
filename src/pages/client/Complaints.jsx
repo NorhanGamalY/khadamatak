@@ -1,21 +1,17 @@
 import { useState } from "react";
 import { FaCamera } from "react-icons/fa6";
 import { useCreateComplaint } from "../../features/complaints/hooks";
+import { useLocation } from "react-router-dom";
 import Toast from "../../components/common/Toast";
 
 export default function Complaints() {
-const [showToast, setShowToast] = useState(false);
+const location = useLocation();
+const { orderService, craftsmanName, orderId } = location.state || {};
+ const [showToast, setShowToast] = useState(false);
 const [toastMessage, setToastMessage] = useState("");
 const [toastType, setToastType] = useState("success");
-
-  const order = {
-    id: 12,
-    service: "كهرباء",
-    craftsman: "محمد أحمابرار مثنى راكع الراوي iraq",
-  };
-
-  const [description, setDescription] = useState("");
-  const { mutate, isPending } = useCreateComplaint();
+ const [description, setDescription] = useState("");
+ const { mutate, isPending } = useCreateComplaint();
 
  const handleSubmit = () => {
   if (!description.trim()) {
@@ -27,7 +23,7 @@ const [toastType, setToastType] = useState("success");
 
   mutate(
     {
-      orderId: order.id,
+      orderId: orderId,
       description: description,
       evidenceAttachmentUrl: "",
     },
@@ -58,9 +54,9 @@ const [toastType, setToastType] = useState("success");
 
       <div className="space-y-6">
       <div className="flex gap-6 text-lg  ">
-        <p>رقم الطلب: <span className="font-semibold text-red-500">{order.id}</span></p>
-        <p>الخدمة:  <span className="font-semibold text-red-500">{order.service}</span></p>
-        <p>الحرفي: <span className="font-semibold text-red-500">{order.craftsman}</span></p>
+        <p>رقم الطلب: <span className="font-semibold text-red-500">{orderId}</span></p>
+        <p>الخدمة:  <span className="font-semibold text-red-500">{orderService}</span></p>
+        <p>الحرفي: <span className="font-semibold text-red-500">{craftsmanName}</span></p>
       </div>
 
         <div>
