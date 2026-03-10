@@ -106,7 +106,7 @@ export default function ClientLogin() {
 
             <p className="text-xs text-gray-500">
               ليس لديك حساب؟{" "}
-              <button onClick={() => navigate("/select-role")} className="text-[#d75b19]">
+              <button onClick={() => navigate("/client-register")} className="text-[#d75b19]">
                 سجل الآن
               </button>
             </p>

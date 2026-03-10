@@ -70,6 +70,7 @@ import Complaints from "./pages/client/Complaints";
 import ForgetPassword from "./pages/public/ForgetPassword";
 import CodeVerification from "./pages/public/CodeVerification";
 import ResetPassword from "./pages/public/ResetPassword";
+import ClientRegister2 from "./pages/public/ClientRegister2";
 
 function GuestRoute({ children }) {
   if (isAuthenticated()) {
@@ -102,6 +103,14 @@ function App() {
             element={
               <GuestRoute>
                 <ClientRegestier />
+              </GuestRoute>
+            }
+          />
+                    <Route
+            path="/client-register2"
+            element={
+              <GuestRoute>
+                <ClientRegister2 />
               </GuestRoute>
             }
           />

@@ -109,3 +109,34 @@ export function validateCraftsmanRegister(values) {
     ...validateCraftsmanStep2(values),
   };
 }
+
+export function validateClientStep1(values) {
+  const errors = {};
+
+  if (!values.fullName || values.fullName.trim().length < 3) {
+    errors.fullName = "الاسم لازم يكون 3 حروف على الأقل";
+  }
+  if (!values.email || !emailRegex.test(values.email)) {
+    errors.email = "اكتب بريد إلكتروني صحيح";
+  }
+  const passErr = validatePassword(values.password);
+  if (passErr) errors.password = passErr;
+
+  return errors;
+}
+
+export function validateClientStep2(values) {
+  const errors = {};
+
+  if (!values.phoneNumber || !phoneRegex.test(values.phoneNumber.trim())) {
+    errors.phoneNumber = "اكتب رقم موبايل مصري صحيح";
+  }
+  if (!values.address || values.address.trim() === "") {
+    errors.address = "اختاري المحافظة";
+  }
+  if (!values.agreeTerms) {
+    errors.agreeTerms = "لازم توافق على الشروط";
+  }
+
+  return errors;
+}
