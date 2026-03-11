@@ -4,6 +4,7 @@ import Header from "../components/common/Header";
 import axios from "axios";
 
 import { getId, getToken } from "../features/auth/authHelpers";
+import { label } from "framer-motion/client";
 export default function CraftsmanLayout() {
   const id = getId();
   const token = getToken();
@@ -24,6 +25,7 @@ export default function CraftsmanLayout() {
     { label: "الرسائل", to: "/craftsman/messages" },
     { label: "الاعدادات", to: "/craftsman/settings" },
     { label: "الملف الشخصي", to: "/craftsman/profile" },
+    { label: "تسجيل الخروج", to: "/craftsman/signout" }
   ];
 
   const getCraftsmanName = async () => {
@@ -117,11 +119,11 @@ const NavItem = ({ label, to, setActiveLabel }) => (
       if (isActive) {
         setActiveLabel(label);
       }
-      return `flex items-center justify-between px-4 py-2.5 rounded-lg cursor-pointer transition-colors ${
-        isActive
-          ? "bg-secondary-orange text-white text-[20px]"
+      return `flex items-center justify-between px-4 py-2.5 rounded-lg cursor-pointer transition-colors ${isActive
+          ? "bg-[#d75b19] text-white text-[20px]"
+
           : "text-[#8A8A8A] text-[16px] hover:bg-white/5 hover:text-white"
-      }`;
+        }`;
     }}
   >
     <span className="font-medium">{label}</span>

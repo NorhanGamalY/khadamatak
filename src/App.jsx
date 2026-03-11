@@ -51,6 +51,7 @@ import Appointments from "./pages/craftsman/Appointments";
 import Evaluate from "./pages/craftsman/Evaluate";
 import Messages from "./pages/craftsman/Messages";
 import ConflictsCraftsman from "./pages/craftsman/ConflictsCraftsman";
+import SignOut from "./pages/craftsman/SignOut";
 import Wallet from "./pages/craftsman/Wallet"
 import NewRequest from "./pages/craftsman/NewRequest";
 import EndidRequest from "./pages/craftsman/EndidRequest";
@@ -71,6 +72,7 @@ import ForgetPassword from "./pages/public/ForgetPassword";
 import CodeVerification from "./pages/public/CodeVerification";
 import ResetPassword from "./pages/public/ResetPassword";
 import ClientRegister2 from "./pages/public/ClientRegister2";
+
 
 function GuestRoute({ children }) {
   if (isAuthenticated()) {
@@ -254,6 +256,7 @@ function App() {
               <Route path="accepted/:id" element={<AcceptCraftman />} />
               <Route path="cancelled/:id" element={<Cancelcraftman />} />
             </Route>
+            <Route path="signout" element={<SignOut />} />
 
           </Route>
 
