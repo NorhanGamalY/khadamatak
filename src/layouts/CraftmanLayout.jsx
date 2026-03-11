@@ -13,6 +13,7 @@ export default function CraftsmanLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeLabel, setActiveLabel] = useState("لوحة التحكم");
   const [craftsmanData, setCraftsmanData] = useState({});
+  const [isLogoutOpen, setIsLogoutOpen] = useState(false);
 
   const navItems = [
     { label: "لوحة المعلومات", to: "/craftsman" },
@@ -23,9 +24,7 @@ export default function CraftsmanLayout() {
     { label: "النزاعات", to: "/craftsman/conflicts" },
     { label: "المحفظة", to: "/craftsman/wallet" },
     { label: "الرسائل", to: "/craftsman/messages" },
-    { label: "الاعدادات", to: "/craftsman/settings" },
     { label: "الملف الشخصي", to: "/craftsman/profile" },
-    { label: "تسجيل الخروج", to: "/craftsman/signout" }
   ];
 
   const getCraftsmanName = async () => {
@@ -74,7 +73,13 @@ export default function CraftsmanLayout() {
                 }
                 setActiveLabel={setActiveLabel}
               />
-            ))}
+            ))}                    
+            <button
+              onClick={() => setIsLogoutOpen(true)}
+              className="w-full flex items-center px-4 py-2.5 rounded-lg text-[#8A8A8A] text-[16px] hover:bg-white/5 hover:text-white transition-colors"
+            >
+              <span className="font-medium">تسجيل الخروج</span>
+            </button>
           </nav>
         </div>
         <div></div>
@@ -107,6 +112,19 @@ export default function CraftsmanLayout() {
             search,
           }}
         />
+
+          {isLogoutOpen && (
+        <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/30 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl p-8 w-full max-w-sm text-center mx-4 shadow-xl">
+            <h2 className="text-[#ef4444] text-xl font-bold mb-2">تسجيل الخروج</h2>
+            <p className="text-gray-500 mb-6 text-sm">إذا قمت بتسجيل الخروج ستفقد كل البيانات الخاصة بالمنصة</p>
+            <div className="flex flex-col gap-3">
+              <button onClick={() => setIsLogoutOpen(false)} className="w-full bg-[#1e1b4b] text-white py-2 rounded-lg font-bold">رجوع</button>
+              <button onClick={() => navigate("/login")} className="w-full border border-red-100 text-[#ef4444] py-2 rounded-lg font-bold hover:bg-red-50">تسجيل الخروج</button>
+            </div>
+          </div>
+        </div>
+      )}
       </main>
     </div>
   );

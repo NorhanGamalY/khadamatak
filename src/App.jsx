@@ -158,7 +158,6 @@ function App() {
             <Route path="/contacts" element={<Contact />} />
             <Route path="/services/:id" element={<CraftmanDetails />} />
             <Route path="/craftman-results" element={<CraftmanResults />} />
-            </Route>
 
             {/* Client Routes */}
             <Route element={<ProtectedRoute allowedRole="Client" redirectTo="/login" />}>
@@ -168,6 +167,7 @@ function App() {
               <Route path="/orders" element={<ClientOrdersPage />} />
               <Route path="/payment" element={<PaymentPage />} />
               <Route path="/notifications" element={<Notifications />} />
+            </Route>
             </Route>
 
           {/* Admin Routes */}
