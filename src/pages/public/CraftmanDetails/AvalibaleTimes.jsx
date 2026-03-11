@@ -4,7 +4,7 @@ import { GoDotFill } from "react-icons/go";
 const dayNames = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
 
 
-function AvalibaleTimes({ availabilities, prices }) {
+function AvalibaleTimes({ availabilities, prices, services }) {
             const priceInfo = prices ? {
             range: `${Math.min(...prices)} - ${Math.max(...prices)} جنية`,
         } : null;

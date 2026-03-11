@@ -56,7 +56,7 @@ function CraftmanDetails() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <AvalibaleTimes
 
-                                availabilities={craftman?.availabilities} prices={prices} />
+                        services={craftman?.services} availabilities={craftman?.availabilities} prices={prices} />
                         </div>
 
                         <section className='shadow-sm rounded-xl p-4'>

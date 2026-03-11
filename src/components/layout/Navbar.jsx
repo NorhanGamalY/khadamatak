@@ -3,15 +3,13 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { IoClose, IoPerson } from "react-icons/io5";
 import { HiMenuAlt3 } from "react-icons/hi";
 import { IoLogOutOutline } from "react-icons/io5";
-import {
-  FiMessageSquare,
-  FiShoppingBag,
-  FiAlertTriangle,
-} from "react-icons/fi";
+import { FiMessageSquare, FiShoppingBag, FiAlertTriangle,} from "react-icons/fi";
 import NotificationBell from "../../pages/client/components/Notificationbell";
 import ProfileDropdown from "../../pages/client/components/Profiledropdown";
 import { useNotifications } from "../../features/notifications/hooks";
 import { formatTime } from "../../utils/time";
+import { useQuery } from "@tanstack/react-query";
+import { getToken } from "../../features/auth/authHelpers";
 
 const navItems = [
   { to: "/home", label: "الرئيسية" },
@@ -53,10 +51,30 @@ const mappedNotifications = notifications?.map((n) => ({
   title: n.title,
   body: n.message,
   time: formatTime(n.createdAt),
-  read: n.isRead,
+  isRead: n.isRead,
   icon: <FiAlertTriangle size={16} />,
 }));
 
+  const { data: chatList = [] } = useQuery({
+    queryKey: ["chatList"],
+    queryFn: async () => {
+      const res = await fetch("https://herafie.runasp.net/api/Chat/chat-list", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${getToken()}`,
+        },
+      });
+      if (!res.ok) throw new Error("فشل");
+      return res.json();
+    },
+    enabled: isLoggedIn && isClient,
+    refetchInterval: 10000,
+  });
+
+  const totalUnreadMessages = chatList.reduce(
+    (sum, chat) => sum + (chat.unreadCount || 0),
+    0
+  );
 
   return (
     <div className="w-[90%] xl:w-[80%] mx-auto flex justify-between gap-3 items-center text-black">
@@ -90,7 +108,10 @@ const mappedNotifications = notifications?.map((n) => ({
         {isLoggedIn && isClient ? (
           <>
             <NotificationBell notifications={mappedNotifications} />
-            <ProfileDropdown onLogout={handleLogout} />
+          <ProfileDropdown
+              onLogout={handleLogout}
+              unreadMessages={totalUnreadMessages}
+            />          
           </>
         ) : isLoggedIn ? (
           <button
@@ -149,6 +170,7 @@ const mappedNotifications = notifications?.map((n) => ({
                   to: "/messages",
                   label: "الرسائل",
                   icon: <FiMessageSquare />,
+                  badge: totalUnreadMessages,
                 },
                 { to: "/orders", label: "الطلبات", icon: <FiShoppingBag /> },
                 {
@@ -165,6 +187,11 @@ const mappedNotifications = notifications?.map((n) => ({
                 >
                   {item.icon}
                   {item.label}
+                  {item.badge > 0 && (
+                    <span className="bg-[#d75b19] text-white text-[10px] rounded-full min-w-[18px] h-[18px] flex items-center justify-center font-bold px-1">
+                      {item.badge > 99 ? "99+" : item.badge}
+                    </span>
+                  )}
                 </NavLink>
               ))}
             </div>

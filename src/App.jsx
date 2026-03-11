@@ -1,32 +1,42 @@
 import "./App.css";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
-import { Toaster } from "react-hot-toast";
-
 import MainLayout from "./layouts/MainLayout";
 import AdminLayout from "./layouts/AdminLayout";
 import CraftsmanLayout from "./layouts/CraftmanLayout";
-
 import ProtectedRoute from "./features/auth/protectedRoutes";
 import { isAuthenticated, getHomeByRole } from "./features/auth/authHelpers";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Public Pages
 import Landing from "./pages/public/Landing";
-import SelectRole from "./pages/public/SelectRole";
 import Home from "./pages/public/Home";
 import About from "./pages/public/About";
 import Contact from "./pages/public/Contact";
 import Works from "./pages/public/Works";
 import Details from "./pages/public/Details";
 import ServicesPage from "./pages/public/ServicesPage";
+import Service from "./pages/public/Service";
 import CraftmanDetails from "./pages/public/CraftmanDetails/CraftmanDetails";
 import CraftmanResults from "./pages/public/CraftmanResults";
 
+//Auth Pages
+import SelectRole from "./pages/public/SelectRole";
+import ForgetPassword from "./pages/public/ForgetPassword";
+import CodeVerification from "./pages/public/CodeVerification";
+import ResetPassword from "./pages/public/ResetPassword";
 import ClientRegestier from "./pages/public/ClientRegestier";
 import ClientLogin from "./pages/public/ClientLogin";
 import CraftsmanRegister from "./pages/public/CraftsmanRegestier";
 import CraftsmanRegister2 from "./pages/public/Craftsmanregestier2";
 import CraftsmanLogin from "./pages/public/CraftsmanLogin";
+import ClientRegister2 from "./pages/public/ClientRegister2";
+
+// Client Pages
 import PaymentPage from "./pages/public/PaymentPage";
+import Chat from "./pages/client/Chat";
+import ClientOrdersPage from "./pages/client/ClientOrderPage";
+import Complaints from "./pages/client/Complaints";
+import Notifications from "./pages/client/Notifications";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/Dashboard";
@@ -57,21 +67,10 @@ import NewRequest from "./pages/craftsman/NewRequest";
 import EndidRequest from "./pages/craftsman/EndidRequest";
 import ComingRequest from "./pages/craftsman/ComingRequest";
 import DetailsCraftMan from "./pages/craftsman/DetailsCraftMan";
-
 import AcceptCraftman from "./api/Acceptcraftman";
 import Cancelcraftman from "./api/Cancelcraftman";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import Service from "./pages/public/Service";
-import Chat from "./pages/client/Chat";
-import ClientOrdersPage from "./pages/public/ClientOrderPage";
-import Notifications from "./pages/public/Notifications";
-import Complaints from "./pages/client/Complaints";
-import ForgetPassword from "./pages/public/ForgetPassword";
-import CodeVerification from "./pages/public/CodeVerification";
-import ResetPassword from "./pages/public/ResetPassword";
-import ClientRegister2 from "./pages/public/ClientRegister2";
 
 
 function GuestRoute({ children }) {
@@ -93,8 +92,8 @@ function App() {
 
           <Route path="/login"
             element={<GuestRoute>
-                <ClientLogin />
-              </GuestRoute>}
+              <ClientLogin />
+            </GuestRoute>}
           />
 
           <Route path="/client-register"
@@ -113,8 +112,7 @@ function App() {
             }
           />
 
-          <Route
-            path="/craftsman-login"
+          <Route path="/craftsman-login"
             element={
               <GuestRoute>
                 <CraftsmanLogin />
@@ -125,28 +123,28 @@ function App() {
           <Route path="/craftsman-register" element={<CraftsmanRegister />} />
           <Route path="/craftsman-register-2" element={<CraftsmanRegister2 />} />
           <Route path="/forget-password"
-          element={ 
-          <GuestRoute>
-            <ForgetPassword /> 
-          </GuestRoute>
+            element={
+              <GuestRoute>
+                <ForgetPassword />
+              </GuestRoute>
             }
           />
 
-        <Route path="/verify-code"
-        element={
-        <GuestRoute>
-            <CodeVerification />
-        </GuestRoute>
-        }
-        />
+          <Route path="/verify-code"
+            element={
+              <GuestRoute>
+                <CodeVerification />
+              </GuestRoute>
+            }
+          />
 
-        <Route path="/reset-password"
-        element={
-        <GuestRoute>
-            <ResetPassword /> 
-        </GuestRoute>
-        }
-        />
+          <Route path="/reset-password"
+            element={
+              <GuestRoute>
+                <ResetPassword />
+              </GuestRoute>
+            }
+          />
 
           {/* Public Layout */}
           <Route element={<MainLayout />}>
@@ -158,46 +156,20 @@ function App() {
             <Route path="/works" element={<Works />} />
             <Route path="/details" element={<Details />} />
             <Route path="/contacts" element={<Contact />} />
-
             <Route path="/services/:id" element={<CraftmanDetails />} />
             <Route path="/craftman-results" element={<CraftmanResults />} />
-            <Route
-              path="/service-request"
-              element={
-                <ProtectedRoute allowedRole="Client" redirectTo="/login">
-                  <Service />
-                </ProtectedRoute>
-              }
-            />
+            </Route>
 
-            <Route
-              path="/chat/:id"
-              element={
-                <ProtectedRoute allowedRole="Client" redirectTo="/login">
-                  <Chat />
-                </ProtectedRoute>
-              }
-            />
+            {/* Client Routes */}
+            <Route element={<ProtectedRoute allowedRole="Client" redirectTo="/login" />}>
+              <Route path="/service-request" element={<Service />} />
+              <Route path="/chat" element={<Chat />} />
+              <Route path="/chat/:craftsmanId" element={<Chat />} />
+              <Route path="/orders" element={<ClientOrdersPage />} />
+              <Route path="/payment" element={<PaymentPage />} />
+              <Route path="/notifications" element={<Notifications />} />
+            </Route>
 
-            <Route path="/complaints" element={<Complaints />} />
-            <Route
-              path="/orders"
-              element={
-                <ProtectedRoute allowedRole="Client" redirectTo="/login">
-                  <ClientOrdersPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/payment"
-              element={
-                <ProtectedRoute allowedRole="Client" redirectTo="/login">
-                  <PaymentPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="/notifications" element={<Notifications />} />
-          </Route>
           {/* Admin Routes */}
           <Route
             path="/admin"

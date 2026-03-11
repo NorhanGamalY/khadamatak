@@ -1,139 +1,205 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { ArrowLeft } from "lucide-react";
 import { BiDotsHorizontalRounded } from "react-icons/bi";
 import { IoSend } from "react-icons/io5";
-import { useOutletContext } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getUserId, getToken } from "../../features/auth/authHelpers";
 
-const users = [
-  {
-    id: 1,
-    name: "محمد أحمد",
-    message: "خدمة ممتازة وسريعة، أنصح الجميع بالتعامل معه.",
-    rating: 5,
-    image: "https://randomuser.me/api/portraits/men/1.jpg",
-    time: "12:00 AM",
-  },
-  {
-    id: 2,
-    name: "سلام علي",
-    message: "كان محترفًا جدًا وأجرى العمل بجودة عالية.",
-    rating: 4.5,
-    image: "https://randomuser.me/api/portraits/men/4.jpg",
-    time: "الامس",
-  },
-  {
-    id: 3,
-    name: "عمر محمود",
-    message: "تجربة جيدة، لكن كان بإمكانه أن يكون أسرع قليلاً.",
-    rating: 4,
-    image: "https://randomuser.me/api/portraits/men/7.jpg",
-    time: "اليوم",
-  },
-  {
-    id: 4,
-    name: "عمار سعيد",
-    message: "تجربة جيدة، لكن كان بإمكانه أن يكون أسرع قليلاً.",
-    rating: 4,
-    image: "https://randomuser.me/api/portraits/men/31.jpg",
-    time: "الاربعاء",
-  },
-  {
-    id: 5,
-    name: "أحمد محمد",
-    message: "خدمة ممتازة، سعيد بالتعامل معه.",
-    rating: 5,
-    image: "https://randomuser.me/api/portraits/men/11.jpg",
-    time: "الخميس",
-  },
-  {
-    id: 6,
-    name: "سامي سلام",
-    message: "خدمة ممتازة، سعيد بالتعامل معه.",
-    rating: 5,
-    image: "https://randomuser.me/api/portraits/men/14.jpg",
-    time: "اليوم",
-  },
-];
+const BASE_URL = "https://herafie.runasp.net";
+
+const authHeaders = () => ({
+  "Content-Type": "application/json",
+  Authorization: `Bearer ${getToken()}`,
+});
+
+const formatTime = (isoString) => {
+  if (!isoString) return "";
+  const date = new Date(isoString);
+  return date.toLocaleTimeString("ar-EG", { hour: "2-digit", minute: "2-digit" });
+};
+
+const fetchChatList = async () => {
+  const res = await fetch(`${BASE_URL}/api/Chat/chat-list`, {
+    headers: authHeaders(),
+  });
+  if (!res.ok) throw new Error("فشل جلب قائمة المحادثات");
+  return res.json();
+};
+
+const fetchConversation = async (clientUserId) => {
+  if (!clientUserId) return [];
+  const res = await fetch(`${BASE_URL}/api/Chat/conversation/${clientUserId}`, {
+    headers: authHeaders(),
+  });
+  if (!res.ok) throw new Error("فشل جلب المحادثة");
+  return res.json();
+};
+
+const sendMessage = async ({ receiverId, content }) => {
+  const res = await fetch(`${BASE_URL}/api/Chat/send`, {
+    method: "POST",
+    headers: authHeaders(),
+    body: JSON.stringify({ receiverId, content }),
+  });
+  if (!res.ok) throw new Error("فشل إرسال الرسالة");
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
+};
+
+const markAsRead = async (senderId) => {
+  if (!senderId) return;
+  await fetch(`${BASE_URL}/api/Chat/mark-read/${senderId}`, {
+    method: "POST",
+    headers: authHeaders(),
+  });
+};
 
 const Messages = () => {
-  const [userMessage, setUserMessage] = useState([]);
-  const [openChat, setOpenChat] = useState(false);
-  const [message, setMessage] = useState({
-    id: Date.now(),
-    text: "",
-  });
-  const [currentUser, setCurrentUser] = useState(users[0]);
-  const { setSearch, setPlaceholder } = useOutletContext();
+  const queryClient = useQueryClient();
+  const messagesEndRef = useRef(null);
 
-  const handleMessageSubmit = (e) => {
-    e.preventDefault();
-    setUserMessage([...userMessage, message]);
-    setCurrentUser(users[0]);
-    setMessage({ id: 0, text: "" });
-  };
+  const currentUserId = getUserId();
+
+  const [openChat, setOpenChat] = useState(false);
+  const [messageText, setMessageText] = useState("");
+  const [activeClientUserId, setActiveClientUserId] = useState(null);
+  const [activeClientName, setActiveClientName] = useState("");
+  const { data: chatList = [], isLoading: loadingChatList } = useQuery({
+    queryKey: ["craftsmanChatList"],
+    queryFn: fetchChatList,
+    refetchInterval: 10000,
+  });
+
+  const { data: messages = [], isLoading: loadingMessages } = useQuery({
+    queryKey: ["craftsmanConversation", activeClientUserId],
+    queryFn: () => fetchConversation(activeClientUserId),
+    enabled: !!activeClientUserId,
+    refetchInterval: 5000,
+  });
+
+
+  const sendMutation = useMutation({
+    mutationFn: sendMessage,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["craftsmanConversation", activeClientUserId]);
+      queryClient.invalidateQueries(["craftsmanChatList"]);
+    },
+  });
+
+
   useEffect(() => {
-    setPlaceholder("تواصل معنا  ...");
-    setSearch("");
-  }, []);
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+
+  const handleOpenConversation = (clientUserId, clientName) => {
+    setActiveClientUserId(clientUserId);
+    setActiveClientName(clientName);
+    setOpenChat(true);
+    markAsRead(clientUserId);
+    queryClient.invalidateQueries(["craftsmanChatList"]);
+  };
+
+  const handleSendMessage = (e) => {
+    e.preventDefault();
+    if (!messageText.trim() || !activeClientUserId) return;
+    sendMutation.mutate({
+      receiverId: activeClientUserId,
+      content: messageText.trim(),
+    });
+    setMessageText("");
+  };
+
+  const getAvatarUrl = (name) =>
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(name || "Client")}&background=0ea5e9&color=fff`;
+
+  const getClientLabel = (chat) => {
+    return `${chat.userId.slice(-6)}`;
+  };
+
+  const getDisplayName = (clientUserId, messages) => {
+    if (!messages || messages.length === 0) return `${clientUserId?.slice(-4) || ""}`;
+    const clientMsg = messages.find((m) => m.senderId !== currentUserId);
+    if (clientMsg?.senderName) return clientMsg.senderName;
+    return `عميل ...${clientUserId?.slice(-6) || ""}`;
+  };
 
   return (
-    <div dir="ltr" className="max-h-screen bg-white text-primary">
+    <div dir="ltr" className="max-h-screen bg-white text-primary pt-10">
       <main className="mx-auto max-w-7xl lg:px-8 px-4 py-6 lg:py-8">
         <div className="grid lg:grid-cols-6 lg:gap-2">
+
           <div
-            className={`lg:col-span-2  rounded shadow-[0_6px_16px_rgba(17,24,39,0.08)] lg:pt-6 py-4
-           ${openChat ? "hidden lg:flex flex-col" : "flex flex-col"} `}
+            className={`lg:col-span-2 rounded shadow-[0_6px_16px_rgba(17,24,39,0.08)] lg:pt-6 py-4
+            ${openChat ? "hidden lg:flex flex-col" : "flex flex-col"}`}
           >
             <h1 className="text-3xl font-bold border-b border-slate-300 lg:pb-2 text-center text-secondary pb-3">
               قائمة المحادثات
             </h1>
+
             <div className="lg:h-[70vh] h-screen overflow-y-auto overflow-message">
-              {users.map((user) => (
-                <button
-                  onClick={() => {
-                    setOpenChat(true);
-                    setCurrentUser(user);
-                  }}
-                  className="py-4 lg:px-4 px-2 w-full border-b border-slate-200 flex items-start text-left gap-4"
-                >
-                  <img
-                    src={user.image}
-                    className="w-14 h-14 rounded-full object-cover"
-                    alt={user.name}
-                  />
-                  <div className="grid gap-0.5 text-secondary">
-                    <h1 className="font-bold text-lg">{user.name}</h1>
-                    <p dir="rtl" className="line-clamp-1 text-sm font-semibold">
-                      {user.message}
-                    </p>
-                  </div>
-                  <div className="text-[10px] text-slate-400 whitespace-nowrap font-bold ml-auto mb-auto">
-                    {user.time}
-                  </div>
-                </button>
-              ))}
+              {loadingChatList ? (
+                <p className="text-center text-slate-400 py-6 font-semibold">
+                  جاري تحميل المحادثات...
+                </p>
+              ) : chatList.length === 0 ? (
+                <p className="text-center text-slate-400 py-6 font-semibold">
+                  لا توجد رسائل بعد
+                </p>
+              ) : (
+                chatList.map((chat) => {
+                  const label = getClientLabel(chat);
+                  const isActive = activeClientUserId === chat.userId;
+                  return (
+                    <button
+                      key={chat.userId}
+                      onClick={() => handleOpenConversation(chat.userId, label)}
+                      className={`py-4 lg:px-4 px-2 w-full border-b border-slate-200 flex items-start text-left gap-4
+                        ${isActive ? "bg-sky-50" : "hover:bg-slate-50"}`}
+                    >
+                      <div className="relative shrink-0">
+                        <img
+                          src={getAvatarUrl(label)}
+                          className="w-14 h-14 rounded-full object-cover"
+                          alt={label}
+                        />
+                        {chat.unreadCount > 0 && (
+                          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                            {chat.unreadCount}
+                          </span>
+                        )}
+                      </div>
+                      <div className="grid gap-0.5 text-secondary flex-1 min-w-0">
+                        <h1 className="font-bold text-lg truncate">{label}</h1>
+                        <p dir="rtl" className="line-clamp-1 text-sm font-semibold text-slate-500">
+                          {chat.lastMessage}
+                        </p>
+                      </div>
+                      <div className="text-[10px] text-slate-400 whitespace-nowrap font-bold ml-auto mb-auto shrink-0">
+                        {formatTime(chat.lastMessageTime)}
+                      </div>
+                    </button>
+                  );
+                })
+              )}
             </div>
           </div>
+
           {openChat ? (
-            <div className="lg:col-span-4 flex flex-col relative border border-slate-200 ">
-              <div className="bg-secondary-orange rounded rounded-bl-none rounded-br-none  lg:p-4 py-4 px-2 lg:grid lg:grid-cols-5 flex gap-5  lg:items-center items-start text-white ">
-                <button
-                  className="col-span-1"
-                  onClick={() => setOpenChat(false)}
-                >
+            <div className="lg:col-span-4 flex flex-col relative border border-slate-200">
+              <div className="bg-secondary-orange rounded rounded-bl-none rounded-br-none lg:p-4 py-4 px-2 lg:grid lg:grid-cols-5 flex gap-5 lg:items-center items-start text-white">
+                <button className="col-span-1" onClick={() => setOpenChat(false)}>
                   <ArrowLeft />
                 </button>
                 <div className="flex lg:items-center justify-center col-span-3 lg:gap-4 gap-3 m-auto">
                   <img
-                    src={currentUser.image}
-                    alt={currentUser.name}
-                    className="lg:w-18 lg:h-18 w-12 h-12 rounded-full"
+                    src={getAvatarUrl(activeClientName)}
+                    alt={activeClientName}
+                    className="lg:w-16 lg:h-16 w-12 h-12 rounded-full"
                   />
                   <div className="text-center grid lg:gap-1">
-                    <h1 className="font-bold text-xl">{currentUser.name}</h1>
-                    <p className="text-orange-200 text-sm font-bold">
-                      متصل الان
-                    </p>
+                    <h1 className="font-bold text-xl">{activeClientName}</h1>
+                    <p className="text-orange-200 text-sm font-bold">متصل الآن</p>
                   </div>
                 </div>
                 <button className="col-span-1 text-3xl text-white ml-auto">
@@ -141,50 +207,75 @@ const Messages = () => {
                 </button>
               </div>
               <div
-                className="lg:px-4 px-2 text-right relative flex flex-col pb-24 lg:h-[70vh] h-screen overflow-y-auto gap-6 py-6 overflow-message"
+                className="lg:px-4 px-2 relative flex flex-col pb-20 lg:h-[70vh] h-screen overflow-y-auto gap-3 py-6 overflow-message"
                 dir="ltr"
               >
-                <div className="bg-main rounded text-black max-w-xs p-3 w-full mr-auto font-semibold">
-                  السلام عليكم ورحمة الله وبركاته، كيف يمكنني مساعدتك اليوم؟
-                </div>
-                {userMessage.map((msg, idx) => (
-                  <div
-                    className="bg-main rounded text-black max-w-xs p-3 w-full mr-auto font-semibold"
-                    key={idx}
-                  >
-                    {msg.text}
-                  </div>
-                ))}
-                <div className="bg-secondary rounded text-white  max-w-xs p-3  w-full ml-auto font-semibold">
-                  وعليكم السلام ورحمة الله وبركاته
-                </div>
+                {loadingMessages ? (
+                  <p className="text-center text-slate-400 font-semibold m-auto">
+                    جاري تحميل الرسائل...
+                  </p>
+                ) : messages.length === 0 ? (
+                  <p className="text-center text-slate-400 font-semibold m-auto">
+                    لا توجد رسائل بعد
+                  </p>
+                ) : (
+                  messages.map((msg, idx) => {
+                    const isMine = msg.senderId === currentUserId;
+                    return (
+                      <div
+                        key={idx}
+                        className={`flex flex-col gap-1 max-w-xs ${
+                          isMine ? "ml-auto items-end" : "mr-auto items-start"
+                        }`}
+                      >
+                        <div
+                          className={`rounded-2xl px-4 py-3 font-semibold text-sm leading-relaxed
+                            ${isMine
+                              ? "bg-secondary-orange text-white rounded-br-none"
+                              : "bg-slate-100 text-black rounded-bl-none"
+                            }`}
+                        >
+                          {msg.content}
+                        </div>
+                        <span className="text-[10px] text-slate-400 font-bold px-1">
+                          {formatTime(msg.sentAt)}
+                        </span>
+                      </div>
+                    );
+                  })
+                )}
+                <div ref={messagesEndRef} />
               </div>
               <div className="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-3">
-                <form onSubmit={handleMessageSubmit}>
+                <form onSubmit={handleSendMessage}>
                   <div className="relative w-full">
                     <input
                       type="text"
                       placeholder="كتابة الرسالة..."
-                      className="w-full py-3 px-3 pr-16 border border-slate-400 rounded-lg font-semibold focus:outline-none"
-                      value={message.text}
-                      onChange={(e) =>
-                        setMessage({ ...message, text: e.target.value })
-                      }
+                      className="w-full py-3 px-3 pr-16 border border-slate-400 rounded-lg font-semibold focus:outline-none focus:border-secondary-orange"
+                      value={messageText}
+                      onChange={(e) => setMessageText(e.target.value)}
+                      disabled={sendMutation.isPending}
                     />
-
                     <button
                       type="submit"
-                      className="absolute right-0 top-0 h-full px-4 bg-secondary-orange text-white rounded-r-lg"
+                      disabled={sendMutation.isPending || !messageText.trim()}
+                      className="absolute right-0 top-0 h-full px-4 bg-secondary-orange text-white rounded-r-lg disabled:opacity-50 transition-opacity"
                     >
                       <IoSend />
                     </button>
                   </div>
+                  {sendMutation.isError && (
+                    <p className="text-red-500 text-xs mt-1 font-semibold text-right">
+                      فشل إرسال الرسالة، حاول مرة أخرى
+                    </p>
+                  )}
                 </form>
               </div>
             </div>
           ) : (
             <div className="lg:col-span-4 hidden lg:flex flex-col relative border border-slate-200 items-center justify-center font-bold text-xl text-secondary">
-              <h1> ابدأ محادثتك الان</h1>
+              <h1>اختر محادثة للرد</h1>
             </div>
           )}
         </div>

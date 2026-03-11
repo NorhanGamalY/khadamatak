@@ -33,7 +33,7 @@ if (error) {
         ) : (
           notifications.map((n) => (
           <div key={n.id} className="flex gap-4 items-center px-4 py-3 border border-gray-100 rounded shadow">
-             <button className="bg-secondary-orange text-white text-lg px-4 py-1 rounded-md hover:bg-[#bf4f16]">
+            <button className="bg-secondary-orange text-white text-lg px-4 py-1 rounded-md hover:bg-[#bf4f16]">
               فتح الطلب
             </button>
             <div className="flex-1 min-w-0">
