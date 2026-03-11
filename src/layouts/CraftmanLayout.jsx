@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import Header from "../components/common/Header";
 import axios from "axios";
 
@@ -8,7 +8,8 @@ import { label } from "framer-motion/client";
 export default function CraftsmanLayout() {
   const id = getId();
   const token = getToken();
-
+  const [search, setSearch] = useState("");
+  const [placeholder, setPlaceholder] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeLabel, setActiveLabel] = useState("لوحة التحكم");
   const [craftsmanData, setCraftsmanData] = useState({});
@@ -42,7 +43,9 @@ export default function CraftsmanLayout() {
   };
   useEffect(() => {
     if (id && token) getCraftsmanName();
+    console.log(search);
   }, [id, token]);
+
   return (
     <div className="flex flex-col lg:flex-row min-h-screen text-black">
       {sidebarOpen && (
@@ -53,7 +56,7 @@ export default function CraftsmanLayout() {
       )}
       <aside
         className={`
-        w-64 flex flex-col justify-between border-r border-white/5 bg-[#1e1855] ps-6 py-8
+        w-64 flex flex-col justify-between border-r border-white/5 bg-secondary ps-6 py-8
         fixed lg:fixed top-0 right-0 h-full z-50
         transform transition-transform duration-300 ease-in-out
         ${sidebarOpen ? "translate-x-0" : "translate-x-full"}
@@ -92,8 +95,18 @@ export default function CraftsmanLayout() {
           role={craftsmanData.bio ? craftsmanData.bio : "عن المستخدم"}
           activeTitle={activeLabel}
           profilePath={"/craftsman/profile"}
+          search={search}
+          setSearch={setSearch}
+          placeholder={placeholder}
         />
-        <Outlet />
+        <Outlet
+          context={{
+            setSearch,
+            placeholder,
+            setPlaceholder,
+            search,
+          }}
+        />
       </main>
     </div>
   );
@@ -108,6 +121,7 @@ const NavItem = ({ label, to, setActiveLabel }) => (
       }
       return `flex items-center justify-between px-4 py-2.5 rounded-lg cursor-pointer transition-colors ${isActive
           ? "bg-[#d75b19] text-white text-[20px]"
+
           : "text-[#8A8A8A] text-[16px] hover:bg-white/5 hover:text-white"
         }`;
     }}

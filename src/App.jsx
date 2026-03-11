@@ -37,7 +37,6 @@ import PaymentSettings from "./pages/admin/PaymentSettings";
 import GenreralSettings from "./pages/admin/GeneralSettings";
 import Conflicts from "./pages/admin/Conflicts";
 import Users from "./pages/admin/Users";
-import Wallet from "./pages/admin/Wallet"
 import Logout from "./pages/admin/Logout";
 import Commission from "./pages/admin/Commission";
 import Orders from "./pages/admin/Orders";
@@ -53,7 +52,7 @@ import Evaluate from "./pages/craftsman/Evaluate";
 import Messages from "./pages/craftsman/Messages";
 import ConflictsCraftsman from "./pages/craftsman/ConflictsCraftsman";
 import SignOut from "./pages/craftsman/SignOut";
-
+import Wallet from "./pages/craftsman/Wallet"
 import NewRequest from "./pages/craftsman/NewRequest";
 import EndidRequest from "./pages/craftsman/EndidRequest";
 import ComingRequest from "./pages/craftsman/ComingRequest";
@@ -69,6 +68,10 @@ import Chat from "./pages/client/Chat";
 import ClientOrdersPage from "./pages/public/ClientOrderPage";
 import Notifications from "./pages/public/Notifications";
 import Complaints from "./pages/client/Complaints";
+import ForgetPassword from "./pages/public/ForgetPassword";
+import CodeVerification from "./pages/public/CodeVerification";
+import ResetPassword from "./pages/public/ResetPassword";
+import ClientRegister2 from "./pages/public/ClientRegister2";
 
 
 function GuestRoute({ children }) {
@@ -84,27 +87,28 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-
-        <Toaster position="top-right" reverseOrder={false} />
-
         <Routes>
 
           <Route path="/select-role" element={<SelectRole />} />
 
-          <Route
-            path="/login"
-            element={
-              <GuestRoute>
+          <Route path="/login"
+            element={<GuestRoute>
                 <ClientLogin />
-              </GuestRoute>
-            }
+              </GuestRoute>}
           />
 
-          <Route
-            path="/client-register"
+          <Route path="/client-register"
             element={
               <GuestRoute>
                 <ClientRegestier />
+              </GuestRoute>
+            }
+          />
+          <Route
+            path="/client-register2"
+            element={
+              <GuestRoute>
+                <ClientRegister2 />
               </GuestRoute>
             }
           />
@@ -120,6 +124,29 @@ function App() {
 
           <Route path="/craftsman-register" element={<CraftsmanRegister />} />
           <Route path="/craftsman-register-2" element={<CraftsmanRegister2 />} />
+          <Route path="/forget-password"
+          element={ 
+          <GuestRoute>
+            <ForgetPassword /> 
+          </GuestRoute>
+            }
+          />
+
+        <Route path="/verify-code"
+        element={
+        <GuestRoute>
+            <CodeVerification />
+        </GuestRoute>
+        }
+        />
+
+        <Route path="/reset-password"
+        element={
+        <GuestRoute>
+            <ResetPassword /> 
+        </GuestRoute>
+        }
+        />
 
           {/* Public Layout */}
           <Route element={<MainLayout />}>
@@ -219,7 +246,7 @@ function App() {
             <Route path="evaluate" element={<Evaluate />} />
             <Route path="conflicts" element={<ConflictsCraftsman />} />
             <Route path="messages" element={<Messages />} />
-
+            <Route path="wallet" element={<Wallet />} />
             <Route path="requests" element={<Requests />}>
               <Route index element={<NewRequest />} />
               <Route path="new" element={<NewRequest />} />
