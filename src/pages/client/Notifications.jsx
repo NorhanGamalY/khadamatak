@@ -33,11 +33,8 @@ if (error) {
         ) : (
           notifications.map((n) => (
           <div key={n.id} className="flex gap-4 items-center px-4 py-3 border border-gray-100 rounded shadow">
-            <button className="bg-secondary-orange text-white text-lg px-4 py-1 rounded-md hover:bg-[#bf4f16]">
-              فتح الطلب
-            </button>
-            <div className="flex-1 min-w-0">
-              <p className="text-md font-semibold text-gray-800">{n.title}</p>
+            <div className="flex-1">
+              <p className="bg-secondary-orange text-white w-[28%] text-center text-lg px-4 py-1 rounded-md hover:bg-[#bf4f16]">{n.title}</p>
               <p className="text-sm text-gray-500 mt-1">{n.message}</p>
               <p className="text-xs text-gray-400 mt-1">{formatTime(n.createdAt)}</p>
             </div>

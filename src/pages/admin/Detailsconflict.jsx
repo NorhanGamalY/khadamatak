@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ArrowRight, FileText, User, Wrench, Clock, CheckCircle, XCircle, AlertCircle, Image } from "lucide-react";
 import SplashLoader from "../../components/common/SplashLoader";
+import { notifyCraftsman, notifyUser, notifyAdmin, NOTIFICATION_MESSAGES } from "../../features/notifications/Notificationapi";
 
 const statusMap = {
     0: "جديد",
@@ -96,6 +97,25 @@ export default function DetailsConflict() {
             );
             setComplaint((prev) => ({ ...prev, status: 2, adminResolutionNotes: resolutionNote }));
             setShowNoteInput(false);
+
+            const craftsmanId = complaint?.order?.craftsmanId;
+            const clientUserId = complaint?.clientUserId;
+
+            // بلّغ العميل إن شكواه اتحلت
+            if (clientUserId) notifyUser(clientUserId,
+                NOTIFICATION_MESSAGES.COMPLAINT_RESOLVED.title,
+                NOTIFICATION_MESSAGES.COMPLAINT_RESOLVED.message
+            );
+            // بلّغ الحرفي إن الشكوى اتحلت
+            if (craftsmanId) notifyCraftsman(craftsmanId,
+                "تم البت في الشكوى المقدمة ضدك",
+                "تمت مراجعة الشكوى المقدمة ضدك وتم إصدار قرار الحل من قِبل الإدارة"
+            );
+            // بلّغ الأدمن
+            notifyAdmin(
+                NOTIFICATION_MESSAGES.ADMIN_COMPLAINT_RESOLVED.title,
+                NOTIFICATION_MESSAGES.ADMIN_COMPLAINT_RESOLVED.message
+            );
         } catch (err) {
             console.log(err);
         } finally {
@@ -105,9 +125,7 @@ export default function DetailsConflict() {
 
     const handleReject = () => updateStatus(3);
 
-    if (loading) return <div className="flex items-center justify-center col-span-3">
-                                <SplashLoader />
-                        </div>;
+    if (loading) return <SplashLoader />;
 
     if (!complaint)
         return (
@@ -130,6 +148,7 @@ export default function DetailsConflict() {
 
     return (
         <div className="p-6 bg-gray-100 min-h-screen" dir="rtl">
+            {/* Header */}
             <div className="flex items-center gap-3 mb-6">
                 <button
                     onClick={() => navigate(-1)}
@@ -145,8 +164,10 @@ export default function DetailsConflict() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                {/* Left column: main info */}
                 <div className="lg:col-span-2 space-y-5">
 
+                    {/* Complaint info card */}
                     <div className="bg-white rounded-xl shadow-sm p-6 space-y-4">
                         <h2 className="text-lg font-bold text-gray-700 flex items-center gap-2">
                             <FileText className="w-5 h-5 text-indigo-600" />
@@ -188,6 +209,7 @@ export default function DetailsConflict() {
                         )}
                     </div>
 
+                    {/* Order info card */}
                     {complaint.order && (
                         <div className="bg-white rounded-xl shadow-sm p-6 space-y-4">
                             <h2 className="text-lg font-bold text-gray-700 flex items-center gap-2">
@@ -223,6 +245,7 @@ export default function DetailsConflict() {
                         </div>
                     )}
 
+                    {/* Resolution note input */}
                     {showNoteInput && (
                         <div className="bg-white rounded-xl shadow-sm p-6 space-y-3">
                             <h2 className="text-lg font-bold text-gray-700">ملاحظة الحل</h2>
@@ -244,7 +267,9 @@ export default function DetailsConflict() {
                     )}
                 </div>
 
+                {/* Right column: people + actions */}
                 <div className="space-y-5">
+                    {/* Client */}
                     {complaint.order?.clientName && (
                         <div className="bg-white rounded-xl shadow-sm p-6">
                             <h2 className="text-sm font-bold text-gray-400 mb-4 flex items-center gap-2">
@@ -260,6 +285,7 @@ export default function DetailsConflict() {
                         </div>
                     )}
 
+                    {/* Craftsman */}
                     {complaint.order?.craftsmanName && (
                         <div className="bg-white rounded-xl shadow-sm p-6">
                             <h2 className="text-sm font-bold text-gray-400 mb-4 flex items-center gap-2">
@@ -275,9 +301,11 @@ export default function DetailsConflict() {
                         </div>
                     )}
 
+                    {/* Actions */}
                     <div className="bg-white rounded-xl shadow-sm p-6 space-y-3">
                         <h2 className="text-sm font-bold text-gray-400 mb-2">الإجراءات</h2>
 
+                        {/* status 0: جديد → بدء التحقيق */}
                         {complaint.status === 0 && (
                             <button
                                 onClick={handleStartInvestigation}
@@ -288,6 +316,7 @@ export default function DetailsConflict() {
                             </button>
                         )}
 
+                        {/* status 1: يتم التحقيق → تم الحل أو رفض */}
                         {complaint.status === 1 && (
                             <>
                                 <button
@@ -307,6 +336,7 @@ export default function DetailsConflict() {
                             </>
                         )}
 
+                        {/* status 2 أو 3: منتهي */}
                         {(complaint.status === 2 || complaint.status === 3) && (
                             <div className="text-center text-gray-400 text-sm py-2 bg-gray-50 rounded-lg">
                                 تم اتخاذ الإجراء — لا يمكن التعديل

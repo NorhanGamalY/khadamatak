@@ -15,7 +15,6 @@ import Contact from "./pages/public/Contact";
 import Works from "./pages/public/Works";
 import Details from "./pages/public/Details";
 import ServicesPage from "./pages/public/ServicesPage";
-import Service from "./pages/public/Service";
 import CraftmanDetails from "./pages/public/CraftmanDetails/CraftmanDetails";
 import CraftmanResults from "./pages/public/CraftmanResults";
 
@@ -32,7 +31,8 @@ import CraftsmanLogin from "./pages/public/CraftsmanLogin";
 import ClientRegister2 from "./pages/public/ClientRegister2";
 
 // Client Pages
-import PaymentPage from "./pages/public/PaymentPage";
+import Service from "./pages/client/Service";
+import PaymentPage from "./pages/client/PaymentPage";
 import Chat from "./pages/client/Chat";
 import ClientOrdersPage from "./pages/client/ClientOrderPage";
 import Complaints from "./pages/client/Complaints";
@@ -68,6 +68,8 @@ import ComingRequest from "./pages/craftsman/ComingRequest";
 import DetailsCraftMan from "./pages/craftsman/DetailsCraftMan";
 import AcceptCraftman from "./api/Acceptcraftman";
 import Cancelcraftman from "./api/Cancelcraftman";
+import CraftsmanNotifications from "./pages/craftsman/CraftsmanNotifications";
+import AdminNotifications from "./pages/admin/AdminNotifications";
 
 
 
@@ -187,6 +189,7 @@ function App() {
             <Route path="reports" element={<Reports />} />
             <Route path="services" element={<Services />} />
             <Route path="Wallet" element={<Wallet />} />
+            <Route path="notifications" element={<AdminNotifications />} />
             <Route path="conflicts" element={<Conflicts />} />
             <Route path="conflicts/:id" element={<DetailsConflict />} />   
             <Route path="settings/*" element={<Settings />}>
@@ -218,6 +221,7 @@ function App() {
             <Route path="evaluate" element={<Evaluate />} />
             <Route path="messages" element={<Messages />} />
             <Route path="wallet" element={<Wallet />} />
+            <Route path="notifications" element={<CraftsmanNotifications />} />
             <Route path="requests" element={<Requests />}>
               <Route index element={<NewRequest />} />
               <Route path="new" element={<NewRequest />} />

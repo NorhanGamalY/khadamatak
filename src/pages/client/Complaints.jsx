@@ -1,18 +1,17 @@
 import { useState } from "react";
-import { FaCamera } from "react-icons/fa6";
 import { useCreateComplaint } from "../../features/complaints/hooks";
 import { useLocation, useNavigate } from "react-router-dom";
 import Toast from "../../components/common/Toast";
+import { notifyUser, notifyCraftsman, notifyAdmin, NOTIFICATION_MESSAGES } from "../../features/notifications/Notificationapi";
 
 export default function Complaints() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { orderService, craftsmanName, orderId } = location.state || {};
+  const { orderService, craftsmanName, orderId, craftsmanId } = location.state || {};
 
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState("success");
-
   const [description, setDescription] = useState("");
 
   const { mutate, isPending } = useCreateComplaint();
@@ -24,11 +23,15 @@ export default function Complaints() {
       setShowToast(true);
       return;
     }
+
+    const clientUserId = localStorage.getItem("userId");
+
     mutate(
       {
         orderId: orderId,
         description: description,
         evidenceAttachmentUrl: "",
+        clientUserId: clientUserId, 
       },
       {
         onSuccess: () => {
@@ -36,6 +39,27 @@ export default function Complaints() {
           setToastMessage("تم ارسال الشكوى بنجاح");
           setShowToast(true);
           setDescription("");
+
+          if (clientUserId) {
+            notifyUser(
+              clientUserId,
+              "تم استلام شكواك",
+              "تم استلام شكواك بنجاح وسيتم مراجعتها من قِبل الإدارة قريباً"
+            );
+          }
+
+          if (craftsmanId) {
+            notifyCraftsman(
+              craftsmanId,
+              NOTIFICATION_MESSAGES.CRAFTSMAN_NEW_COMPLAINT.title,
+              NOTIFICATION_MESSAGES.CRAFTSMAN_NEW_COMPLAINT.message
+            );
+          }
+
+          notifyAdmin(
+            NOTIFICATION_MESSAGES.ADMIN_NEW_COMPLAINT.title,
+            NOTIFICATION_MESSAGES.ADMIN_NEW_COMPLAINT.message
+          );
         },
         onError: () => {
           setToastType("error");

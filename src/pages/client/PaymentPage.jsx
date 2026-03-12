@@ -7,6 +7,9 @@ import PaymentForm from "../../components/payment/PaymentForm";
 import PayNowButton from "../../components/payment/PayNowButton";
 import { useSendNotification } from "../../features/notifications/hooks";
 
+const ADMIN_USER_ID = "d18c1d85-d9bd-491a-8248-f0202aa5a9a2";
+const COMMISSION_RATE = 0.10; 
+
 export default function PaymentPage() {
   const { mutateAsync: sendNotificationMutation } = useSendNotification();
 
@@ -36,8 +39,8 @@ export default function PaymentPage() {
   const fees = 20;
   const total = Number(servicePrice) + Number(fees);
 
-  console.log("order stringified:", JSON.stringify(order, null, 2));
-  console.log("craftsman stringified:", JSON.stringify(craftsman, null, 2));
+  const commission = (Number(servicePrice) * COMMISSION_RATE).toFixed(2);
+  const craftsmanNet = (Number(servicePrice) * (1 - COMMISSION_RATE)).toFixed(2);
 
   function validateForm() {
     const newErrors = {};
@@ -93,14 +96,42 @@ export default function PaymentPage() {
   async function sendPaymentSuccessNotifications() {
     const orderId = order?.id || order?.orderId;
     const serviceName = selectedService?.name || order?.serviceName || "الخدمة";
+    const clientUserId = localStorage.getItem("userId");
+    const craftsmanUserId = craftsman?.userId;
 
-    const clientUserId = "35803856-163e-4312-b74c-c06d0fdbbcef";
+    const notifications = [];
 
-    await sendNotificationMutation({
-      userId: clientUserId,
-      title: "تم الدفع بنجاح",
-      message: `تم دفع الطلب رقم ${orderId} الخاص بخدمة ${serviceName} بنجاح.`,
-    });
+    if (clientUserId) {
+      notifications.push(
+        sendNotificationMutation({
+          userId: clientUserId,
+          title: "تم الدفع وتأكيد الطلب بنجاح",
+          message: `تم دفع مبلغ ${total.toFixed(2)} جنيه بنجاح وتأكيد طلبك رقم ${orderId} لخدمة ${serviceName}.`,
+        })
+      );
+    }
+
+    if (craftsmanUserId) {
+      notifications.push(
+        sendNotificationMutation({
+          userId: craftsmanUserId,
+          title: "تم تأكيد طلب جديد",
+          message: `تم تأكيد طلب رقم ${orderId} لخدمة ${serviceName}. المبلغ المستحق لك ${craftsmanNet} جنيه (بعد خصم عمولة الموقع ${commission} جنيه).`,
+        })
+      );
+    }
+
+    if (ADMIN_USER_ID) {
+      notifications.push(
+        sendNotificationMutation({
+          userId: ADMIN_USER_ID,
+          title: "تم تحصيل عمولة",
+          message: `تم إتمام الدفع للطلب رقم ${orderId} — خدمة ${serviceName}. قيمة العمولة المحصلة: ${commission} جنيه (10% من ${servicePrice} جنيه).`,
+        })
+      );
+    }
+
+    await Promise.allSettled(notifications);
   }
 
   async function handlePayNow() {
@@ -155,11 +186,6 @@ export default function PaymentPage() {
       toast.error(error.message || "حدث خطأ أثناء الدفع");
     } finally {
       setLoading(false);
-    }
-    try {
-      await sendPaymentSuccessNotifications();
-    } catch (notificationError) {
-      console.error("Notification error:", notificationError);
     }
   }
 
