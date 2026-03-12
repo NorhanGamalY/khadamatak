@@ -51,6 +51,7 @@ import Users from "./pages/admin/Users";
 import Logout from "./pages/admin/Logout";
 import Commission from "./pages/admin/Commission";
 import Craftsmen from "./pages/admin/Craftsmen";
+import DetailsConflict from "./pages/admin/Detailsconflict";
 
 // Craftsman Pages
 import Dashboard from "./pages/craftsman/Dashboard";
@@ -187,7 +188,7 @@ function App() {
             <Route path="services" element={<Services />} />
             <Route path="Wallet" element={<Wallet />} />
             <Route path="conflicts" element={<Conflicts />} />
-
+            <Route path="conflicts/:id" element={<DetailsConflict />} />   
             <Route path="settings/*" element={<Settings />}>
               <Route index element={<GenreralSettings />} />
               <Route path="payment" element={<PaymentSettings />} />

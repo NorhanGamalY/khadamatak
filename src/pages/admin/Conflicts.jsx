@@ -1,27 +1,27 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Search } from "lucide-react";
-import { FaEdit } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const statusMap = {
-    0: "جديد ",
+    4: "جديد ",
     1: "قيد المراجعة",
     2: "تم الحل",
     3: "مغلق",
 };
 
 const statusConfig = {
-    "تم الحل": { class: "bg-gray-200 text-gray-700 font-bold", icon: null },
-    "مغلق": { class: "bg-orange-700/50 text-orange-700 font-bold", icon: null },
-    "قيد المراجعة": {
-        class: "bg-amber-900/40 text-amber-900/60 font-bold",
-    },
+    "تم الحل": { class: "bg-gray-200 text-gray-700 font-bold" },
+    "مغلق": { class: "bg-orange-700/50 text-orange-700 font-bold" },
+    "قيد المراجعة": { class: "bg-amber-900/40 text-amber-900/60 font-bold" },
+    "جديد ": { class: "bg-blue-100 text-blue-700 font-bold" },
 };
 
 export default function Conflicts() {
     const [conflicts, setConflicts] = useState([]);
     const [search, setSearch] = useState("");
     const [filter, setFilter] = useState("الكل");
+    const navigate = useNavigate();
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -40,7 +40,7 @@ export default function Conflicts() {
         const text = search.toLowerCase();
 
         const matchesFilter =
-            filter === "الكل" || statusLabel === filter;
+            filter === "الكل" || statusLabel.trim() === filter.trim();
 
         const matchesSearch =
             String(item.id).includes(text) ||
@@ -81,7 +81,7 @@ export default function Conflicts() {
                         <table className="w-full text-right border-collapse" dir="ltr">
                             <thead>
                                 <tr className="bg-gray-50 text-gray-800 text-right">
-                                    <th className="p-4 border-b border-gray-300">الإجراء</th>
+                                    <th className="p-4 border-b border-gray-300"></th>
                                     <th className="p-4 border-b border-gray-300">الحالة</th>
                                     <th className="p-4 border-b border-gray-300">اسم الحرفي</th>
                                     <th className="p-4 border-b border-gray-300">سبب الشكوى</th>
@@ -99,32 +99,22 @@ export default function Conflicts() {
                                     </tr>
                                 ) : (
                                     filteredData.map((item) => {
-                                        const statusLabel = statusMap[item.status] ?? "غير معروف";
-                                        const currentStatus = statusConfig[statusLabel] || { class: "bg-gray-100", icon: null };
+                                        const statusLabel = statusMap[item.status] ?? "جديد";
+                                        const currentStatus = statusConfig[statusLabel] || { class: "bg-gray-100" };
 
                                         return (
                                             <tr key={item.id} className="border-b border-gray-300 last:border-0 hover:bg-gray-50 transition-colors text-right">
                                                 <td className="p-4">
-                                                    {item.status === 0 && (
-                                                        <button className="px-3 py-1 rounded bg-blue-600 text-white text-xs font-bold hover:bg-blue-700 transition-colors">
-                                                            بدأ المراجعة
-                                                        </button>
-                                                    )}
-                                                    {item.status === 1 && (
-                                                        <button className="px-3 py-1 rounded bg-green-600 text-white text-xs font-bold hover:bg-green-700 transition-colors">
-                                                            حل النزاع
-                                                        </button>
-                                                    )}
-                                                    {(item.status !== 0 && item.status !== 1) && (
-                                                        <button className="px-3 py-1 rounded bg-gray-500 text-white text-xs font-bold hover:bg-gray-700 transition-colors">
-                                                            عرض التفاصيل
-                                                        </button>
-                                                    )}
+                                                    <button
+                                                        onClick={() => navigate(`/admin/conflicts/${item.id}`)}
+                                                        className="px-3 py-1 rounded bg-indigo-900 text-white text-xs font-bold hover:bg-indigo-700 transition-colors"
+                                                    >
+                                                        عرض التفاصيل
+                                                    </button>
                                                 </td>
                                                 <td className="p-4">
                                                     <span className={`text-xs rounded px-2 py-1 inline-flex items-center gap-1 ${currentStatus.class}`}>
                                                         {statusLabel}
-                                                        {currentStatus.icon && <span>{currentStatus.icon}</span>}
                                                     </span>
                                                 </td>
                                                 <td className="p-4 text-sm font-bold">{item.order?.craftsmanName}</td>
@@ -133,7 +123,7 @@ export default function Conflicts() {
                                                         {item.description}
                                                     </span>
                                                 </td>
-                                                <td className="p-4 text-sm  font-bold">{item.id}</td>
+                                                <td className="p-4 text-sm font-bold">{item.id}</td>
                                                 <td className="p-4 text-sm font-bold">{item.order?.clientName}</td>
                                             </tr>
                                         );

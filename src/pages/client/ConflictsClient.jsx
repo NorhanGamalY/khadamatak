@@ -78,8 +78,8 @@ const ConflictsClient = () => {
 
   const filteredData = clientData.filter((item) =>
     activeTab === "open"
-      ? item.orderStatus === 1 || item.orderStatus === 2 || item.orderStatus === 3
-      : item.orderStatus === 4
+      ? item.status === 1 || item.status === 2 || item.status === 3
+      : item.status === 0
   );
 
   return (
