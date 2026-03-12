@@ -1,13 +1,15 @@
 import { useNavigate } from "react-router-dom";
-import { MessageCircleMore, TriangleAlert } from "lucide-react";
+import { MessageCircleMore, TriangleAlert, Star } from "lucide-react";
 import { formatCurrency, formatDateTime } from "../../utils/formatters";
 import OrderStatusBadge from "./OrderStatusBadge";
 
-const OrderDetailsModal = ({ order, onClose, onOpenComplaint }) => {
+const OrderDetailsModal = ({ order, onClose, onOpenComplaint, onOpenReview }) => {
   const navigate = useNavigate();
   if (!order) return null;
 
   const { date, time } = formatDateTime(order.scheduledAt);
+
+  const isCompleted = order.status === 4 || order.status === 5;
 
   const handleMessageCraftsman = () => {
     navigate(`/chat/${order.craftsmanId}`);
@@ -15,22 +17,20 @@ const OrderDetailsModal = ({ order, onClose, onOpenComplaint }) => {
   };
 
   const handleOpenComplaint = () => {
-navigate('/complaints', {
-  state: {
-    orderService: order.serviceName,
-    craftsmanName: order.craftsmanName,
-    orderId: order.id
-  }
-});
-onClose?.();
-    };
+    navigate('/complaints', {
+      state: {
+        orderService: order.serviceName,
+        craftsmanName: order.craftsmanName,
+        orderId: order.id,
+        craftsmanId: order.craftsmanId,
+      }
+    });
+    onClose?.();
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-      <div
-        className="w-full max-w-2xl rounded-2xl bg-white p-6 shadow-xl"
-        dir="rtl"
-      >
+      <div className="w-full max-w-2xl rounded-2xl bg-white p-6 shadow-xl" dir="rtl">
         <div className="mb-5 flex items-center justify-between">
           <h2 className="text-xl font-bold text-gray-800">تفاصيل الطلب</h2>
           <button
@@ -106,11 +106,23 @@ onClose?.();
           {order.status === 4 && (
             <button
               onClick={handleOpenComplaint}
-            
               className="inline-flex items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 px-5 py-3 text-sm font-semibold text-red-600 transition hover:bg-red-100"
             >
               <TriangleAlert size={18} />
               تقديم شكوى
+            </button>
+          )}
+
+          {isCompleted && (
+            <button
+              onClick={() => {
+                onOpenReview?.(order);
+                onClose?.();
+              }}
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-orange-200 bg-orange-50 px-5 py-3 text-sm font-semibold text-orange-600 transition hover:bg-orange-100"
+            >
+              <Star size={18} />
+              تقييم الحرفي
             </button>
           )}
         </div>
