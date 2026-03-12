@@ -37,6 +37,7 @@ import Chat from "./pages/client/Chat";
 import ClientOrdersPage from "./pages/client/ClientOrderPage";
 import Complaints from "./pages/client/Complaints";
 import Notifications from "./pages/client/Notifications";
+import ConflictsClient from "./pages/client/ConflictsClient";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/Dashboard";
@@ -59,8 +60,6 @@ import CraftsmanServices from "./pages/craftsman/Services";
 import Appointments from "./pages/craftsman/Appointments";
 import Evaluate from "./pages/craftsman/Evaluate";
 import Messages from "./pages/craftsman/Messages";
-import ConflictsCraftsman from "./pages/craftsman/ConflictsCraftsman";
-import SignOut from "./pages/craftsman/SignOut";
 import Wallet from "./pages/craftsman/Wallet"
 import NewRequest from "./pages/craftsman/NewRequest";
 import EndidRequest from "./pages/craftsman/EndidRequest";
@@ -166,6 +165,8 @@ function App() {
               <Route path="/orders" element={<ClientOrdersPage />} />
               <Route path="/payment" element={<PaymentPage />} />
               <Route path="/notifications" element={<Notifications />} />
+              <Route path="/Client-Conflicts" element={<ConflictsClient />} />
+              <Route path="/complaints" element={<Complaints />} />
             </Route>
             </Route>
 
@@ -214,7 +215,6 @@ function App() {
             <Route path="services" element={<CraftsmanServices />} />
             <Route path="appointments" element={<Appointments />} />
             <Route path="evaluate" element={<Evaluate />} />
-            <Route path="conflicts" element={<ConflictsCraftsman />} />
             <Route path="messages" element={<Messages />} />
             <Route path="wallet" element={<Wallet />} />
             <Route path="requests" element={<Requests />}>
@@ -226,8 +226,6 @@ function App() {
               <Route path="accepted/:id" element={<AcceptCraftman />} />
               <Route path="cancelled/:id" element={<Cancelcraftman />} />
             </Route>
-            <Route path="signout" element={<SignOut />} />
-
           </Route>
 
           <Route path="*" element={<Navigate to="/" replace />} />

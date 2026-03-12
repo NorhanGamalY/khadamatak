@@ -22,7 +22,7 @@ export default function ProfileDropdown({ onLogout, unreadMessages = 0 }) {
       badge: unreadMessages,
     },
     { icon: <FiShoppingBag size={17} />, label: "الطلبات", to: "/orders" },
-    { icon: <FiAlertTriangle size={17} />, label: "النزاعات", to: "/disputes" },
+    { icon: <FiAlertTriangle size={17} />, label: "النزاعات", to: "/Client-Conflicts" },
   ];
 
   useEffect(() => {
