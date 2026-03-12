@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import Header from "../components/common/Header";
 import axios from "axios";
-
 import { getId, getToken } from "../features/auth/authHelpers";
-import { label } from "framer-motion/client";
+
 export default function CraftsmanLayout() {
   const id = getId();
   const token = getToken();
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [placeholder, setPlaceholder] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -42,8 +42,16 @@ export default function CraftsmanLayout() {
   };
   useEffect(() => {
     if (id && token) getCraftsmanName();
-    console.log(search);
   }, [id, token]);
+
+  const handleLogout = () => {
+    ["token", "role", "userName", "userAvatar"].forEach((key) => {
+      localStorage.removeItem(key);
+      sessionStorage.removeItem(key);
+    });
+    setIsLogoutOpen(false);
+    navigate("/login");
+  };
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen text-black">
@@ -87,7 +95,7 @@ export default function CraftsmanLayout() {
 
       <main
         className={`
-       flex-1 transition-all duration-300
+        flex-1 transition-all duration-300
         ${sidebarOpen ? "lg:mr-64" : "lg:mr-0"}
       `}
       >
@@ -113,18 +121,28 @@ export default function CraftsmanLayout() {
           }}
         />
 
-          {isLogoutOpen && (
-        <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/30 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl p-8 w-full max-w-sm text-center mx-4 shadow-xl">
-            <h2 className="text-[#ef4444] text-xl font-bold mb-2">تسجيل الخروج</h2>
-            <p className="text-gray-500 mb-6 text-sm">إذا قمت بتسجيل الخروج ستفقد كل البيانات الخاصة بالمنصة</p>
-            <div className="flex flex-col gap-3">
-              <button onClick={() => setIsLogoutOpen(false)} className="w-full bg-[#1e1b4b] text-white py-2 rounded-lg font-bold">رجوع</button>
-              <button onClick={() => navigate("/login")} className="w-full border border-red-100 text-[#ef4444] py-2 rounded-lg font-bold hover:bg-red-50">تسجيل الخروج</button>
+      {isLogoutOpen && (
+          <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/30 backdrop-blur-sm">
+            <div className="bg-white rounded-2xl p-8 w-full max-w-sm text-center mx-4 shadow-xl">
+              <h2 className="text-[#ef4444] text-xl font-bold mb-2">تسجيل الخروج</h2>
+              <p className="text-gray-500 mb-6 text-sm">إذا قمت بتسجيل الخروج ستفقد كل البيانات الخاصة بالمنصة</p>
+              <div className="flex flex-col gap-3">
+                <button
+                  onClick={() => setIsLogoutOpen(false)}
+                  className="w-full bg-[#1e1b4b] text-white py-2 rounded-lg font-bold"
+                >
+                  رجوع
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="w-full border border-red-100 text-[#ef4444] py-2 rounded-lg font-bold hover:bg-red-50"
+                >
+                  تسجيل الخروج
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
       </main>
     </div>
   );

@@ -49,7 +49,6 @@ import Conflicts from "./pages/admin/Conflicts";
 import Users from "./pages/admin/Users";
 import Logout from "./pages/admin/Logout";
 import Commission from "./pages/admin/Commission";
-import Orders from "./pages/admin/Orders";
 import Craftsmen from "./pages/admin/Craftsmen";
 
 // Craftsman Pages
@@ -183,7 +182,6 @@ function App() {
             <Route index element={<AdminDashboard />} />
             <Route path="users" element={<Users />} />
             <Route path="craftsmen" element={<Craftsmen />} />
-            <Route path="request01s" element={<Orders />} />
             <Route path="reports" element={<Reports />} />
             <Route path="services" element={<Services />} />
             <Route path="Wallet" element={<Wallet />} />

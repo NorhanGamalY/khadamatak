@@ -1,23 +1,31 @@
 import React, { useState } from 'react'
 import { NavLink, Outlet, useNavigate  } from 'react-router-dom';
 import Header from '../components/common/Header';
-import { label } from 'framer-motion/client';
 
 export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeLabel, setActiveLabel] = useState("لوحة التحكم");
   const [isLogoutOpen, setIsLogoutOpen] = useState(false);
   const navigate = useNavigate(); 
+
   const navItems = [
     { label: "لوحة التحكم", to: "/admin" },
     { label: "المستخدمين", to: "/admin/users" },
     { label: "الحرفيين", to: "/admin/craftsmen" },
     { label: "قائمة الخدمات", to: "/admin/services" },
-    { label: "الطلبات", to: "/admin/request01s" },
     { label: "التقارير", to: "/admin/reports" },
     { label: "النزاعات", to: "/admin/conflicts" },
     { label: "الاعدادات", to: "/admin/settings" },
   ];
+
+    const handleLogout = () => {
+    ["token", "role", "userName", "userAvatar"].forEach((key) => {
+      localStorage.removeItem(key);
+      sessionStorage.removeItem(key);
+    });
+    setIsLogoutOpen(false);
+    navigate("/login");
+  };
   return (
     <div className="flex flex-col lg:flex-row min-h-screen text-black">
       {sidebarOpen && (
@@ -51,21 +59,31 @@ export default function AdminLayout() {
       </aside>
 
       <main className={`
-       flex-1 transition-all duration-300
+        flex-1 transition-all duration-300
         ${sidebarOpen ? 'lg:mr-64' : 'lg:mr-0'}
       `}>
         <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} name={"Admin Admin"} role={"مدير النظام"} activeTitle={activeLabel} />
         <Outlet />
       </main>
-      {/* LogOut Sidebar */}
-      {isLogoutOpen && (
+
+        {isLogoutOpen && (
         <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/30 backdrop-blur-sm">
           <div className="bg-white rounded-2xl p-8 w-full max-w-sm text-center mx-4 shadow-xl">
             <h2 className="text-[#ef4444] text-xl font-bold mb-2">تسجيل الخروج</h2>
             <p className="text-gray-500 mb-6 text-sm">إذا قمت بتسجيل الخروج ستفقد كل البيانات الخاصة بالمنصة</p>
             <div className="flex flex-col gap-3">
-              <button onClick={() => setIsLogoutOpen(false)} className="w-full bg-[#1e1b4b] text-white py-2 rounded-lg font-bold">رجوع</button>
-              <button onClick={() => navigate("/login")} className="w-full border border-red-100 text-[#ef4444] py-2 rounded-lg font-bold hover:bg-red-50">تسجيل الخروج</button>
+              <button
+                onClick={() => setIsLogoutOpen(false)}
+                className="w-full bg-[#1e1b4b] text-white py-2 rounded-lg font-bold"
+              >
+                رجوع
+              </button>
+              <button
+                onClick={handleLogout}
+                className="w-full border border-red-100 text-[#ef4444] py-2 rounded-lg font-bold hover:bg-red-50"
+              >
+                تسجيل الخروج
+              </button>
             </div>
           </div>
         </div>
