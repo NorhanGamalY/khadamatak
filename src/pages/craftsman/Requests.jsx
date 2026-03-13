@@ -80,9 +80,9 @@ export default function Requests() {
             <div className="flex justify-center md:justify-start">
               <button
                 className="bg-white border border-gray-300 
-               hover:bg-gray-100 transition 
-               text-gray-700 font-medium px-4 py-2 rounded-md
-               flex flex-col md:flex-row items-center md:items-center gap-2"
+                hover:bg-gray-100 transition 
+                text-gray-700 font-medium px-4 py-2 rounded-md
+                flex flex-col md:flex-row items-center md:items-center gap-2"
               >
                 <span>تصفية النتائج</span>
                 <img

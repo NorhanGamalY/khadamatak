@@ -112,12 +112,12 @@ export default function ResetPassword() {
         </div>
 
         <div className="relative w-[100%] order-1 md:order-2 md:w-[48%]">
-          <img src="/clientLogin.png" className="rounded-lg min-h-[400px]" />
+          <img src="/reset.png" className="rounded-lg min-h-[400px]" />
           <div className="absolute bottom-5 w-[92%] left-[4%]">
             <div className="bg-white/70 rounded-lg text-center text-[#1e1855] p-6 pb-8 z-50 min-h-[36%]">
-              <p className="text-[14px] text-center font-semibold">خدمة سريعة وموثوقة</p>
+              <p className="text-[14px] text-center font-semibold">خبرة تقدر تعتمد عليها</p>
               <span className="text-[11px] text-center pb-8">
-                تواصل مباشر، أسعار واضحة، وتجربة مريحة من أول خطوة لآخرها.
+                    بنختار حرفيين بخبرة حقيقية علشان نضمنلك خدمة تريحك.
               </span>
             </div>
           </div>

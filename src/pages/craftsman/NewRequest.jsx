@@ -9,6 +9,11 @@ function NewRequest() {
 
   const data = orders.filter((o) => o.status === 0);
 
+  const notify = (msg) => {
+    setMessage(msg);
+    setTimeout(() => setMessage(""), 2500);
+  };
+
   const handleAccept = async (id) => {
     try {
       const token = localStorage.getItem("token");
@@ -20,22 +25,20 @@ function NewRequest() {
         }
       );
       if (!res.ok) throw new Error();
-
-      setOrders(orders.map((o) => (o.id === id ? { ...o, status: 1 } : o)));
-      setMessage("تم قبول الطلب بنجاح!");
-    } catch (e) {
-      console.error(e);
-      setMessage("فشل قبول الطلب");
-    } finally {
-      setTimeout(() => setMessage(""), 2000);
+      setOrders((prev) =>
+        prev.map((o) => (o.id === id ? { ...o, status: 1 } : o))
+      );
+      notify("✅ تم قبول الطلب بنجاح");
+    } catch {
+      notify("❌ فشل قبول الطلب");
     }
   };
 
-  const handleCancel = async (id) => {
+  const handleReject = async (id) => {
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(
-        `https://herafie.runasp.net/api/Orders/${id}/cancel`,
+        `https://herafie.runasp.net/api/Orders/${id}/reject`,
         {
           method: "PUT",
           headers: {
@@ -44,19 +47,21 @@ function NewRequest() {
           },
         }
       );
-      if (!res.ok) throw new Error("فشل رفض الطلب");
-
-      setMessage("تم رفض الطلب");
-      setTimeout(() => setMessage(""), 2000);
-    } catch (error) {
-      console.error(error);
-      setMessage("فشل رفض الطلب");
-      setTimeout(() => setMessage(""), 2000);
+      if (!res.ok) throw new Error();
+      setOrders((prev) =>
+        prev.map((o) => (o.id === id ? { ...o, status: 2 } : o))
+      );
+      notify("تم رفض الطلب");
+    } catch {
+      notify("❌ فشل رفض الطلب");
     }
   };
 
   if (loading)
     return <p className="text-center mt-10">جاري تحميل الطلبات...</p>;
+
+  if (data.length === 0)
+    return <p className="text-center mt-10 text-gray-400">لا توجد طلبات جديدة</p>;
 
   return (
     <>
@@ -66,7 +71,7 @@ function NewRequest() {
         </p>
       )}
 
-      {data.filter((item) => item.status === 0).map((item) => {
+      {data.map((item) => {
         const date = new Date(item.scheduledAt);
         return (
           <div
@@ -103,15 +108,14 @@ function NewRequest() {
             <div className="flex flex-col gap-3 w-full md:w-auto">
               <NavLink
                 to={`/craftsman/requests/details/${item.id}`}
-                className="bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 font-medium text-sm px-4 py-2 rounded-md transition"
-
+                className="bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 font-medium text-sm px-4 py-2 rounded-md transition text-center"
               >
                 عرض التفاصيل
               </NavLink>
 
               <div className="flex flex-col sm:flex-row gap-3">
                 <button
-                  onClick={() => handleCancel(item.id)}
+                  onClick={() => handleReject(item.id)}
                   className="bg-red-100 text-red-600 hover:bg-red-200 px-4 py-2 rounded-md transition"
                 >
                   رفض

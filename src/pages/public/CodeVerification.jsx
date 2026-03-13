@@ -112,10 +112,17 @@ export default function CodeVerification() {
           </div>
         </div>
 
-        <div className="relative w-full order-1 md:order-2 md:w-[48%]">
-          <img src="/clientLogin.png" className="rounded-lg min-h-[400px] object-cover" />
+           <div className="relative w-[100%] order-1 md:order-2 md:w-[48%]">
+          <img src="/verfiy.png" className="rounded-lg min-h-[400px]" />
+          <div className="absolute bottom-5 w-[92%] left-[4%]">
+            <div className="bg-white/70 rounded-lg text-center text-[#1e1855] p-6 pb-8 z-50 min-h-[36%]">
+              <p className="text-[14px] text-center font-semibold">محتاج خدمة؟ الحل أقربلك</p>
+              <span className="text-[11px] text-center pb-8">
+                    في خطوات بسيطة، اطلب الخدمة اللي محتاجها ووصلّنا ننسّق مع الحرفي المناسب.
+              </span>
+            </div>
+          </div>
         </div>
-
       </div>
     </main>
   );

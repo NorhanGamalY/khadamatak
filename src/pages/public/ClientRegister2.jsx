@@ -37,7 +37,6 @@ export default function ClientRegister2() {
 
     const onSubmit = () => {
     const v = validateClientStep2(form);
-    console.log(form)
     setErrors(v);
     if (Object.keys(v).length > 0) return;
 

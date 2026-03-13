@@ -99,19 +99,16 @@ export default function DetailsConflict() {
             setShowNoteInput(false);
 
             const craftsmanId = complaint?.order?.craftsmanId;
-            const clientUserId = complaint?.clientUserId;
+            const clientUserId = complaint?.evidenceAttachmentUrl;
 
-            // بلّغ العميل إن شكواه اتحلت
             if (clientUserId) notifyUser(clientUserId,
                 NOTIFICATION_MESSAGES.COMPLAINT_RESOLVED.title,
                 NOTIFICATION_MESSAGES.COMPLAINT_RESOLVED.message
             );
-            // بلّغ الحرفي إن الشكوى اتحلت
             if (craftsmanId) notifyCraftsman(craftsmanId,
                 "تم البت في الشكوى المقدمة ضدك",
                 "تمت مراجعة الشكوى المقدمة ضدك وتم إصدار قرار الحل من قِبل الإدارة"
             );
-            // بلّغ الأدمن
             notifyAdmin(
                 NOTIFICATION_MESSAGES.ADMIN_COMPLAINT_RESOLVED.title,
                 NOTIFICATION_MESSAGES.ADMIN_COMPLAINT_RESOLVED.message

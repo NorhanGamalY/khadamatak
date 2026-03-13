@@ -19,7 +19,6 @@ export default function Service() {
 
   const { state } = useLocation();
   const { craftsman } = state || {};
-  console.log("here", craftsman);
   const dayNames = [
     "الأحد",
     "الاثنين",
@@ -96,7 +95,6 @@ export default function Service() {
       description,
       scheduledAt,
     };
-    console.log("Payload before sending:", payload);
 
     createOrder(payload, {
       onSuccess: (data) => {
