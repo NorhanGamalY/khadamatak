@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useCreateComplaint } from "../../features/complaints/hooks";
 import { useLocation, useNavigate } from "react-router-dom";
 import Toast from "../../components/common/Toast";
-import { notifyUser, notifyCraftsman, notifyAdmin, NOTIFICATION_MESSAGES } from "../../features/notifications/Notificationapi.js";
+import { notifyUser, notifyCraftsman, notifyAdmin, NOTIFICATION_MESSAGES } from "../../features/notifications/notificationApi.js";
 
 export default function Complaints() {
   const location = useLocation();

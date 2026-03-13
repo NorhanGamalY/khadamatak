@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ArrowRight, FileText, User, Wrench, Clock, CheckCircle, XCircle, AlertCircle, Image } from "lucide-react";
 import SplashLoader from "../../components/common/SplashLoader";
-import { notifyCraftsman, notifyUser, notifyAdmin, NOTIFICATION_MESSAGES } from "../../features/notifications/Notificationapi.js";
+import { notifyCraftsman, notifyUser, notifyAdmin, NOTIFICATION_MESSAGES } from "../../features/notifications/notificationApi.js";
 
 const statusMap = {
     0: "جديد",
