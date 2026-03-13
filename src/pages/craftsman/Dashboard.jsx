@@ -27,16 +27,6 @@ export default function Dashboard() {
             </h4>
           </div>
           <CraftCard />
-
-          {/* <div className="bg-white p-4 ">
-            <h3 className="text-2xl my-4">تزكير سريع</h3>
-            <div className="bg-amber-100 rounded-lg p-4 flex flex-col gap-2 shadow-md">
-              <h3 className="text-lg font-semibold text-amber-900 text-2xl">
-                موعد الصيانة
-              </h3>
-              <p className="text-amber-700 text-sm">بقي 50 دقيقة على الموعد</p>
-            </div>
-          </div> */}
         </main>
       </div>
     </>

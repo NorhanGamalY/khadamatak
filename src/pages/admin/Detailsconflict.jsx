@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ArrowRight, FileText, User, Wrench, Clock, CheckCircle, XCircle, AlertCircle, Image } from "lucide-react";
 import SplashLoader from "../../components/common/SplashLoader";
-import { notifyCraftsman, notifyUser, notifyAdmin, NOTIFICATION_MESSAGES } from "../../features/notifications/Notificationapi";
+import { notifyCraftsman, notifyUser, notifyAdmin, NOTIFICATION_MESSAGES } from "../../features/notifications/Notificationapi.js";
 
 const statusMap = {
     0: "جديد",
@@ -27,7 +27,6 @@ function Avatar({ name }) {
         <div className="w-12 h-12 rounded-full bg-indigo-900 text-white flex items-center justify-center font-bold text-lg select-none">
             {initials}
         </div>
-
     );
 }
 
@@ -56,31 +55,23 @@ export default function DetailsConflict() {
             .finally(() => setLoading(false));
     }, [id]);
 
-    const statusToastMap = {
-        1: { title: "تم بدء التحقيق", message: "سيتم مراجعة الشكوى والتحقيق فيها قريباً" },
-        3: { title: "تم رفض الشكوى", message: "تم رفض الشكوى وإغلاق النزاع" },
-    };
-
-    const updateStatus = async (newStatus) => {
+    const handleStartInvestigation = async () => {
         setActionLoading(true);
         const token = localStorage.getItem("token");
         try {
             await axios.patch(
-                `https://herafie.runasp.net/api/Complaints/admin/${id}/status?status=${newStatus}`,
+                `https://herafie.runasp.net/api/Complaints/admin/${id}/status?status=1`,
                 {},
                 { headers: { Authorization: `Bearer ${token}` } }
             );
-            setComplaint((prev) => ({ ...prev, status: newStatus }));
+            setComplaint((prev) => ({ ...prev, status: 1 }));
             setShowNoteInput(false);
-
         } catch (err) {
             console.log(err);
         } finally {
             setActionLoading(false);
         }
     };
-
-    const handleStartInvestigation = () => updateStatus(1);
 
     const handleResolve = async () => {
         if (!resolutionNote.trim()) {
@@ -99,13 +90,15 @@ export default function DetailsConflict() {
             setShowNoteInput(false);
 
             const craftsmanId = complaint?.order?.craftsmanId;
-            const clientUserId = complaint?.evidenceAttachmentUrl;
+            const clientUserId = complaint?.evidenceAttachmentUrl; 
 
-            if (clientUserId) notifyUser(clientUserId,
+            if (clientUserId) notifyUser(
+                clientUserId,
                 NOTIFICATION_MESSAGES.COMPLAINT_RESOLVED.title,
                 NOTIFICATION_MESSAGES.COMPLAINT_RESOLVED.message
             );
-            if (craftsmanId) notifyCraftsman(craftsmanId,
+            if (craftsmanId) notifyCraftsman(
+                craftsmanId,
                 "تم البت في الشكوى المقدمة ضدك",
                 "تمت مراجعة الشكوى المقدمة ضدك وتم إصدار قرار الحل من قِبل الإدارة"
             );
@@ -120,7 +113,39 @@ export default function DetailsConflict() {
         }
     };
 
-    const handleReject = () => updateStatus(3);
+    const handleReject = async () => {
+        setActionLoading(true);
+        const token = localStorage.getItem("token");
+        try {
+            await axios.patch(
+                `https://herafie.runasp.net/api/Complaints/admin/${id}/status?status=3`,
+                {},
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            setComplaint((prev) => ({ ...prev, status: 3 }));
+
+            const craftsmanId = complaint?.order?.craftsmanId;
+            const clientUserId = complaint?.evidenceAttachmentUrl; 
+            if (clientUserId) notifyUser(
+                clientUserId,
+                NOTIFICATION_MESSAGES.COMPLAINT_REJECTED.title,
+                NOTIFICATION_MESSAGES.COMPLAINT_REJECTED.message
+            );
+            if (craftsmanId) notifyCraftsman(
+                craftsmanId,
+                "تم رفض الشكوى المقدمة ضدك",
+                "تمت مراجعة الشكوى المقدمة ضدك وتم رفضها من قِبل الإدارة"
+            );
+            notifyAdmin(
+                NOTIFICATION_MESSAGES.ADMIN_COMPLAINT_REJECTED.title,
+                NOTIFICATION_MESSAGES.ADMIN_COMPLAINT_REJECTED.message
+            );
+        } catch (err) {
+            console.log(err);
+        } finally {
+            setActionLoading(false);
+        }
+    };
 
     if (loading) return <SplashLoader />;
 
@@ -145,7 +170,6 @@ export default function DetailsConflict() {
 
     return (
         <div className="p-6 bg-gray-100 min-h-screen" dir="rtl">
-            {/* Header */}
             <div className="flex items-center gap-3 mb-6">
                 <button
                     onClick={() => navigate(-1)}
@@ -161,10 +185,8 @@ export default function DetailsConflict() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-                {/* Left column: main info */}
                 <div className="lg:col-span-2 space-y-5">
 
-                    {/* Complaint info card */}
                     <div className="bg-white rounded-xl shadow-sm p-6 space-y-4">
                         <h2 className="text-lg font-bold text-gray-700 flex items-center gap-2">
                             <FileText className="w-5 h-5 text-indigo-600" />
@@ -175,22 +197,6 @@ export default function DetailsConflict() {
                             <p className="text-gray-400 text-sm mb-1">سبب الشكوى</p>
                             <p className="text-gray-800 font-medium">{complaint.description ?? "—"}</p>
                         </div>
-
-                        {complaint.evidenceAttachmentUrl && complaint.evidenceAttachmentUrl !== "string" && (
-                            <div className="bg-gray-50 rounded-lg p-4">
-                                <p className="text-gray-400 text-sm mb-2 flex items-center gap-1">
-                                    <Image className="w-4 h-4" /> مرفق الإثبات
-                                </p>
-                                <a
-                                    href={complaint.evidenceAttachmentUrl}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="text-indigo-600 underline text-sm break-all"
-                                >
-                                    {complaint.evidenceAttachmentUrl}
-                                </a>
-                            </div>
-                        )}
 
                         {complaint.adminResolutionNotes && (
                             <div className="bg-green-50 rounded-lg p-4 border border-green-200">
@@ -206,7 +212,6 @@ export default function DetailsConflict() {
                         )}
                     </div>
 
-                    {/* Order info card */}
                     {complaint.order && (
                         <div className="bg-white rounded-xl shadow-sm p-6 space-y-4">
                             <h2 className="text-lg font-bold text-gray-700 flex items-center gap-2">
@@ -242,7 +247,6 @@ export default function DetailsConflict() {
                         </div>
                     )}
 
-                    {/* Resolution note input */}
                     {showNoteInput && (
                         <div className="bg-white rounded-xl shadow-sm p-6 space-y-3">
                             <h2 className="text-lg font-bold text-gray-700">ملاحظة الحل</h2>
@@ -264,9 +268,7 @@ export default function DetailsConflict() {
                     )}
                 </div>
 
-                {/* Right column: people + actions */}
                 <div className="space-y-5">
-                    {/* Client */}
                     {complaint.order?.clientName && (
                         <div className="bg-white rounded-xl shadow-sm p-6">
                             <h2 className="text-sm font-bold text-gray-400 mb-4 flex items-center gap-2">
@@ -282,7 +284,6 @@ export default function DetailsConflict() {
                         </div>
                     )}
 
-                    {/* Craftsman */}
                     {complaint.order?.craftsmanName && (
                         <div className="bg-white rounded-xl shadow-sm p-6">
                             <h2 className="text-sm font-bold text-gray-400 mb-4 flex items-center gap-2">
@@ -298,11 +299,9 @@ export default function DetailsConflict() {
                         </div>
                     )}
 
-                    {/* Actions */}
                     <div className="bg-white rounded-xl shadow-sm p-6 space-y-3">
                         <h2 className="text-sm font-bold text-gray-400 mb-2">الإجراءات</h2>
 
-                        {/* status 0: جديد → بدء التحقيق */}
                         {complaint.status === 0 && (
                             <button
                                 onClick={handleStartInvestigation}
@@ -313,7 +312,6 @@ export default function DetailsConflict() {
                             </button>
                         )}
 
-                        {/* status 1: يتم التحقيق → تم الحل أو رفض */}
                         {complaint.status === 1 && (
                             <>
                                 <button
@@ -333,7 +331,6 @@ export default function DetailsConflict() {
                             </>
                         )}
 
-                        {/* status 2 أو 3: منتهي */}
                         {(complaint.status === 2 || complaint.status === 3) && (
                             <div className="text-center text-gray-400 text-sm py-2 bg-gray-50 rounded-lg">
                                 تم اتخاذ الإجراء — لا يمكن التعديل
@@ -350,6 +347,5 @@ export default function DetailsConflict() {
                 </div>
             </div>
         </div>
-
     );
 }

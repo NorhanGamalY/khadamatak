@@ -17,11 +17,10 @@ const getCraftsmanUserId = async (craftsmanId) => {
     const res = await axios.get(`${BASE_URL}/Craftsmen`, {
         headers: getAuthHeaders(),
     });
-    const list = res.data ?? [];
-    const found = list.find((c) => c.id === craftsmanId);
+    const list = res.data?.data ?? res.data ?? [];
+    const found = list.find((c) => String(c.id) === String(craftsmanId));
     return found?.userId ?? null;
 };
-
 /**
  * @param {string} userId
  * @param {string} title
