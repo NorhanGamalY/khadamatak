@@ -28,7 +28,9 @@ export default function ClientRegister() {
       <div className="w-[80%] lg:w-[50%] flex flex-wrap gap-0 md:gap-2 bg-white p-6 shadow-2xl">
 
         <div className="w-[100%] order-2 lg:order-1 md:w-[48%] flex flex-col gap-5">
-          <h1 className="text-3xl font-bold text-black">خد<span className='text-[#d75b19]'>ما</span>تك</h1>
+          <button onClick={() => navigate("/")} className="text-3xl font-bold text-black text-start">
+                        خد<span className="text-[#d75b19]">ما</span>تك
+          </button>          
           <h3>إنشاء حساب</h3>
 
           <p className='text-xs text-gray-500'>ادخل بياناتك الأساسية للتسجيل</p>
@@ -48,6 +50,17 @@ export default function ClientRegister() {
             >
               التالي
             </button>
+
+            
+            <p className="text-xs text-gray-500">
+                            عندك حساب؟{" "}
+            <button
+                onClick={() => navigate("/login")}
+                className="text-[#d75b19]"
+              >
+               سجل دخول
+            </button>
+            </p>
           </div>
         </div>
 

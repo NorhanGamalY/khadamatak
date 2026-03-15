@@ -27,7 +27,6 @@ import ClientRegestier from "./pages/public/ClientRegestier";
 import ClientLogin from "./pages/public/ClientLogin";
 import CraftsmanRegister from "./pages/public/CraftsmanRegestier";
 import CraftsmanRegister2 from "./pages/public/Craftsmanregestier2";
-import CraftsmanLogin from "./pages/public/CraftsmanLogin";
 import ClientRegister2 from "./pages/public/ClientRegister2";
 
 // Client Pages
@@ -109,14 +108,6 @@ function App() {
             element={
               <GuestRoute>
                 <ClientRegister2 />
-              </GuestRoute>
-            }
-          />
-
-          <Route path="/craftsman-login"
-            element={
-              <GuestRoute>
-                <CraftsmanLogin />
               </GuestRoute>
             }
           />

@@ -1,6 +1,8 @@
 import React from "react";
+import { useNavigate } from 'react-router-dom'
 
 export default function CtaSection() {
+  const navigate = useNavigate();
   return (
     <section dir="rtl" className="bg-white py-14">
       <div className="mx-auto w-full max-w-[1400px] px-4">
@@ -16,12 +18,11 @@ export default function CtaSection() {
             </p>
 
             <div className="mt-25 flex justify-center lg:justify-center">
-              <a
-                href="/services"
+              <button onClick={() => navigate("/services")}
                 className="inline-flex h-12 w-full max-w-[560px] items-center justify-center rounded-full bg-[#1E1855] px-8 text-base sm:text-lg font-extrabold text-white shadow-[0_12px_22px_rgba(30,24,85,0.25)] transition hover:bg-[#D75B19]"
               >
                 اطلب الخدمة
-              </a>
+              </button>
             </div>
           </div>
           <div className="relative flex justify-center ">

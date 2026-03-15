@@ -71,9 +71,9 @@ export default function ResetPassword() {
     <main className="min-h-screen flex items-center justify-center">
       <div className="w-[80%] md:w-[80%] lg:w-[50%] flex flex-wrap gap-0 md:gap-2 bg-white p-6 shadow-2xl">
         <div className="w-[100%] order-2 lg:order-1 md:w-[48%] flex flex-col gap-4">
-          <h1 className="text-3xl font-bold text-black">
-            خد<span className="text-[#d75b19]">ما</span>تك
-          </h1>
+                    <button onClick={() => navigate("/")} className="text-3xl font-bold text-black text-start">
+                        خد<span className="text-[#d75b19]">ما</span>تك
+                    </button>
           <p className="text-s text-gray-500">ادخل كلمة السر الجديدة لتحديث حسابك.</p>
 
           <div className="flex flex-col gap-4 items-center text-white">

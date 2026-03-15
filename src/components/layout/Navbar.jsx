@@ -123,7 +123,7 @@ const mappedNotifications = notifications?.map((n) => ({
           </button>
         ) : (
           <NavLink
-            to="/select-role"
+            to="/login"
             className="flex items-center gap-2 rounded-4xl text-[14px] transition bg-secondary-orange text-white hover:bg-secondary py-1 px-3"
           >
             <IoPerson />
@@ -207,7 +207,7 @@ const mappedNotifications = notifications?.map((n) => ({
             </button>
           ) : (
             <NavLink
-              to="/select-role"
+              to="/login"
               onClick={closeMenu}
               className="flex items-center gap-2 py-3 px-4 justify-center rounded-lg text-[16px] mt-4 bg-secondary-orange text-white hover:bg-secondary transition"
             >
