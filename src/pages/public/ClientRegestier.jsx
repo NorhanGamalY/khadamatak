@@ -65,7 +65,7 @@ export default function ClientRegister() {
         </div>
 
         <div className="relative w-[100%] order-1 md:order-2 md:w-[48%]">
-          <img src='/clientRegestier.png' className='rounded-lg min-h-[400px]' />
+          <img src='/reset.png' className='rounded-lg min-h-[400px]' />
           <div className='absolute bottom-5 w-[92%] left-[4%]'>
             <div className='bg-white/70 rounded-lg text-[#1e1855] p-6 pb-8'>
               <p className='text-[14px] text-center font-semibold'>نوصلك بالحرفي الصح</p>
