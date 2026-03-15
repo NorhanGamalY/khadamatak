@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import { Star } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 const DEFAULT_AVATAR = "/unknown.jpg";
 const EMPTY_ARR = [];
@@ -40,6 +41,10 @@ function isClientLoggedIn() {
 }
 
 export default function CraftsmanResultsSection() {
+  const [searchParams] = useSearchParams();
+  const service = searchParams.get("service");
+  const cityName = searchParams.get("city");
+
   const navigate = useNavigate();
 
   const [governorate, setGovernorate] = useState("");
@@ -102,7 +107,23 @@ export default function CraftsmanResultsSection() {
 
   const results = useMemo(() => {
     let next = [...list];
+    if (service) {
+      const search = service.toLowerCase().trim();
 
+      next = next.filter((x) =>
+        x.services?.some(
+          (s) =>
+            s.name?.toLowerCase().includes(search) ||
+            s.serviceCategory?.name?.toLowerCase().includes(search),
+        ),
+      );
+    }
+
+    if (cityName) {
+      next = next.filter((x) =>
+        x.cityName?.toLowerCase().includes(cityName.toLowerCase()),
+      );
+    }
     if (governorate) {
       next = next.filter((x) => (x?.cityName || "").trim() === governorate);
     }
@@ -117,7 +138,7 @@ export default function CraftsmanResultsSection() {
     }
 
     return next;
-  }, [list, governorate, sortBy]);
+  }, [list, governorate, sortBy, service, cityName]);
 
   if (isLoading) return <div>Loading...</div>;
 

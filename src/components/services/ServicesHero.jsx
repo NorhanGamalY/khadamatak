@@ -148,9 +148,12 @@ function ServiceCard({ item }) {
 
         <button
           type="button"
-          onClick={() =>
-            navigate("/craftman-results", { state: { serviceName: title } })
-          }
+          onClick={() => {
+            const params = new URLSearchParams();
+            params.append("service", title);
+
+            navigate(`/craftman-results?${params.toString()}`);
+          }}
           className="mt-2 inline-flex items-center justify-center rounded-md bg-[#d75b19] px-5 py-3 text-[12px] font-bold text-white transition hover:bg-[#1E1855] active:scale-[0.98]"
         >
           اختر الخدمة
