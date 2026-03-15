@@ -49,9 +49,9 @@ export default function ForgetPassword() {
 
         <div className="w-full order-2 lg:order-1 md:w-[48%] flex flex-col gap-4">
 
-          <h1 className="text-3xl font-bold text-black">
-            خد<span className="text-[#d75b19]">ما</span>تك
-          </h1>
+        <button onClick={() => navigate("/")} className="text-3xl font-bold text-black text-start">
+                        خد<span className="text-[#d75b19]">ما</span>تك
+        </button>
 
           <h3 className="text-xl font-semibold">
             نسيت كلمة السر؟
