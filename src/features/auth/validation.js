@@ -6,6 +6,7 @@ export const passwordRules = {
   hasUpper: /[A-Z]/,
   hasLower: /[a-z]/,
   hasNumber: /[0-9]/,
+  hasSpecial: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/, 
 };
 
 
@@ -19,6 +20,9 @@ function validatePassword(password) {
     !passwordRules.hasNumber.test(password)
   ) {
     return "لازم تحتوي على حرف كبير وصغير ورقم";
+  }
+  if (!passwordRules.hasSpecial.test(password)) { 
+    return "لازم تحتوي على رمز خاص مثل ! @ # $";
   }
   return null;
 }

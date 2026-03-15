@@ -19,6 +19,13 @@ export default function CraftsmanRegestier() {
         if (errors[field]) setErrors((prev) => ({ ...prev, [field]: "" }));
     };
 
+    const handleBlur = (field) => {
+        const v = validateCraftsmanStep1({ ...form });
+        if (v[field]) {
+            setErrors((prev) => ({ ...prev, [field]: v[field] }));
+        }
+    };
+
     const handleNext = () => {
         const validationErrors = validateCraftsmanStep1(form);
         if (Object.keys(validationErrors).length > 0) {
@@ -28,7 +35,8 @@ export default function CraftsmanRegestier() {
         navigate("/craftsman-register-2", { state: form });
     };
 
-    const isDisabled = !form.fullName || !form.email || !form.password;
+    const isDisabled =
+        !form.fullName || !form.email || !form.password;
 
     return (
         <main className="min-h-screen flex items-center justify-center">
@@ -51,6 +59,7 @@ export default function CraftsmanRegestier() {
                             fieldPlaceholder="ادخل الاسم.."
                             value={form.fullName}
                             onChange={(e) => handleChange("fullName", e.target.value)}
+                            onBlur={() => handleBlur("fullName")}
                             error={errors.fullName}
                         />
 
@@ -61,6 +70,7 @@ export default function CraftsmanRegestier() {
                             fieldPlaceholder="ادخل البريد الالكتروني.."
                             value={form.email}
                             onChange={(e) => handleChange("email", e.target.value)}
+                            onBlur={() => handleBlur("email")}
                             error={errors.email}
                         />
 
@@ -71,14 +81,15 @@ export default function CraftsmanRegestier() {
                             fieldPlaceholder="ادخل كلمة السر.."
                             value={form.password}
                             onChange={(e) => handleChange("password", e.target.value)}
+                            onBlur={() => handleBlur("password")}
                             error={errors.password}
                         />
 
                         <button
                             disabled={isDisabled}
                             className={`text-md text-center w-[90%] px-4 py-2 rounded-lg
-                ${isDisabled ? "bg-gray-400 cursor-not-allowed" : "bg-[#1e1855] text-white"}
-                `}
+                                ${isDisabled ? "bg-gray-400 cursor-not-allowed" : "bg-[#1e1855] text-white"}
+                            `}
                             onClick={handleNext}
                         >
                             متابعة
@@ -86,10 +97,7 @@ export default function CraftsmanRegestier() {
 
                         <p className="text-xs text-gray-500">
                             عندك حساب؟{" "}
-                            <button
-                                onClick={() => navigate("/login")}
-                                className="text-[#d75b19]"
-                            >
+                            <button onClick={() => navigate("/login")} className="text-[#d75b19]">
                                 سجل دخول
                             </button>
                         </p>
@@ -97,10 +105,7 @@ export default function CraftsmanRegestier() {
                 </div>
 
                 <div className="w-full md:w-[48%]">
-                    <img
-                        src="/craftsmanRegestier1.png"
-                        className="rounded-lg min-h-[400px]"
-                    />
+                    <img src="/craftsmanRegestier1.png" className="rounded-lg min-h-[400px]" />
                 </div>
             </div>
         </main>

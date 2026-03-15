@@ -13,6 +13,13 @@ export default function ClientRegister() {
     setErrors((prev) => ({ ...prev, [key]: undefined }));
   };
 
+  const handleBlur = (key) => {
+    const v = validateClientStep1({ ...form });
+    if (v[key]) {
+      setErrors((prev) => ({ ...prev, [key]: v[key] }));
+    }
+  };
+
   const handleNext = () => {
     const v = validateClientStep1(form);
     setErrors(v);
@@ -29,19 +36,30 @@ export default function ClientRegister() {
 
         <div className="w-[100%] order-2 lg:order-1 md:w-[48%] flex flex-col gap-5">
           <button onClick={() => navigate("/")} className="text-3xl font-bold text-black text-start">
-                        خد<span className="text-[#d75b19]">ما</span>تك
-          </button>          
+            خد<span className="text-[#d75b19]">ما</span>تك
+          </button>
           <h3>إنشاء حساب</h3>
 
           <p className='text-xs text-gray-500'>ادخل بياناتك الأساسية للتسجيل</p>
 
           <div className='flex flex-col gap-4 items-center'>
             <InputField inputType="text" title="الاسم بالكامل" id="fullName" fieldPlaceholder="ادخل الاسم.."
-              value={form.fullName} onChange={(e) => handleChange("fullName", e.target.value)} error={errors.fullName} />
+              value={form.fullName}
+              onChange={(e) => handleChange("fullName", e.target.value)}
+              onBlur={() => handleBlur("fullName")}
+              error={errors.fullName} />
+
             <InputField inputType="email" title="البريد الالكتروني" id="email" fieldPlaceholder="ادخل البريد الالكتروني.."
-              value={form.email} onChange={(e) => handleChange("email", e.target.value)} error={errors.email} />
+              value={form.email}
+              onChange={(e) => handleChange("email", e.target.value)}
+              onBlur={() => handleBlur("email")}
+              error={errors.email} />
+
             <InputField inputType="password" title="كلمة السر" id="password" fieldPlaceholder="ادخل كلمة السر.."
-              value={form.password} onChange={(e) => handleChange("password", e.target.value)} error={errors.password} />
+              value={form.password}
+              onChange={(e) => handleChange("password", e.target.value)}
+              onBlur={() => handleBlur("password")}
+              error={errors.password} />
 
             <button
               onClick={handleNext}
@@ -51,15 +69,11 @@ export default function ClientRegister() {
               التالي
             </button>
 
-            
             <p className="text-xs text-gray-500">
-                            عندك حساب؟{" "}
-            <button
-                onClick={() => navigate("/login")}
-                className="text-[#d75b19]"
-              >
-               سجل دخول
-            </button>
+              عندك حساب؟{" "}
+              <button onClick={() => navigate("/login")} className="text-[#d75b19]">
+                سجل دخول
+              </button>
             </p>
           </div>
         </div>
