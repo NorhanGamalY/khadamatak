@@ -368,7 +368,6 @@ function TabButton({ children, icon = false, onClick }) {
   );
 }
 
-
 function ServiceCard({ card, onBook, onOpen }) {
   const navigate = useNavigate();
 
@@ -380,15 +379,47 @@ function ServiceCard({ card, onBook, onOpen }) {
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") onOpen();
       }}
-      className={[
-        "rounded-3xl bg-[#E8E9E8] p-6 sm:p-7 cursor-pointer",
-        "transition hover:shadow-[0_12px_34px_rgba(0,0,0,0.12)] active:scale-[0.99]",
-        "outline-none focus-visible:ring-2 focus-visible:ring-[#d75b19]/60",
-      ].join(" ")}
+      className="
+      bg-[#E8E9E8]
+      rounded-3xl
+      p-6
+      md:mx-15
+      lg:mx-0
+      shadow-[0_10px_25px_rgba(0,0,0,0.08)]
+      transition
+      hover:shadow-[0_14px_40px_rgba(0,0,0,0.12)]
+      active:scale-[0.99]
+      cursor-pointer
+    "
     >
-      <div className="flex items-start justify-between gap-6">
-        <div className="flex-1 mt-10 mr-5">
-          <h3 className="text-2xl sm:text-3xl font-extrabold text-[#1E1855] leading-snug">
+      <div className="grid gap-6 items-center lg:grid-cols-[1fr_220px]">
+        <div className="flex justify-center lg:order-2">
+          <div
+            className="
+          w-full
+max-w-[300px] 
+ lg:max-w-[200px]
+          aspect-square
+          rounded-2xl
+          bg-white
+          overflow-hidden
+          shadow-[0_10px_25px_rgba(0,0,0,0.08)]
+          "
+          >
+            <img
+              src={card.image}
+              alt={card.title}
+              className="w-full h-full object-cover transition duration-300 hover:scale-105"
+              loading="lazy"
+              onError={(e) => {
+                e.currentTarget.src = "/unknown.jpg";
+              }}
+            />
+          </div>
+        </div>
+
+        <div className="text-center lg:text-right lg:order-1">
+          <h3 className="text-2xl md:text-3xl font-extrabold text-[#1E1855]">
             {card.title}
           </h3>
 
@@ -398,24 +429,29 @@ function ServiceCard({ card, onBook, onOpen }) {
             {card.cityName}
           </div>
 
-          <div className="mt-3 flex items-center gap-3 text-[#1E1855]">
-            <span className="font-extrabold text-xl">
+          <div className="mt-3 flex items-center justify-center lg:justify-start gap-3">
+            <span className="font-extrabold text-lg">
               {Number(card.rating || 0).toFixed(1)}
             </span>
+
             <StarsRow rating={card.rating} />
           </div>
 
           {card.priceFrom !== null && card.priceTo !== null && (
-            <div className="mt-4 text-lg sm:text-xl text-[#1E1855] font-bold">
-              السعر:{" "}
-              <span dir="ltr" className="font-extrabold text-xl">
+            <div className="mt-4 text-lg text-[#1E1855] font-bold">
+              السعر
+              <span dir="ltr" className="mx-2 text-sm font-extrabold">
                 {card.priceFrom}-{card.priceTo}
-              </span>{" "}
+              </span>
               ج م
             </div>
           )}
 
-          <div className="flex items-center gap-4 mt-5">
+          <div className="mt-3 text-lg font-extrabold text-[#1E1855]">
+            {card.name}
+          </div>
+
+          <div className="flex flex-wrap justify-center lg:justify-start gap-3 mt-5">
             <button
               type="button"
               onClick={(e) => {
@@ -425,7 +461,16 @@ function ServiceCard({ card, onBook, onOpen }) {
                 });
                 onBook();
               }}
-              className="h-12 px-6 rounded-xl bg-[#d75b19] text-white text-sm sm:text-base font-extrabold hover:bg-[#1E1855] transition whitespace-nowrap"
+              className="
+              px-6
+              h-11
+              rounded-xl
+              bg-[#d75b19]
+              text-white
+              font-bold
+              hover:bg-[#1E1855]
+              transition
+            "
             >
               احجز الآن
             </button>
@@ -436,34 +481,19 @@ function ServiceCard({ card, onBook, onOpen }) {
                 e.stopPropagation();
                 onOpen();
               }}
-              className="h-12 px-6 rounded-xl bg-[#1E1855] text-white text-sm sm:text-base font-extrabold hover:bg-[#d75b19] transition whitespace-nowrap"
+              className="
+              px-6
+              h-11
+              rounded-xl
+              bg-[#1E1855]
+              text-white
+              font-bold
+              hover:bg-[#d75b19]
+              transition
+            "
             >
               عرض الملف
             </button>
-          </div>
-        </div>
-
-        <div className="shrink-0 text-center flex flex-col items-center">
-          <div
-            className="rounded-2xl bg-white overflow-hidden
-                       w-[140px] h-[130px]
-                       sm:w-[210px] sm:h-[180px]
-                       md:w-[200px] md:h-[200px] lg:w-[230px] lg:h-[230px]
-                       shadow-[0_8px_20px_rgba(0,0,0,0.08)] mb-4"
-          >
-            <img
-              src={card.image}
-              alt={card.title}
-              className="w-full h-full object-cover"
-              loading="lazy"
-              onError={(e) => {
-                e.currentTarget.src = "/unknown.jpg";
-              }}
-            />
-          </div>
-
-          <div className="text-lg sm:text-xl text-[#1E1855] font-extrabold leading-none">
-            {card.name}
           </div>
         </div>
       </div>
