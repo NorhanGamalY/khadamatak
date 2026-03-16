@@ -3,7 +3,7 @@ import { Star } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
-import toast, { Toaster } from "react-hot-toast"; // إضافة Toast
+import toast, { Toaster } from "react-hot-toast"; 
 
 const DEFAULT_AVATAR = "/unknown.jpg";
 const EMPTY_ARR = [];
@@ -79,7 +79,6 @@ export default function CraftsmanResultsSection() {
       return;
     }
 
-    // **التعديل هنا: منع الانتقال إذا الحرفي ما عنده مواعيد**
     if (!item.availabilities || item.availabilities.length === 0) {
       toast.error("لا توجد مواعيد متاحة لهذا الحرفي");
       return;
