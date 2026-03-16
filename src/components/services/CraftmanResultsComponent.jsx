@@ -3,6 +3,7 @@ import { Star } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast"; // إضافة Toast
 
 const DEFAULT_AVATAR = "/unknown.jpg";
 const EMPTY_ARR = [];
@@ -78,6 +79,12 @@ export default function CraftsmanResultsSection() {
       return;
     }
 
+    // **التعديل هنا: منع الانتقال إذا الحرفي ما عنده مواعيد**
+    if (!item.availabilities || item.availabilities.length === 0) {
+      toast.error("لا توجد مواعيد متاحة لهذا الحرفي");
+      return;
+    }
+
     navigate(next, { state: { craftsman: item } });
   }
 
@@ -113,8 +120,8 @@ export default function CraftsmanResultsSection() {
       next = next.filter((x) =>
         x.services?.some(
           (s) =>
-            s.name?.toLowerCase().includes(search) ||
-            s.serviceCategory?.name?.toLowerCase().includes(search),
+            s.serviceName?.toLowerCase().includes(search) ||
+            s.serviceCategoreyName?.toLowerCase().includes(search),
         ),
       );
     }
@@ -144,6 +151,7 @@ export default function CraftsmanResultsSection() {
 
   return (
     <section dir="rtl" className="w-full mt-25 py-14">
+      <Toaster position="top-right" />
       <div className="mx-auto w-full max-w-[1100px] px-4">
         <h2 className="text-center text-[28px] sm:text-[34px] font-extrabold text-black">
           نتائج الحرفيين
