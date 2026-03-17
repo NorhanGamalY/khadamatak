@@ -19,6 +19,7 @@ export default function AdminLayout() {
     { label: "قائمة الخدمات", to: "/admin/services" },
     { label: "التقارير", to: "/admin/reports" },
     { label: "النزاعات", to: "/admin/conflicts" },
+    { label: "المحفظة", to: "/admin/wallet" },
     { label: "الاشعارات", to: "/admin/notifications" },
     { label: "الاعدادات", to: "/admin/settings" },
   ];
@@ -55,7 +56,6 @@ export default function AdminLayout() {
                 to={item.to}
                 onClick={() => window.innerWidth < 1024 && setSidebarOpen(false)}
                 setActiveLabel={setActiveLabel}
-                // باتش للإشعارات في الـ Sidebar
                 badge={item.to === "/admin/notifications" && unreadCount > 0 ? unreadCount : 0}
               />
             ))}
