@@ -69,6 +69,7 @@ import AcceptCraftman from "./api/Acceptcraftman";
 import Cancelcraftman from "./api/Cancelcraftman";
 import CraftsmanNotifications from "./pages/craftsman/CraftsmanNotifications";
 import AdminNotifications from "./pages/admin/AdminNotifications";
+import AdminWallet from "./pages/admin/AdminWallet";
 
 
 
@@ -179,7 +180,7 @@ function App() {
             <Route path="craftsmen" element={<Craftsmen />} />
             <Route path="reports" element={<Reports />} />
             <Route path="services" element={<Services />} />
-            <Route path="Wallet" element={<Wallet />} />
+            <Route path="Wallet" element={<AdminWallet />} />
             <Route path="notifications" element={<AdminNotifications />} />
             <Route path="conflicts" element={<Conflicts />} />
             <Route path="conflicts/:id" element={<DetailsConflict />} />   

@@ -13,7 +13,6 @@ export default function DateSelector({ days, selectedDay, setSelectedDay }) {
             }`}
         >
           <span className="text-sm">{day.name}</span>
-          {/* <span className="text-sm font-semibold mt-1">{day.date}</span> */}
         </button>
       ))}
     </div>

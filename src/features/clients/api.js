@@ -15,7 +15,7 @@ export const deleteClient = async (id) => {
     return res.data;                                                                            
 }
 
-export const editClient = async (id, data) => {
-    const res = await http.put(`/Clients/${id}`, data);
-    return res.data;
-}   
+export const editClient = ({ id, fullName }) =>
+    axiosInstance.put(`/Clients/${id}`, JSON.stringify(fullName), {
+        headers: { "Content-Type": "application/json" }
+});

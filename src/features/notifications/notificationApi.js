@@ -2,7 +2,7 @@ import axios from "axios";
 
 const BASE_URL = "https://herafie.runasp.net/api";
 
-const ADMIN_USER_ID = "d18c1d85-d9bd-491a-8248-f0202aa5a9a2";
+const ADMIN_USER_ID = "ADMIN_ID";
 
 const getAuthHeaders = () => {
     const token = localStorage.getItem("token");

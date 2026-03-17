@@ -16,30 +16,36 @@ export function useSearchClients(keyword){
     })
 }   
 
-export function useDeleteClient() {
+export function useDeleteClient(callbacks = {}) {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: deleteClient,
-        onSuccess: (_, id) => {         
+        onSuccess: (_, id) => {
             queryClient.setQueryData(['clients'], (old = []) => old.filter((i) => i.id !== id));
             queryClient.invalidateQueries(['clients']);
+            callbacks.onSuccess?.();
         },
         onError: (err) => {
             console.error('failed to delete client', err);
+            callbacks.onError?.();
         },
-    });         
+    });
 }
 
-export function useEditClient() {
-    const queryClient = useQueryClient();       
+export function useEditClient(callbacks = {}) {
+    const queryClient = useQueryClient();
     return useMutation({
         mutationFn: editClient,
-        onSuccess: (_, { id, data }) => {
-            queryClient.setQueryData(['clients'], (old = []) => old.map((i) => i.id === id ? { ...i, ...data } : i));
+        onSuccess: (_, { id, fullName }) => {
+            queryClient.setQueryData(['clients'], (old = []) =>
+                old.map((i) => i.id === id ? { ...i, fullName } : i)
+            );
             queryClient.invalidateQueries(['clients']);
-        },  
+            callbacks.onSuccess?.();
+        },
         onError: (err) => {
             console.error('failed to edit client', err);
+            callbacks.onError?.();
         }
     });
-}   
+} 

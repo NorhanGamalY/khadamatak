@@ -4,22 +4,29 @@ import ActionsCell from "../../components/common/ActionCell";
 import SplashLoader from "../../components/common/SplashLoader";
 import TableCard from "../../components/common/TableCard";
 import { useClients, useDeleteClient, useEditClient, useSearchClients } from "../../features/clients/hooks";
+import Toast from "../../components/common/Toast";
 
 export default function Users() {
   const { data: allClients, isLoading, isError } = useClients();
   const [searchTerm, setSearchTerm] = useState("");
-
+  const [toast, setToast] = useState({ isOpen: false, type: "success", title: "", message: "" });
   const [deleteRow, setDeleteRow] = useState(null);
-  const deleteClientMutation = useDeleteClient();
-  const handleDelete = (row) => setDeleteRow(row); 
+  const [editRow, setEditRow] = useState(null);
+  const [editName, setEditName] = useState("");
+  const handleEdit = (row) => {
+    setEditRow(row);
+    setEditName(row.name);
+  };
+  const handleDelete = (row) => setDeleteRow(row);
+  const deleteClientMutation = useDeleteClient({
+    onSuccess: () => setToast({ isOpen: true, type: "success", title: "تم الحذف", message: "تم حذف المستخدم بنجاح" }),
+    onError: () => setToast({ isOpen: true, type: "error", title: "فشل الحذف", message: "حدث خطأ أثناء الحذف" }),
+  });
 
-const editClientMutation = useEditClient();
-const [editRow, setEditRow] = useState(null); 
-const [editName, setEditName] = useState("");
-const handleEdit = (row) => {
-  setEditRow(row);
-  setEditName(row.name); 
-};
+  const editClientMutation = useEditClient({
+    onSuccess: () => setToast({ isOpen: true, type: "success", title: "تم التعديل", message: "تم تعديل المستخدم بنجاح" }),
+    onError: () => setToast({ isOpen: true, type: "error", title: "فشل التعديل", message: "حدث خطأ أثناء التعديل" }),
+  });
 
 
   const [debouncedSearch] = useDebounce(searchTerm, 500);
@@ -110,7 +117,7 @@ const handleEdit = (row) => {
 
         <button
           onClick={() => {
-            editClientMutation.mutate({ ...editRow, fullName: editName });
+          editClientMutation.mutate({ id: editRow.id, fullName: editName });
             setEditRow(null);
           }}
           className="bg-blue-600 px-4 py-2 text-white rounded"
@@ -121,6 +128,13 @@ const handleEdit = (row) => {
     </div>
   </div>
 )}
+  <Toast
+    isOpen={toast.isOpen}
+    type={toast.type}
+    title={toast.title}
+    message={toast.message}
+    onClose={() => setToast({ ...toast, isOpen: false })}
+  />
     </div>
   );
 }
