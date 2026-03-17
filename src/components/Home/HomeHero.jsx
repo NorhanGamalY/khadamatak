@@ -21,9 +21,8 @@ export default function HomeHero() {
     const set = new Set();
     craftsmen.forEach((c) =>
       (c.services || []).forEach((s) => {
-        if (s.name) set.add(s.name);
-        if (s.serviceCategory?.name) set.add(s.serviceCategory.name);
-      }),
+        if (s.serviceCategoreyName) set.add(s.serviceCategoreyName); 
+      })
     );
     return Array.from(set);
   }, [craftsmen]);
@@ -38,9 +37,9 @@ export default function HomeHero() {
     setServiceSuggestions(
       service
         ? services.filter((s) =>
-            s.toLowerCase().includes(service.toLowerCase()),
+            s.toLowerCase().includes(service.toLowerCase())
           )
-        : [],
+        : []
     );
   }, [service, services]);
 
@@ -48,7 +47,7 @@ export default function HomeHero() {
     setCitySuggestions(
       city
         ? cities.filter((c) => c.toLowerCase().includes(city.toLowerCase()))
-        : [],
+        : []
     );
   }, [city, cities]);
 
