@@ -9,10 +9,6 @@ const getAuthHeaders = () => {
     return { Authorization: `Bearer ${token}` };
 };
 
-/**
- * @param {number} craftsmanId 
- * @returns {string|null} 
- */
 const getCraftsmanUserId = async (craftsmanId) => {
     const res = await axios.get(`${BASE_URL}/Craftsmen`, {
         headers: getAuthHeaders(),
@@ -21,11 +17,7 @@ const getCraftsmanUserId = async (craftsmanId) => {
     const found = list.find((c) => String(c.id) === String(craftsmanId));
     return found?.userId ?? null;
 };
-/**
- * @param {string} userId
- * @param {string} title
- * @param {string} message
- */
+
 const sendNotification = async (userId, title, message) => {
     await axios.post(
         `${BASE_URL}/Notification/send`,
@@ -69,6 +61,21 @@ export const notifyAdmin = async (title, message) => {
 
 
 export const NOTIFICATION_MESSAGES = {
+    // ── طلبات العميل ──────────────────────────────────────────────
+    ORDER_ACCEPTED: {
+        title: "تم قبول طلبك ",
+        message: "تم قبول طلبك من قِبل الحرفي، يمكنك التواصل معه للاستفسار عن موعد التنفيذ",
+    },
+    ORDER_REJECTED: {
+        title: "تم رفض طلبك ",
+        message: "نأسف، تم رفض طلبك من قِبل الحرفي ولن يتمكن من القيام بالخدمة في الوقت الحالي",
+    },
+    ORDER_COMPLETED: {
+        title: "تم إتمام خدمتك بنجاح ",
+        message: "تم الانتهاء من تنفيذ خدمتك بنجاح، نتمنى أن تكون راضياً — قم بتقييم الحرفي ومشاركة تجربتك",
+    },
+
+    // ── شكاوى العميل ──────────────────────────────────────────────
     COMPLAINT_UNDER_INVESTIGATION: {
         title: "تم استلام شكواك",
         message: "شكواك قيد المراجعة والتحقيق من قِبل الإدارة",
@@ -81,19 +88,8 @@ export const NOTIFICATION_MESSAGES = {
         title: "تم رفض شكواك",
         message: "بعد المراجعة، تم رفض شكواك من قِبل الإدارة",
     },
-    ORDER_ACCEPTED: {
-        title: "تم قبول طلبك",
-        message: "قام الحرفي بقبول طلبك، سيتواصل معك قريباً",
-    },
-    ORDER_REJECTED: {
-        title: "تم رفض طلبك",
-        message: "نأسف، تم رفض طلبك من قِبل الحرفي",
-    },
-    ORDER_COMPLETED: {
-        title: "تم إتمام الطلب",
-        message: "تم إتمام طلبك بنجاح، نتمنى أن تكون راضياً عن الخدمة",
-    },
 
+    // ── إشعارات الأدمن ────────────────────────────────────────────
     ADMIN_NEW_COMPLAINT: {
         title: "شكوى جديدة",
         message: "تم تقديم شكوى جديدة وتحتاج إلى مراجعة",
@@ -111,6 +107,7 @@ export const NOTIFICATION_MESSAGES = {
         message: "تم رفض إحدى الشكاوى وإغلاق النزاع",
     },
 
+    // ── إشعارات الحرفي ────────────────────────────────────────────
     CRAFTSMAN_NEW_COMPLAINT: {
         title: "تم تقديم شكوى ضدك",
         message: "قام أحد العملاء بتقديم شكوى بخصوص أحد طلباتك، وستتم مراجعتها من قِبل الإدارة",

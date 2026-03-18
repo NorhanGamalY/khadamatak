@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { IoClose, IoPerson } from "react-icons/io5";
 import { HiMenuAlt3 } from "react-icons/hi";
 import { IoLogOutOutline } from "react-icons/io5";
-import { FiMessageSquare, FiShoppingBag, FiAlertTriangle,} from "react-icons/fi";
+import { FiMessageSquare, FiShoppingBag, FiAlertTriangle, FiGrid} from "react-icons/fi";
 import NotificationBell from "../../pages/client/components/Notificationbell";
 import ProfileDropdown from "../../pages/client/components/Profiledropdown";
 import { useNotifications } from "../../features/notifications/hooks";
@@ -28,7 +28,9 @@ export default function Navbar() {
   const isLoggedIn = !!token;
   const role = localStorage.getItem("role") || sessionStorage.getItem("role");
   const isClient = role === "Client";
-
+  const isAdmin = role === "Admin";
+  const isCraftsman = role === "Craftsman";
+  const dashboardPath = isAdmin ? "/admin" : isCraftsman ? "/craftsman" : null;
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
 
@@ -38,7 +40,7 @@ export default function Navbar() {
       sessionStorage.removeItem(key);
     });
     closeMenu();
-    navigate("/select-role");
+    navigate("/login");
   };
 
 
@@ -113,7 +115,24 @@ const mappedNotifications = notifications?.map((n) => ({
               unreadMessages={totalUnreadMessages}
             />          
           </>
-        ) : isLoggedIn ? (
+        ) : isLoggedIn && dashboardPath ? (
+          <>
+            <NavLink
+              to={dashboardPath}
+              className="flex items-center gap-2 rounded-4xl text-[14px] transition bg-secondary-orange text-white hover:bg-secondary py-1 px-3"
+            >
+              <FiGrid />
+              لوحة التحكم
+            </NavLink>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 rounded-4xl text-[14px] transition bg-secondary text-white hover:bg-secondary-orange py-1 px-3"
+            >
+              <IoLogOutOutline />
+              تسجيل الخروج
+            </button>
+          </>
+    ) : isLoggedIn ? (
           <button
             onClick={handleLogout}
             className="flex items-center gap-2 rounded-4xl text-[14px] transition bg-secondary text-white hover:bg-secondary-orange py-1 px-3"

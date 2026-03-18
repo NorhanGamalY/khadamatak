@@ -27,8 +27,8 @@ export default function CraftsmanLayout() {
     { label: "تقيماتي", to: "/craftsman/evaluate" },
     { label: "المحفظة", to: "/craftsman/wallet" },
     { label: "الرسائل", to: "/craftsman/messages" },
+    { label: "النزاعات", to: "/craftsman/conflicts" },
     { label: "الاشعارات", to: "/craftsman/notifications" },
-    { label: "الملف الشخصي", to: "/craftsman/profile" },
   ];
 
   const getCraftsmanName = async () => {
