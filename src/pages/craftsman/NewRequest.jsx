@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Avatar from "../../components/common/Avatar";
 import { NavLink } from "react-router-dom";
 import { useOutletContext } from "react-router-dom";
+import { notifyUser, NOTIFICATION_MESSAGES } from "../../features/notifications/notificationApi";
 
 function NewRequest() {
   const { orders, setOrders, loading } = useOutletContext();
@@ -25,6 +26,13 @@ function NewRequest() {
         }
       );
       if (!res.ok) throw new Error();
+
+      const order = orders.find((o) => o.id === id);
+      if (order?.userId) {
+        const { title, message: msg } = NOTIFICATION_MESSAGES.ORDER_ACCEPTED;
+        notifyUser(order.userId, title, msg);
+      }
+
       setOrders((prev) =>
         prev.map((o) => (o.id === id ? { ...o, status: 1 } : o))
       );
@@ -48,6 +56,13 @@ function NewRequest() {
         }
       );
       if (!res.ok) throw new Error();
+
+      const order = orders.find((o) => o.id === id);
+      if (order?.userId) {
+        const { title, message: msg } = NOTIFICATION_MESSAGES.ORDER_REJECTED;
+        notifyUser(order.userId, title, msg);
+      }
+
       setOrders((prev) =>
         prev.map((o) => (o.id === id ? { ...o, status: 2 } : o))
       );

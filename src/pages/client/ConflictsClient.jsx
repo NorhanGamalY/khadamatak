@@ -78,8 +78,8 @@ const ConflictsClient = () => {
 
   const filteredData = clientData.filter((item) =>
     activeTab === "open"
-      ? item.status === 1 || item.status === 2 || item.status === 3
-      : item.status === 0
+      ? item.status === 0 || item.status === 1
+      : item.status === 2 || item.status === 3
   );
 
   return (
@@ -159,24 +159,25 @@ const ConflictItem = ({ data, orderDetails, onViewDetails }) => {
               <GiStoneCrafting className="text-secondary-orange" />
               <p className="flex gap-1 text-secondary font-bold">
                 رقم الطلب :
-                <span> {data.orderId ? data.orderId : data.serviceId}</span>
+                <span>{data.orderId ? data.orderId : data.serviceId}</span>
               </p>
             </div>
-            <StatusBadge status={data.orderStatus} />
+            <StatusBadge status={data.status} />
           </div>
           <div className="grid gap-2 lg:gap-4 lg:mr-4 font-semibold text-secondary lg:text-[16px] text-sm">
-            <div className="flex lg:items-center items-start gap-1">
-              <GoDotFill className="text-secondary-orange" />
-              <span className="font-bold"> الاسم :</span>
-              <span> {data.clientName}</span>
-            </div>
-            <div className="flex lg:items-center items-start gap-1">
-              <GoDotFill className="text-secondary-orange" />
-              <span className="font-bold"> الخدمة المطلوبة :</span>
-              <span>{data.serviceName}</span>
-            </div>
-            {orderDetails && (
+
+            {orderDetails ? (
               <>
+                <div className="flex lg:items-center items-start gap-1">
+                  <GoDotFill className="text-secondary-orange" />
+                  <span className="font-bold"> الاسم :</span>
+                  <span>{orderDetails.clientName}</span>
+                </div>
+                <div className="flex lg:items-center items-start gap-1">
+                  <GoDotFill className="text-secondary-orange" />
+                  <span className="font-bold"> الخدمة المطلوبة :</span>
+                  <span>{orderDetails.serviceName}</span>
+                </div>
                 <div className="flex lg:items-center items-start gap-1">
                   <GoDotFill className="text-secondary-orange" />
                   <span className="font-bold"> الحرفي :</span>
@@ -188,7 +189,14 @@ const ConflictItem = ({ data, orderDetails, onViewDetails }) => {
                   <span>{orderDetails.amount} ج.م</span>
                 </div>
               </>
+            ) : (
+              <div className="flex lg:items-center items-start gap-1">
+                <GoDotFill className="text-secondary-orange" />
+                <span className="font-bold"> رقم الشكوى :</span>
+                <span>#{data.id}</span>
+              </div>
             )}
+
             <div className="flex lg:items-center items-start gap-1 bg-main py-2 lg:w-fit lg:pl-6 pl-1">
               <GoDotFill className="text-secondary-orange" />
               <span className="font-bold">سبب الشكوى :</span>
@@ -208,6 +216,7 @@ const ConflictItem = ({ data, orderDetails, onViewDetails }) => {
     </div>
   );
 };
+
 
 const ComplaintModal = ({ complaint, orderDetails, token, onClose, onUpdated, onDeleted }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -260,6 +269,8 @@ const ComplaintModal = ({ complaint, orderDetails, token, onClose, onUpdated, on
     if (e.target === e.currentTarget) onClose();
   };
 
+  const canEditOrDelete = complaint.status === 0 || complaint.status === 1;
+
   return (
     <div
       dir="rtl"
@@ -282,20 +293,19 @@ const ComplaintModal = ({ complaint, orderDetails, token, onClose, onUpdated, on
 
         <div className="px-6 py-5 grid gap-4">
           <div className="flex justify-end">
-            <StatusBadge status={complaint.orderStatus} />
+            <StatusBadge status={complaint.status} />
           </div>
 
           <InfoRow label="رقم الشكوى" value={`#${complaint.id}`} />
           <InfoRow label="رقم الطلب" value={`#${complaint.orderId || complaint.serviceId}`} />
-          <InfoRow label="اسم العميل" value={orderDetails.clientName} />
-          <InfoRow label="الخدمة المطلوبة" value={orderDetails.serviceName} />
 
           {orderDetails && (
             <>
+              <InfoRow label="الخدمة المطلوبة" value={orderDetails.serviceName} />
               <InfoRow label="اسم الحرفي" value={orderDetails.craftsmanName} />
               <InfoRow label="المبلغ" value={`${orderDetails.amount} ج.م`} />
               <InfoRow
-                label="التاريخ "
+                label="التاريخ"
                 value={
                   orderDetails.scheduledAt
                     ? new Date(orderDetails.scheduledAt).toLocaleDateString("ar-EG")
@@ -322,72 +332,83 @@ const ComplaintModal = ({ complaint, orderDetails, token, onClose, onUpdated, on
             )}
           </div>
 
+          {complaint.adminResolutionNotes && (
+            <div className="grid gap-1">
+              <span className="font-bold text-sm text-secondary">ملاحظات الإدارة :</span>
+              <p className="bg-green-50 border border-green-200 rounded-lg px-3 py-2 text-sm text-green-800">
+                {complaint.adminResolutionNotes}
+              </p>
+            </div>
+          )}
+
           {error && (
             <p className="text-red-500 text-sm font-semibold text-center">{error}</p>
           )}
         </div>
 
-        <div className="px-6 pb-5 grid gap-3">
-          {isEditing ? (
-            <div className="flex gap-3">
-              <button
-                onClick={handleUpdate}
-                disabled={isSubmitting}
-                className="flex-1 py-2 rounded-lg bg-secondary-orange text-white font-bold hover:bg-orange-500 transition-colors disabled:opacity-60"
-              >
-                {isSubmitting ? "جاري الحفظ..." : "حفظ التعديل"}
-              </button>
-              <button
-                onClick={() => {
-                  setIsEditing(false);
-                  setEditDescription(complaint.description);
-                  setError("");
-                }}
-                className="flex-1 py-2 rounded-lg bg-slate-200 text-secondary font-bold hover:bg-slate-300 transition-colors"
-              >
-                إلغاء
-              </button>
-            </div>
-          ) : confirmDelete ? (
-            <div className="grid gap-2">
-              <p className="text-center text-sm font-semibold text-red-500">
-                هل أنت متأكد من حذف هذه الشكوى؟
-              </p>
+        {canEditOrDelete && (
+          <div className="px-6 pb-5 grid gap-3">
+            {isEditing ? (
               <div className="flex gap-3">
                 <button
-                  onClick={handleDelete}
-                  disabled={isDeleting}
-                  className="flex-1 py-2 rounded-lg bg-red-500 text-white font-bold hover:bg-red-600 transition-colors disabled:opacity-60"
+                  onClick={handleUpdate}
+                  disabled={isSubmitting}
+                  className="flex-1 py-2 rounded-lg bg-secondary-orange text-white font-bold hover:bg-orange-500 transition-colors disabled:opacity-60"
                 >
-                  {isDeleting ? "جاري الحذف..." : "نعم، احذف"}
+                  {isSubmitting ? "جاري الحفظ..." : "حفظ التعديل"}
                 </button>
                 <button
-                  onClick={() => setConfirmDelete(false)}
+                  onClick={() => {
+                    setIsEditing(false);
+                    setEditDescription(complaint.description);
+                    setError("");
+                  }}
                   className="flex-1 py-2 rounded-lg bg-slate-200 text-secondary font-bold hover:bg-slate-300 transition-colors"
                 >
-                  لا، تراجع
+                  إلغاء
                 </button>
               </div>
-            </div>
-          ) : (
-            <div className="flex gap-3">
-              <button
-                onClick={() => setIsEditing(true)}
-                className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg bg-secondary-orange text-white font-bold hover:bg-orange-500 transition-colors"
-              >
-                <MdEdit size={18} />
-                تعديل الشكوى
-              </button>
-              <button
-                onClick={() => setConfirmDelete(true)}
-                className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg bg-red-100 text-red-600 font-bold hover:bg-red-200 transition-colors"
-              >
-                <MdDelete size={18} />
-                إلغاء الشكوى
-              </button>
-            </div>
-          )}
-        </div>
+            ) : confirmDelete ? (
+              <div className="grid gap-2">
+                <p className="text-center text-sm font-semibold text-red-500">
+                  هل أنت متأكد من حذف هذه الشكوى؟
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleDelete}
+                    disabled={isDeleting}
+                    className="flex-1 py-2 rounded-lg bg-red-500 text-white font-bold hover:bg-red-600 transition-colors disabled:opacity-60"
+                  >
+                    {isDeleting ? "جاري الحذف..." : "نعم، احذف"}
+                  </button>
+                  <button
+                    onClick={() => setConfirmDelete(false)}
+                    className="flex-1 py-2 rounded-lg bg-slate-200 text-secondary font-bold hover:bg-slate-300 transition-colors"
+                  >
+                    لا، تراجع
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg bg-secondary-orange text-white font-bold hover:bg-orange-500 transition-colors"
+                >
+                  <MdEdit size={18} />
+                  تعديل الشكوى
+                </button>
+                <button
+                  onClick={() => setConfirmDelete(true)}
+                  className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg bg-red-100 text-red-600 font-bold hover:bg-red-200 transition-colors"
+                >
+                  <MdDelete size={18} />
+                  إلغاء الشكوى
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -404,10 +425,10 @@ const InfoRow = ({ label, value }) => (
 
 
 const statusMap = {
-  1: { label: "جديد", color: "bg-blue-100 text-blue-700" },
-  2: { label: "قيد المعالجة", color: "bg-yellow-100 text-yellow-700" },
-  3: { label: "مفتوح", color: "bg-orange-100 text-orange-700" },
-  4: { label: "جديد", color: "bg-green-100 text-green-700" },
+  0: { label: "جديد",         color: "bg-blue-100 text-blue-700" },
+  1: { label: "قيد المعالجة", color: "bg-yellow-100 text-yellow-700" },
+  2: { label: "تم الحل",      color: "bg-green-100 text-green-700" },
+  3: { label: "تم الرفض",     color: "bg-red-100 text-red-600" },
 };
 
 const StatusBadge = ({ status }) => {

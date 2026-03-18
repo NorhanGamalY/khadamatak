@@ -1,51 +1,53 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { deleteClient, editClient, getClients, searchClients } from "./api";
+import { getClients, searchClients, activateClient, deactivateClient } from "./api";
 
-export function useClients(){
+export function useClients() {
     return useQuery({
-        queryKey: ['clients'],
-        queryFn: getClients
-    })
+    queryKey: ["clients"],
+    queryFn: getClients,
+    });
 }
 
-export function useSearchClients(keyword){
+export function useSearchClients(keyword) {
     return useQuery({
-        queryKey: ['clients', 'search', keyword],
-        queryFn: () => searchClients(keyword),
-        enabled: !!keyword
-    })
-}   
+    queryKey: ["clients", "search", keyword],
+    queryFn: () => searchClients(keyword),
+    enabled: !!keyword,
+    });
+}
 
-export function useDeleteClient(callbacks = {}) {
+export function useActivateClient(callbacks = {}) {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: deleteClient,
+    mutationFn: activateClient,
+    onSuccess: (_, id) => {
+        queryClient.setQueryData(["clients"], (old = []) =>
+        old.map((i) => (i.id === id ? { ...i, isActive: true } : i))
+        );
+        queryClient.invalidateQueries(["clients"]);
+        callbacks.onSuccess?.();
+    },
+    onError: (err) => {
+        console.error("failed to activate client", err);
+        callbacks.onError?.();
+    },
+    });
+}
+
+export function useDeactivateClient(callbacks = {}) {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: deactivateClient,
         onSuccess: (_, id) => {
-            queryClient.setQueryData(['clients'], (old = []) => old.filter((i) => i.id !== id));
-            queryClient.invalidateQueries(['clients']);
-            callbacks.onSuccess?.();
+        queryClient.setQueryData(["clients"], (old = []) =>
+            old.map((i) => (i.id === id ? { ...i, isActive: false } : i))
+        );
+        queryClient.invalidateQueries(["clients"]);
+        callbacks.onSuccess?.();
         },
         onError: (err) => {
-            console.error('failed to delete client', err);
-            callbacks.onError?.();
+        console.error("failed to deactivate client", err);
+        callbacks.onError?.();
         },
     });
 }
-
-export function useEditClient(callbacks = {}) {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: editClient,
-        onSuccess: (_, { id, fullName }) => {
-            queryClient.setQueryData(['clients'], (old = []) =>
-                old.map((i) => i.id === id ? { ...i, fullName } : i)
-            );
-            queryClient.invalidateQueries(['clients']);
-            callbacks.onSuccess?.();
-        },
-        onError: (err) => {
-            console.error('failed to edit client', err);
-            callbacks.onError?.();
-        }
-    });
-} 

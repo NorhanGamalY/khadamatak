@@ -1,6 +1,7 @@
 import { NavLink, Outlet, useOutletContext } from "react-router-dom";
 import { useEffect, useState } from "react";
 import getorder_craftman from "../../api/getorder_craftman";
+
 export default function Requests() {
   const activeStyle = "text-orange-600 border-b-2 border-orange-600";
   const [orders, setOrders] = useState([]);
@@ -31,15 +32,15 @@ export default function Requests() {
       setFilteredOrder(orders);
       return;
     }
+
+    const q = search.toLowerCase();
+
     const filtered = orders?.filter((order) =>
-      (
-        order.name ||
-        order.clientName + " " + order.serviceName ||
-        order.description
-      )
-        .toLowerCase()
-        .includes(search.toLowerCase()),
+      [order.clientName, order.serviceName, order.description]
+        .filter(Boolean)
+        .some((field) => field.toLowerCase().includes(q))
     );
+
     setFilteredOrder(filtered);
   }, [search, orders]);
 

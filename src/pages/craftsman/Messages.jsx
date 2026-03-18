@@ -64,6 +64,7 @@ const Messages = () => {
   const [messageText, setMessageText] = useState("");
   const [activeClientUserId, setActiveClientUserId] = useState(null);
   const [activeClientName, setActiveClientName] = useState("");
+
   const { data: chatList = [], isLoading: loadingChatList } = useQuery({
     queryKey: ["craftsmanChatList"],
     queryFn: fetchChatList,
@@ -77,7 +78,6 @@ const Messages = () => {
     refetchInterval: 5000,
   });
 
-
   const sendMutation = useMutation({
     mutationFn: sendMessage,
     onSuccess: () => {
@@ -86,11 +86,9 @@ const Messages = () => {
     },
   });
 
-
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-
 
   const handleOpenConversation = (clientUserId, clientName) => {
     setActiveClientUserId(clientUserId);
@@ -113,9 +111,7 @@ const Messages = () => {
   const getAvatarUrl = (name) =>
     `https://ui-avatars.com/api/?name=${encodeURIComponent(name || "Client")}&background=0ea5e9&color=fff`;
 
-  const getClientLabel = (chat) => {
-    return `${chat.userId.slice(-6)}`;
-  };
+  const getClientLabel = (chat) => `${chat.userId.slice(-6)}`;
 
   const getDisplayName = (clientUserId, messages) => {
     if (!messages || messages.length === 0) return `${clientUserId?.slice(-4) || ""}`;
@@ -199,13 +195,13 @@ const Messages = () => {
                   />
                   <div className="text-center grid lg:gap-1">
                     <h1 className="font-bold text-xl">{activeClientName}</h1>
-                    <p className="text-orange-200 text-sm font-bold">متصل الآن</p>
                   </div>
                 </div>
                 <button className="col-span-1 text-3xl text-white ml-auto">
                   <BiDotsHorizontalRounded />
                 </button>
               </div>
+
               <div
                 className="lg:px-4 px-2 relative flex flex-col pb-20 lg:h-[70vh] h-screen overflow-y-auto gap-3 py-6 overflow-message"
                 dir="ltr"
@@ -246,6 +242,7 @@ const Messages = () => {
                 )}
                 <div ref={messagesEndRef} />
               </div>
+
               <div className="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-3">
                 <form onSubmit={handleSendMessage}>
                   <div className="relative w-full">
@@ -265,11 +262,6 @@ const Messages = () => {
                       <IoSend />
                     </button>
                   </div>
-                  {sendMutation.isError && (
-                    <p className="text-red-500 text-xs mt-1 font-semibold text-right">
-                      فشل إرسال الرسالة، حاول مرة أخرى
-                    </p>
-                  )}
                 </form>
               </div>
             </div>
