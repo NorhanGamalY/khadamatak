@@ -5,8 +5,8 @@ import Avatar from "../../components/common/Avatar";
 
 const STATUS_LABELS = {
   0: { label: "قيد الانتظار", color: "text-yellow-600" },
-  1: { label: "مقبول", color: "text-blue-600" },
-  2: { label: "مرفوض", color: "text-red-600" },
+  1: { label: "غير مدفوع", color: "text-red-600" },
+  2: { label: "مدفوع", color: "text-blue-600" },
   3: { label: "جارٍ التنفيذ", color: "text-orange-500" },
   4: { label: "مكتمل", color: "text-green-600" },
   5: { label: "ملغي", color: "text-gray-500" },
@@ -60,9 +60,9 @@ function DetailsCraftMan() {
     try {
       await callApi("accept");
       setOrderDetails((prev) => ({ ...prev, status: 1 }));
-      notify("✅ تم قبول الطلب بنجاح");
+      notify("!تم قبول الطلب بنجاح");
     } catch {
-      notify("❌ فشل قبول الطلب");
+      notify("!فشل قبول الطلب");
     } finally {
       setActionLoading(false);
     }
@@ -72,10 +72,10 @@ function DetailsCraftMan() {
     setActionLoading(true);
     try {
       await callApi("reject");
-      setOrderDetails((prev) => ({ ...prev, status: 2 }));
+      setOrderDetails((prev) => ({ ...prev, status: 5 }));
       notify("تم رفض الطلب");
     } catch {
-      notify("❌ فشل رفض الطلب");
+      notify("!فشل رفض الطلب");
     } finally {
       setActionLoading(false);
     }
@@ -86,7 +86,7 @@ function DetailsCraftMan() {
     try {
       await callApi("start");
       setOrderDetails((prev) => ({ ...prev, status: 3 }));
-      notify("✅ تم بدء الطلب");
+      notify("!تم بدء الطلب");
     } catch {
       notify("❌ فشل بدء الطلب");
     } finally {
@@ -99,9 +99,9 @@ function DetailsCraftMan() {
     try {
       await callApi("complete");
       setOrderDetails((prev) => ({ ...prev, status: 4 }));
-      notify("✅ تم إتمام الطلب بنجاح");
+      notify("!تم إتمام الطلب بنجاح");
     } catch {
-      notify("❌ فشل إتمام الطلب");
+      notify("!فشل إتمام الطلب");
     } finally {
       setActionLoading(false);
     }
@@ -191,16 +191,27 @@ function DetailsCraftMan() {
         )}
 
         {status === 1 && (
-          <button
-            onClick={handleStart}
-            disabled={actionLoading}
-            className="flex-1 bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 disabled:opacity-50 transition"
-          >
-            بدء الطلب
-          </button>
+          <span className="flex-1 bg-red-100 text-red-600 text-sm font-semibold py-2 rounded-md text-center">
+            غير مدفوع
+          </span>
         )}
 
-        {status === 3 && (
+        {status === 2 && (
+          <>
+            <span className="flex-1 bg-green-100 text-green-600 text-sm font-semibold py-2 rounded-md text-center">
+              مدفوع
+            </span>
+            <button
+              onClick={handleStart}
+              disabled={actionLoading}
+              className="flex-1 bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 disabled:opacity-50 transition"
+            >
+              بدء الطلب
+            </button>
+          </>
+        )}
+
+        {status === 4 && (
           <button
             onClick={handleComplete}
             disabled={actionLoading}
@@ -210,7 +221,7 @@ function DetailsCraftMan() {
           </button>
         )}
 
-        {(status === 4 || status === 5 || status === 2) && (
+        {(status === 3 || status === 5) && (
           <button
             onClick={() => navigate(-1)}
             className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-md hover:bg-gray-200 transition"

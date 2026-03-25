@@ -5,6 +5,7 @@ import { IoSend } from "react-icons/io5";
 import { useParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getUserId, getToken } from "../../features/auth/authHelpers";
+import Avatar from "../../components/common/Avatar";
 
 const BASE_URL = "https://herafie.runasp.net";
 const currentUserId = getUserId();
@@ -71,6 +72,7 @@ const Chat = () => {
     const [messageText, setMessageText] = useState("");
     const [activeCraftsmanUserId, setActiveCraftsmanUserId] = useState(null);
     const [activeCraftsmanName, setActiveCraftsmanName] = useState("");
+    const [activeCraftsmanImage, setActiveCraftsmanImage] = useState("");
 
     const { data: craftsmen = [], isLoading: loadingCraftsmen } = useQuery({
         queryKey: ["craftsmen"],
@@ -106,6 +108,7 @@ const Chat = () => {
         if (craftsmanFromUrl && !activeCraftsmanUserId) {
             setActiveCraftsmanUserId(craftsmanFromUrl.userId);
             setActiveCraftsmanName(craftsmanFromUrl.fullName);
+            setActiveCraftsmanImage(craftsmanFromUrl.profilePicture || "");
             setOpenChat(true);
             markAsRead(craftsmanFromUrl.userId);
         }
@@ -116,8 +119,10 @@ const Chat = () => {
     }, [messages]);
 
     const handleOpenConversation = (userId, name) => {
+        const found = craftsmen.find((c) => c.userId === userId);
         setActiveCraftsmanUserId(userId);
         setActiveCraftsmanName(name);
+        setActiveCraftsmanImage(found?.profilePicture || "");
         setOpenChat(true);
         markAsRead(userId);
         queryClient.invalidateQueries(["chatList"]);
@@ -137,9 +142,6 @@ const Chat = () => {
         const found = craftsmen.find((c) => c.userId === userId);
         return found?.fullName || "حرفي";
     };
-
-    const getAvatarUrl = (name) =>
-        `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=f97316&color=fff`;
 
     if (loadingCraftsmen) {
         return (
@@ -174,6 +176,7 @@ const Chat = () => {
                             ) : (
                                 chatList.map((chat) => {
                                     const name = getCraftsmanNameByUserId(chat.userId);
+                                    const craftsmanData = craftsmen.find((c) => c.userId === chat.userId);
                                     const isActive = activeCraftsmanUserId === chat.userId;
                                     return (
                                         <button
@@ -183,10 +186,10 @@ const Chat = () => {
                                             ${isActive ? "bg-orange-50" : "hover:bg-slate-50"}`}
                                         >
                                             <div className="relative shrink-0">
-                                                <img
-                                                    src={getAvatarUrl(name)}
-                                                    className="w-14 h-14 rounded-full object-cover"
-                                                    alt={name}
+                                                <Avatar
+                                                    src={craftsmanData?.profilePicture || ""}
+                                                    name={name}
+                                                    size={40}
                                                 />
                                                 {chat.unreadCount > 0 && (
                                                     <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full w-5 h-5 flex items-center justify-center font-bold">
@@ -217,10 +220,10 @@ const Chat = () => {
                                     <ArrowLeft />
                                 </button>
                                 <div className="flex lg:items-center justify-center col-span-3 lg:gap-4 gap-3 m-auto">
-                                    <img
-                                        src={getAvatarUrl(activeCraftsmanName)}
-                                        alt={activeCraftsmanName}
-                                        className="lg:w-16 lg:h-16 w-12 h-12 rounded-full"
+                                    <Avatar
+                                        src={activeCraftsmanImage}
+                                        name={activeCraftsmanName}
+                                        size={40}
                                     />
                                     <div className="text-center grid lg:gap-1">
                                         <h1 className="font-bold text-xl">{activeCraftsmanName}</h1>
@@ -241,7 +244,7 @@ const Chat = () => {
                                     </p>
                                 ) : messages.length === 0 ? (
                                     <p className="text-center text-slate-400 font-semibold m-auto">
-                                        ابدأ المحادثة الآن 👋
+                                        ابدأ المحادثة الآن
                                     </p>
                                 ) : (
                                     messages.map((msg, idx) => {

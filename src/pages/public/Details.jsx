@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { FaStar } from "react-icons/fa";
 import Avatar from "../../components/common/Avatar";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function Details() {
-  const defaultImages = ["/works1.jpeg", "/works2.jpeg", "/works3.jpeg"];
   const location = useLocation();
+  const navigate = useNavigate();
   const { details } = location.state;
+
   if (!details) {
     return <div>No Data Found</div>;
   }
@@ -20,10 +21,7 @@ function Details() {
       >
         <div className="md:w-1/3 flex flex-col gap-4">
           <img
-            src={
-              details.image ||
-              defaultImages[Math.floor(Math.random() * defaultImages.length)]
-            }
+            src={details.profilePicture}
             alt={details.fullName}
             className="h-64 w-full object-cover rounded-lg shadow-md"
           />
@@ -46,10 +44,7 @@ function Details() {
                   <FaStar
                     key={num}
                     className={
-                      num <=
-                        (details?.rating)
-                        ? "text-orange-500"
-                        : "text-gray-300"
+                      num <= details?.rating ? "text-orange-500" : "text-gray-300"
                     }
                   />
                 ))}
@@ -58,7 +53,14 @@ function Details() {
             <p>{details.yearsOfExperience} سنة خبرة</p>
           </div>
 
-          <button className="bg-cyan-900 hover:bg-cyan-800 text-white font-medium px-5 py-2 rounded-lg mt-3">
+          <button
+            onClick={() =>
+              navigate("/service-request", {
+                state: { craftsman: details },
+              })
+            }
+            className="bg-cyan-900 hover:bg-cyan-800 text-white font-medium px-5 py-2 rounded-lg mt-3"
+          >
             اطلب الآن
           </button>
         </div>
@@ -80,9 +82,7 @@ function Details() {
                     <FaStar
                       key={num}
                       className={
-                        num <= review.rating
-                          ? "text-orange-500"
-                          : "text-gray-300"
+                        num <= review.rating ? "text-orange-500" : "text-gray-300"
                       }
                     />
                   ))}

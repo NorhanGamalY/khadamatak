@@ -9,11 +9,11 @@ function Orders() {
   useEffect(() => {
     const fetchOrders = async () => {
       const data = await getorder_craftman();
-      const newOrders = data.filter((order) => order.status === 0);
+      const newOrders = data.filter((order) => [0, 1].includes(order.status));      
       setNewOrders(newOrders);
-      const currentOrders = data.filter((order) => order.status === 3);
+      const currentOrders = data.filter((order) => order.status === 4);
       setCurrentOrders(currentOrders);
-      const completedOrders = data.filter((order) => order.status === 4);
+      const completedOrders = data.filter((order) => order.status === 5);
       setCompletedOrders(completedOrders);
     };
     fetchOrders();

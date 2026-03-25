@@ -103,7 +103,7 @@ const OrderDetailsModal = ({ order, onClose, onOpenComplaint, onOpenReview }) =>
             مراسلة الحرفي
           </button>
 
-          {order.status === 4 && (
+          {order.status === 5 && (
             <button
               onClick={handleOpenComplaint}
               className="inline-flex items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 px-5 py-3 text-sm font-semibold text-red-600 transition hover:bg-red-100"

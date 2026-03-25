@@ -159,6 +159,7 @@ const ConflictItem = ({ data }) => {
               <span className="font-bold">سبب الشكوى :</span>
               <span>{data.description}</span>
             </div>
+            
 
             {data.adminResolutionNotes && (
               <div className="border border-orange-200 bg-orange-50 rounded-lg p-3 grid gap-1">

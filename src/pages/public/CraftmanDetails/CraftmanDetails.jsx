@@ -25,7 +25,7 @@ function CraftmanDetails() {
             <div className="min-h-screen bg-gray-100 py-10 px-4 mt-20">
                 <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
 
-                    <div className="bg-secondary p-8 relative flex  items-center justify-between text-white ">
+                    <div className="bg-secondary p-8 relative flex  items-center justify-between text-white overflow-hidden ">
                         <div className="z-10 ">
 
                             <h1 className="text-2xl font-bold ">{craftman?.fullName}</h1>
@@ -37,7 +37,7 @@ function CraftmanDetails() {
                             </div>
                         </div>
                         <div className="absolute top-0 left-0 lg:w-40 lg:h-50 h-55 w-40 overflow-hidden">
-                            <img src={Craftmanimg} alt="craftsman" className="w-full h-full object-cover" />
+                            <img src={craftman?.profilePicture} alt="craftsman" className="w-full h-full object-cover" />
                         </div>
                     </div>
 

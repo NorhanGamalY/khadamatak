@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Phone, MapPin, Edit3 } from "lucide-react";
 import Avatar from "../../components/common/Avatar";
 import axios from "axios";
-import { Toaster } from "react-hot-toast";
 import { useOutletContext } from "react-router-dom";
 
 export default function Profile() {
@@ -13,10 +12,12 @@ export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({ services: [] });
   const [tempData, setTempData] = useState({ services: [{ name: "" }] });
+  const [imageFile, setImageFile] = useState(null);
   const { setSearch, setPlaceholder } = useOutletContext();
 
   const handleCancel = () => {
     setTempData(profile);
+    setImageFile(null);
     setIsEditing(false);
   };
 
@@ -24,10 +25,10 @@ export default function Profile() {
     const res = await axios.get(`https://herafie.runasp.net/api/Craftsmen/me`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-
     setProfile(res.data);
     setTempData(res.data);
   };
+
   const handleEdit = async () => {
     try {
       const cleanServices = tempData?.services.map((ser) => {
@@ -36,37 +37,49 @@ export default function Profile() {
           description: ser.description,
           price: ser.price,
         };
-
-        if (ser.id && ser.id !== 0) {
-          obj.id = ser.id;
-        }
-
+        if (ser.id && ser.id !== 0) obj.id = ser.id;
         return obj;
       });
 
-      const payload = {
-        fullName: tempData.fullName,
-        phoneNumber: tempData.phoneNumber,
-        bio: tempData.bio,
-        yearsOfExperience: Number(tempData.yearsOfExperience) || 0,
-        services: cleanServices,
-      };
+      const formData = new FormData();
+      formData.append("FullName", tempData.fullName || "");
+      formData.append("PhoneNumber", tempData.phoneNumber || "");
+      formData.append("Bio", tempData.bio || "");
+      formData.append("YearsOfExperience", Number(tempData.yearsOfExperience) || 0);
+
+      if (imageFile) {
+        formData.append("ProfilePicture", imageFile);
+      }
+
+      cleanServices.forEach((ser, i) => {
+        formData.append(`Services[${i}][name]`, ser.name || "");
+        formData.append(`Services[${i}][description]`, ser.description || "");
+        formData.append(`Services[${i}][price]`, ser.price || 0);
+        if (ser.id) formData.append(`Services[${i}][id]`, ser.id);
+      });
 
       const res = await axios.put(
         "https://herafie.runasp.net/api/Craftsmen/me",
-        payload,
-        { headers: { Authorization: `Bearer ${token}` } },
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
 
       if (res.status === 200 || res.status === 204) {
         await handleGetData();
         toast.success("تم تعديل بياناتك");
         setIsEditing(false);
+        setImageFile(null);
       }
     } catch (error) {
       console.error("تفاصيل الخطأ:", error.response?.data);
+      toast.error("حدث خطأ أثناء التعديل");
     }
   };
+
   useEffect(() => {
     if (token) handleGetData();
   }, [token]);
@@ -75,7 +88,6 @@ export default function Profile() {
     setPlaceholder(" الملف الشخصي ...");
     setSearch("");
   }, []);
-
   return (
     <>
       <div dir="rtl" className="min-h-screen bg-main">
@@ -89,7 +101,7 @@ export default function Profile() {
             <div className="p-0">
               <div className="bg-white p-8 flex flex-col md:flex-row items-center gap-6 text-center md:text-right">
                 <Avatar
-                  src={profile.image ? profile.image : ""}
+                  src={profile.profilePicture || ""}
                   name={profile.fullName}
                   size={80}
                 />
@@ -107,9 +119,11 @@ export default function Profile() {
                   </div>
                 </div>
               </div>
+
               <div className="bg-[#D75B19] text-white text-center py-3 text-lg font-semibold">
                 الخدمات
               </div>
+
               <div className="p-8 space-y-4 text-indigo-900 text-lg">
                 {profile?.services?.length > 0 &&
                   profile?.services?.map((service, i) => {
@@ -127,16 +141,17 @@ export default function Profile() {
                         </motion.div>
                       );
                     } else {
-                      return;
+                      return null;
                     }
                   })}
               </div>
+
               <div className="flex flex-col md:flex-row gap-4 p-8 pt-0">
                 <button
                   onClick={() => setIsEditing(true)}
                   className="bg-[#171240] cursor-pointer hover:bg-indigo-900 text-white p-3 rounded-2xl w-full flex items-center justify-center gap-2"
                 >
-                  <p className="flex items-center justify-center ">
+                  <p className="flex items-center justify-center">
                     <Edit3 className="mr-2" size={16} /> تعديل البيانات
                   </p>
                 </button>
@@ -173,7 +188,7 @@ export default function Profile() {
                 />
                 <input
                   className="w-full border rounded-xl p-2"
-                  value={tempData.phoneNumber}
+                  value={tempData.phoneNumber || ""}
                   onChange={(e) =>
                     setTempData({ ...tempData, phoneNumber: e.target.value })
                   }
@@ -181,28 +196,37 @@ export default function Profile() {
                 />
                 <input
                   className="w-full border rounded-xl p-2"
-                  value={tempData.bio}
+                  value={tempData.bio || ""}
                   onChange={(e) =>
                     setTempData({ ...tempData, bio: e.target.value })
                   }
                   placeholder="كهربائي"
                 />
 
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="w-full"
-                  onChange={(e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                      const reader = new FileReader();
-                      reader.onloadend = () => {
-                        setTempData({ ...tempData, image: reader.result });
-                      };
-                      reader.readAsDataURL(file);
-                    }
-                  }}
-                />
+                <div className="space-y-1">
+                  <label className="text-sm text-gray-600 block">
+                    صورة الملف الشخصي
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="w-full text-sm text-gray-500
+                      file:ml-3 file:py-2 file:px-4
+                      file:rounded-xl file:border-0
+                      file:text-sm file:font-semibold
+                      file:bg-orange-50 file:text-orange-600
+                      hover:file:bg-orange-100 cursor-pointer"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file) setImageFile(file);
+                    }}
+                  />
+                  {imageFile && (
+                    <p className="text-xs text-green-600">
+                      ✓ تم اختيار: {imageFile.name}
+                    </p>
+                  )}
+                </div>
 
                 <div className="flex gap-3">
                   <button

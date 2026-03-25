@@ -3,12 +3,6 @@ import { Link } from "react-router-dom";
 import { FaStar } from "react-icons/fa";
 import WorksDetails from "../../api/WorksDetails";
 
-const workData = [
-  { img: "/works1.jpeg" },
-  { img: "/works2.jpeg" },
-  { img: "/works3.jpeg" },
-];
-
 function Works() {
   const [data, setData] = useState([]);
 
@@ -34,8 +28,6 @@ function Works() {
           .filter((work) => work.rating >= 4)
           .slice(0, 4)
           .map((work) => {
-            const randomImage =
-              workData[Math.floor(Math.random() * workData.length)].img;
 
             return (
               <Link
@@ -45,7 +37,7 @@ function Works() {
                 className="relative rounded-xl overflow-hidden shadow hover:scale-105 transition duration-300 block"
               >
                 <img
-                  src={randomImage}
+                  src={work.profilePicture}
                   alt=""
                   className="w-full h-48 sm:h-56 md:h-64 object-cover"
                 />

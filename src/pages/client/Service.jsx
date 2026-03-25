@@ -111,7 +111,7 @@ export default function Service() {
         });
 
         setTimeout(() => {
-          navigat("/payment", {
+          navigat("/orders", {
             state: {
               order: data,
               craftsman,

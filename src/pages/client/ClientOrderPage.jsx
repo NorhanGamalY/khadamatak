@@ -19,7 +19,6 @@ const ClientOrdersPage = () => {
     <div className="min-h-screen p-4 md:p-6 mt-25" dir="rtl">
       <div className="mx-auto max-w-6xl space-y-6">
         <OrdersPageHeader />
-
         <OrdersTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
         {loading ? (

@@ -1,7 +1,7 @@
 import { FaUserCircle } from "react-icons/fa";
 
 export default function Avatar({
-  src,
+  src = null,
   name = "",
   size = 40,
   }) {
@@ -17,7 +17,7 @@ return (
       style={{ width: size, height: size }}>
       {src ? (
         <img
-          src={src}
+          src={`${src}`}
           alt={name}
           className="w-full h-full object-cover"
         />

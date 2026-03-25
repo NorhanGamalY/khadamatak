@@ -48,9 +48,11 @@ export default function ClientLogin() {
         },
         onError: (err) => {
           const msg =
-            err?.response?.data?.message ||
-            err?.response?.data?.error ||
-            "بيانات الدخول غير صحيحة";
+        typeof err?.response?.data === "string"
+            ? err.response.data
+            : err?.response?.data?.message ||
+              err?.response?.data?.title ||
+              "حصل خطأ، حاول تاني";
           setServerError(msg);
         },
       }
