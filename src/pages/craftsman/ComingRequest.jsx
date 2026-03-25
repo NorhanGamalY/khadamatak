@@ -8,7 +8,7 @@ function ComingRequest() {
   const { orders, setOrders, loading } = useOutletContext();
   const [message, setMessage] = useState("");
 
-  const data = orders.filter((o) => o.status === 1 || o.status === 3);
+  const data = orders.filter((o) => o.status === 1 || o.status === 2 || o.status === 3 || o.status === 4);
 
   const notify = (msg) => {
     setMessage(msg);
@@ -29,9 +29,9 @@ function ComingRequest() {
       setOrders((prev) =>
         prev.map((o) => (o.id === id ? { ...o, status: 3 } : o))
       );
-      notify("✅ تم بدء الطلب");
+      notify(" !تم بدء الطلب");
     } catch {
-      notify("❌ فشل بدء الطلب");
+      notify("!فشل بدء الطلب");
     }
   };
 
@@ -56,9 +56,9 @@ function ComingRequest() {
       setOrders((prev) =>
         prev.map((o) => (o.id === id ? { ...o, status: 4 } : o))
       );
-      notify("✅ تم إتمام الطلب بنجاح");
+      notify(" !تم إتمام الطلب بنجاح");
     } catch {
-      notify("❌ فشل إتمام الطلب");
+      notify("!فشل إتمام الطلب");
     }
   };
 
@@ -126,14 +126,24 @@ function ComingRequest() {
 
               <div className="flex flex-col sm:flex-row gap-3">
                 {order.status === 1 && (
-                  <button
-                    onClick={() => handleStart(order.id)}
-                    className="bg-blue-500 text-white hover:bg-blue-400 px-4 py-2 rounded-md transition"
-                  >
-                    بدء
-                  </button>
+                  <span className="bg-red-100 text-red-600 text-sm font-semibold px-4 py-2 rounded-md text-center">
+                    غير مدفوع
+                  </span>
                 )}
-                {order.status === 3 && (
+                {order.status === 2 && (
+                  <>
+                    <span className="bg-green-100 text-green-600 text-sm font-semibold px-4 py-2 rounded-md text-center">
+                      مدفوع
+                    </span>
+                    <button
+                      onClick={() => handleStart(order.id)}
+                      className="bg-blue-500 text-white hover:bg-blue-400 px-4 py-2 rounded-md transition"
+                    >
+                      بدء
+                    </button>
+                  </>
+                )}
+                {order.status === 4 && (
                   <button
                     onClick={() => handleComplete(order.id)}
                     className="bg-green-600 text-white hover:bg-green-500 px-4 py-2 rounded-md transition"

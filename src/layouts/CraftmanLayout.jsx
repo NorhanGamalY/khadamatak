@@ -94,6 +94,7 @@ export default function CraftsmanLayout() {
           setSidebarOpen={setSidebarOpen}
           name={craftsmanData.fullName || "اسم المستخدم"}
           role={craftsmanData.bio || "عن المستخدم"}
+          src={craftsmanData.profilePicture}
           activeTitle={activeLabel}
           profilePath="/craftsman/profile"
           search={search}

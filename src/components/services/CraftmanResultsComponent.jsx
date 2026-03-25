@@ -54,18 +54,6 @@ export default function CraftsmanResultsSection() {
   const [draftGovernorate, setDraftGovernorate] = useState("");
   const [draftSortBy, setDraftSortBy] = useState("topRated");
 
-  const imageById = useMemo(
-    () => ({
-      1: "/workers/najjar.png",
-      2: "/workers/paint.png",
-      3: "/workers/Frame 2147228572.png",
-    }),
-    [],
-  );
-
-  function getCraftsmanImage(id) {
-    return imageById[id] || DEFAULT_AVATAR;
-  }
 
   function onViewProfile(item) {
     navigate(`/services/${item.id}`);
@@ -207,7 +195,6 @@ export default function CraftsmanResultsSection() {
                 item={item}
                 onViewProfile={onViewProfile}
                 onRequestService={onRequestService}
-                getCraftsmanImage={getCraftsmanImage}
               />
             ))
           )}
@@ -318,7 +305,7 @@ function CraftsmanCard({
         <div className="order-1 md:order-2 shrink-0">
           <div className="w-full md:w-[370px] rounded-xl overflow-hidden bg-[#F3F3F3] aspect-[16/10] sm:aspect-[16/9] md:aspect-auto md:h-[280px]">
             <img
-              src={getCraftsmanImage(item.id)}
+              src={item.profilePicture}
               alt={item.fullName}
               className="w-full h-full object-cover"
               loading="lazy"

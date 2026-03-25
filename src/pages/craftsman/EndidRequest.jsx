@@ -6,7 +6,7 @@ import { useOutletContext } from "react-router-dom";
 function EndidRequest() {
   const { orders, loading } = useOutletContext();
 
-  const data = orders.filter((o) => o.status === 4 || o.status === 5);
+  const data = orders.filter((o) => o.status === 5 || o.status === 6);
 
   if (loading)
     return <p className="text-center mt-10">جاري تحميل الطلبات...</p>;
@@ -57,10 +57,10 @@ function EndidRequest() {
               <h3 className="font-semibold text-sm">الحالة</h3>
               <span
                 className={`text-sm font-medium ${
-                  order.status === 4 ? "text-green-600" : "text-red-500"
+                  order.status === 5 ? "text-green-600" : "text-red-500"
                 }`}
               >
-                {order.status === 4 ? "مكتمل" : "ملغي"}
+                {order.status === 5 ? "مكتمل" : "ملغي"}
               </span>
             </div>
 

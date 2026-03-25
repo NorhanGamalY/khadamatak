@@ -199,7 +199,7 @@ function App() {
             element={
               <ProtectedRoute
                 allowedRole="Craftsman"
-                redirectTo="/craftsman-login"
+                redirectTo="/login"
               >
                 <CraftsmanLayout />
               </ProtectedRoute>

@@ -36,7 +36,7 @@ function NewRequest() {
       setOrders((prev) =>
         prev.map((o) => (o.id === id ? { ...o, status: 1 } : o))
       );
-      notify("✅ تم قبول الطلب بنجاح");
+      notify("!تم قبول الطلب بنجاح");
     } catch {
       notify("❌ فشل قبول الطلب");
     }
@@ -66,9 +66,9 @@ function NewRequest() {
       setOrders((prev) =>
         prev.map((o) => (o.id === id ? { ...o, status: 2 } : o))
       );
-      notify("تم رفض الطلب");
+      notify("!تم رفض الطلب");
     } catch {
-      notify("❌ فشل رفض الطلب");
+      notify("!فشل رفض الطلب");
     }
   };
 

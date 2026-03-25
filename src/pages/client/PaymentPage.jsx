@@ -8,7 +8,7 @@ import PayNowButton from "../../components/payment/PayNowButton";
 import { useSendNotification } from "../../features/notifications/hooks";
 
 const ADMIN_USER_ID = "d18c1d85-d9bd-491a-8248-f0202aa5a9a2";
-const COMMISSION_RATE = 0.10; 
+const COMMISSION_RATE = 0.10;
 
 export default function PaymentPage() {
   const { mutateAsync: sendNotificationMutation } = useSendNotification();
@@ -88,7 +88,6 @@ export default function PaymentPage() {
       expMonth: Number(expMonth),
       expYear: Number(`20${expYear}`),
       orderId: order?.id || order?.orderId,
-      paymentMethod: selectedMethod,
       stripeToken: "tok_visa",
     };
   }
@@ -148,7 +147,7 @@ export default function PaymentPage() {
       const payload = buildPaymentPayload();
 
       const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/api/Payments/pay-card`,
+        `https://herafie.runasp.net/api/Payments/pay-card`,
         {
           method: "POST",
           headers: {
@@ -156,13 +155,22 @@ export default function PaymentPage() {
             Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
           },
           body: JSON.stringify(payload),
-        },
+        }
       );
 
-      const data = await response.json();
+      const text = await response.text();
+
+      let data = {};
+      if (text) {
+        try {
+          data = JSON.parse(text);
+        } catch {
+          console.error("Non-JSON response from API:", text);
+        }
+      }
 
       if (!response.ok) {
-        throw new Error(data?.message || "فشل الدفع");
+        throw new Error(data?.message || `فشل الدفع (${response.status})`);
       }
 
       try {
@@ -174,7 +182,7 @@ export default function PaymentPage() {
       toast.success(data?.paymentMessage || "تم الدفع بنجاح");
 
       setTimeout(() => {
-        navigate("/home", {
+        navigate("/orders", {
           state: {
             payment: data,
             order,

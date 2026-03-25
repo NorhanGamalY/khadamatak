@@ -20,6 +20,7 @@ export default function Header({
   data,
   unreadCount = 0,
   notificationsPath,
+  src,
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(true);
   const navigate = useNavigate();
@@ -46,7 +47,7 @@ export default function Header({
                 onClick={() => profilePath && navigate(profilePath)}
                 className="h-10 w-10 rounded-full bg-[#f59e0b] flex items-center justify-center text-white font-extrabold cursor-pointer transition-colors"
               >
-                <Avatar name={name} />
+                <Avatar src={src} name={name} />
               </div>
               <div className="leading-tight text-right hidden lg:grid">
                 <div className="text-[13px] font-bold">{name}</div>

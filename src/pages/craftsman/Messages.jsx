@@ -4,6 +4,7 @@ import { BiDotsHorizontalRounded } from "react-icons/bi";
 import { IoSend } from "react-icons/io5";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getUserId, getToken } from "../../features/auth/authHelpers";
+import Avatar from "../../components/common/Avatar";
 
 const BASE_URL = "https://herafie.runasp.net";
 
@@ -64,6 +65,7 @@ const Messages = () => {
   const [messageText, setMessageText] = useState("");
   const [activeClientUserId, setActiveClientUserId] = useState(null);
   const [activeClientName, setActiveClientName] = useState("");
+  const [activeClientImage, setActiveClientImage] = useState("");
 
   const { data: chatList = [], isLoading: loadingChatList } = useQuery({
     queryKey: ["craftsmanChatList"],
@@ -90,9 +92,10 @@ const Messages = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleOpenConversation = (clientUserId, clientName) => {
+  const handleOpenConversation = (clientUserId, clientName, clientImage) => {
     setActiveClientUserId(clientUserId);
     setActiveClientName(clientName);
+    setActiveClientImage(clientImage || "");
     setOpenChat(true);
     markAsRead(clientUserId);
     queryClient.invalidateQueries(["craftsmanChatList"]);
@@ -106,18 +109,6 @@ const Messages = () => {
       content: messageText.trim(),
     });
     setMessageText("");
-  };
-
-  const getAvatarUrl = (name) =>
-    `https://ui-avatars.com/api/?name=${encodeURIComponent(name || "Client")}&background=0ea5e9&color=fff`;
-
-  const getClientLabel = (chat) => `${chat.userId.slice(-6)}`;
-
-  const getDisplayName = (clientUserId, messages) => {
-    if (!messages || messages.length === 0) return `${clientUserId?.slice(-4) || ""}`;
-    const clientMsg = messages.find((m) => m.senderId !== currentUserId);
-    if (clientMsg?.senderName) return clientMsg.senderName;
-    return `عميل ...${clientUserId?.slice(-6) || ""}`;
   };
 
   return (
@@ -144,21 +135,17 @@ const Messages = () => {
                 </p>
               ) : (
                 chatList.map((chat) => {
-                  const label = getClientLabel(chat);
                   const isActive = activeClientUserId === chat.userId;
+                  const displayName = chat.userName || `...${chat.userId.slice(-6)}`;
                   return (
                     <button
                       key={chat.userId}
-                      onClick={() => handleOpenConversation(chat.userId, label)}
+                      onClick={() => handleOpenConversation(chat.userId, displayName, chat.userImage)}
                       className={`py-4 lg:px-4 px-2 w-full border-b border-slate-200 flex items-start text-left gap-4
                         ${isActive ? "bg-sky-50" : "hover:bg-slate-50"}`}
                     >
                       <div className="relative shrink-0">
-                        <img
-                          src={getAvatarUrl(label)}
-                          className="w-14 h-14 rounded-full object-cover"
-                          alt={label}
-                        />
+                        <Avatar src={chat.userImage || ""} name={displayName} size={40} />
                         {chat.unreadCount > 0 && (
                           <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full w-5 h-5 flex items-center justify-center font-bold">
                             {chat.unreadCount}
@@ -166,7 +153,7 @@ const Messages = () => {
                         )}
                       </div>
                       <div className="grid gap-0.5 text-secondary flex-1 min-w-0">
-                        <h1 className="font-bold text-lg truncate">{label}</h1>
+                        <h1 className="font-bold text-lg truncate">{displayName}</h1>
                         <p dir="rtl" className="line-clamp-1 text-sm font-semibold text-slate-500">
                           {chat.lastMessage}
                         </p>
@@ -188,11 +175,7 @@ const Messages = () => {
                   <ArrowLeft />
                 </button>
                 <div className="flex lg:items-center justify-center col-span-3 lg:gap-4 gap-3 m-auto">
-                  <img
-                    src={getAvatarUrl(activeClientName)}
-                    alt={activeClientName}
-                    className="lg:w-16 lg:h-16 w-12 h-12 rounded-full"
-                  />
+                  <Avatar src={activeClientImage} name={activeClientName} size={40} />
                   <div className="text-center grid lg:gap-1">
                     <h1 className="font-bold text-xl">{activeClientName}</h1>
                   </div>
