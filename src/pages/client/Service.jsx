@@ -199,7 +199,7 @@ export default function Service() {
           }
           className="flex items-center justify-center gap-2 w-full max-w-md bg-blue-900 text-white py-2 rounded-xl text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          متابعة الدفع <MdKeyboardDoubleArrowLeft size={24} />
+          اتمام الطلب <MdKeyboardDoubleArrowLeft size={24} />
         </button>
       </div>
     </div>
